@@ -11,6 +11,32 @@
   "clientCount": "Број клијената",
   "caseCount": "Број предмета",
   "upcomingDeadlines": "Предстојећи рокови",
+  "home": {
+    "recentCases": "Недавни предмети",
+    "deadlinesThisWeek": "Рокови ове недеље"
+  },
+  "placeholder": {
+    "clients": "Листа клијената долази у Фази 2",
+    "cases": "Листа предмета долази у Фази 2",
+    "calendar": "Календар долази у Фази 3"
+  },
+  "roles": {
+    "admin": "Администратор",
+    "lawyer": "Адвокат",
+    "trainee": "Приправник",
+    "paralegal": "Правни сарадник",
+    "accountant": "Рачуновођа",
+    "staff": "Особље"
+  },
+  "profile": {
+    "role": "Улога",
+    "email": "Имејл",
+    "noUser": "Нема података о кориснику"
+  },
+  "more": {
+    "settings": "Подешавања",
+    "profile": "Профил"
+  },
   "status": {
     "new": "Нови",
     "active": "Активан",
