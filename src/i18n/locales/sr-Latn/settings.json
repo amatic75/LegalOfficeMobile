@@ -1,0 +1,19 @@
+{
+  "title": "Podesavanja",
+  "language": {
+    "title": "Jezik",
+    "description": "Izaberite jezik aplikacije"
+  },
+  "profile": {
+    "title": "Profil"
+  },
+  "about": {
+    "title": "O aplikaciji",
+    "version": "Verzija",
+    "description": "Pravna kancelarija - mobilna aplikacija za upravljanje advokatskom kancelarijom."
+  },
+  "theme": {
+    "title": "Tema",
+    "description": "Izaberite temu aplikacije"
+  }
+}

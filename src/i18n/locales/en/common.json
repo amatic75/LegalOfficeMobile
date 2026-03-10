@@ -1,0 +1,38 @@
+{
+  "app": {
+    "name": "Legal Office",
+    "version": "Version {{version}}"
+  },
+  "greeting": "Welcome, {{name}}",
+  "clients": "Clients",
+  "cases": "Cases",
+  "calendar": "Calendar",
+  "documents": "Documents",
+  "clientCount": "Client count",
+  "caseCount": "Case count",
+  "upcomingDeadlines": "Upcoming deadlines",
+  "status": {
+    "new": "New",
+    "active": "Active",
+    "pending": "Pending",
+    "closed": "Closed",
+    "archived": "Archived"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "network": "Network error. Check your connection.",
+    "notFound": "The requested content was not found."
+  },
+  "loading": "Loading...",
+  "noData": "No data available.",
+  "retry": "Try again"
+}

@@ -1,0 +1,38 @@
+{
+  "app": {
+    "name": "Pravna kancelarija",
+    "version": "Verzija {{version}}"
+  },
+  "greeting": "Dobrodosli, {{name}}",
+  "clients": "Klijenti",
+  "cases": "Predmeti",
+  "calendar": "Kalendar",
+  "documents": "Dokumenta",
+  "clientCount": "Broj klijenata",
+  "caseCount": "Broj predmeta",
+  "upcomingDeadlines": "Predstojechi rokovi",
+  "status": {
+    "new": "Novi",
+    "active": "Aktivan",
+    "pending": "Na chekanju",
+    "closed": "Zatvoren",
+    "archived": "Arhiviran"
+  },
+  "actions": {
+    "save": "Sacuvaj",
+    "cancel": "Otkazi",
+    "delete": "Obrisi",
+    "edit": "Izmeni",
+    "create": "Kreiraj",
+    "search": "Pretrazi",
+    "filter": "Filtriraj"
+  },
+  "errors": {
+    "generic": "Doslo je do greske. Pokusajte ponovo.",
+    "network": "Greska u mrezi. Proverite konekciju.",
+    "notFound": "Trazeni sadrzaj nije pronadjen."
+  },
+  "loading": "Ucitavanje...",
+  "noData": "Nema podataka.",
+  "retry": "Pokusaj ponovo"
+}

@@ -1,0 +1,15 @@
+{
+  "tabs": {
+    "home": "Home",
+    "clients": "Clients",
+    "cases": "Cases",
+    "calendar": "Calendar",
+    "more": "More"
+  },
+  "screens": {
+    "settings": "Settings",
+    "profile": "Profile",
+    "about": "About"
+  },
+  "back": "Back"
+}

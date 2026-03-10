@@ -1,0 +1,15 @@
+{
+  "tabs": {
+    "home": "Pocetna",
+    "clients": "Klijenti",
+    "cases": "Predmeti",
+    "calendar": "Kalendar",
+    "more": "Vise"
+  },
+  "screens": {
+    "settings": "Podesavanja",
+    "profile": "Profil",
+    "about": "O aplikaciji"
+  },
+  "back": "Nazad"
+}
