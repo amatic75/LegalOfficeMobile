@@ -1,0 +1,61 @@
+{
+  "list": {
+    "title": "Klijenti",
+    "searchPlaceholder": "Pretrazite klijente...",
+    "emptyState": "Nema klijenata",
+    "noResults": "Nema rezultata pretrage"
+  },
+  "filter": {
+    "all": "Svi",
+    "individual": "Fizicka lica",
+    "corporate": "Pravna lica"
+  },
+  "detail": {
+    "profile": "Profil",
+    "linkedCases": "Povezani predmeti",
+    "noCases": "Nema povezanih predmeta",
+    "contact": "Kontakt",
+    "representatives": "Zastupnici"
+  },
+  "form": {
+    "createTitle": "Novi klijent",
+    "editTitle": "Izmena klijenta",
+    "selectType": "Izaberite tip",
+    "firstName": "Ime",
+    "lastName": "Prezime",
+    "companyName": "Naziv firme",
+    "jmbg": "JMBG",
+    "pib": "PIB",
+    "mb": "Maticni broj",
+    "phone": "Telefon",
+    "email": "Email",
+    "address": "Adresa",
+    "city": "Grad",
+    "representatives": "Zastupnici",
+    "addRepresentative": "Dodaj zastupnika",
+    "representativeName": "Ime zastupnika",
+    "representativeRole": "Funkcija",
+    "save": "Sacuvaj",
+    "cancel": "Otkazi"
+  },
+  "type": {
+    "individual": "Fizicko lice",
+    "corporate": "Pravno lice"
+  },
+  "validation": {
+    "firstNameRequired": "Ime je obavezno polje",
+    "lastNameRequired": "Prezime je obavezno polje",
+    "companyNameRequired": "Naziv firme je obavezno polje",
+    "jmbgInvalid": "JMBG nije validan",
+    "pibInvalid": "PIB nije validan",
+    "mbInvalid": "Maticni broj nije validan",
+    "emailInvalid": "Email adresa nije validna",
+    "phoneInvalid": "Broj telefona nije validan"
+  },
+  "actions": {
+    "call": "Pozovi",
+    "sendEmail": "Posalji email",
+    "edit": "Izmeni",
+    "newClient": "Novi klijent"
+  }
+}

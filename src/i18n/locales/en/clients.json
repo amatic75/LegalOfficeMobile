@@ -1,0 +1,61 @@
+{
+  "list": {
+    "title": "Clients",
+    "searchPlaceholder": "Search clients...",
+    "emptyState": "No clients",
+    "noResults": "No search results"
+  },
+  "filter": {
+    "all": "All",
+    "individual": "Individuals",
+    "corporate": "Companies"
+  },
+  "detail": {
+    "profile": "Profile",
+    "linkedCases": "Linked Cases",
+    "noCases": "No linked cases",
+    "contact": "Contact",
+    "representatives": "Representatives"
+  },
+  "form": {
+    "createTitle": "New Client",
+    "editTitle": "Edit Client",
+    "selectType": "Select type",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "companyName": "Company Name",
+    "jmbg": "JMBG",
+    "pib": "PIB",
+    "mb": "Registration Number",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "city": "City",
+    "representatives": "Representatives",
+    "addRepresentative": "Add representative",
+    "representativeName": "Representative name",
+    "representativeRole": "Role",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "type": {
+    "individual": "Individual",
+    "corporate": "Company"
+  },
+  "validation": {
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "companyNameRequired": "Company name is required",
+    "jmbgInvalid": "JMBG is not valid",
+    "pibInvalid": "PIB is not valid",
+    "mbInvalid": "Registration number is not valid",
+    "emailInvalid": "Email address is not valid",
+    "phoneInvalid": "Phone number is not valid"
+  },
+  "actions": {
+    "call": "Call",
+    "sendEmail": "Send email",
+    "edit": "Edit",
+    "newClient": "New Client"
+  }
+}

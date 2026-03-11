@@ -35,6 +35,19 @@ export const mockClients: Client[] = [
     phone: '+381 11 234 5678',
     address: 'Nemanjina 11',
     city: 'Beograd',
+    representatives: [
+      {
+        name: 'Dragan Zivkovic',
+        role: 'Direktor',
+        phone: '+381 63 111 2222',
+        email: 'dragan@zivkovic-gradnja.rs',
+      },
+      {
+        name: 'Jelena Zivkovic',
+        role: 'Ovlasceni zastupnik',
+        phone: '+381 63 333 4444',
+      },
+    ],
     createdAt: '2024-03-10T09:00:00Z',
   },
   {
@@ -59,6 +72,14 @@ export const mockClients: Client[] = [
     phone: '+381 11 345 6789',
     address: 'Bulevar Mihajla Pupina 10',
     city: 'Beograd',
+    representatives: [
+      {
+        name: 'Marko Petrovic',
+        role: 'Direktor',
+        phone: '+381 64 555 6666',
+        email: 'marko@itsolutions.rs',
+      },
+    ],
     createdAt: '2024-05-22T08:45:00Z',
   },
   {
@@ -83,6 +104,18 @@ export const mockClients: Client[] = [
     phone: '+381 21 456 7890',
     address: 'Zmaj Jovina 15',
     city: 'Novi Sad',
+    representatives: [
+      {
+        name: 'Slobodan Brkic',
+        role: 'Vlasnik',
+        phone: '+381 63 777 8888',
+        email: 'slobodan@pekarnica-brkic.rs',
+      },
+      {
+        name: 'Mirjana Brkic',
+        role: 'Ovlasceni zastupnik',
+      },
+    ],
     createdAt: '2024-07-18T13:00:00Z',
   },
   {
