@@ -6,8 +6,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
-import type { CaseSummary, CaseStatus } from "../../../src/services/types";
-import { STATUS_COLORS, STATUS_TRANSITIONS } from "../../../src/services/types";
+import type { CaseSummary, CaseStatus, Document } from "../../../src/services/types";
+import { STATUS_COLORS, STATUS_TRANSITIONS, formatFileSize, DOC_TYPE_ICONS } from "../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -57,14 +57,21 @@ export default function CaseDetailScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
+  const { t: td } = useTranslation("documents");
+
   const [caseData, setCaseData] = useState<CaseSummary | null>(null);
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusUpdating, setStatusUpdating] = useState(false);
 
   const loadCase = useCallback(async () => {
     if (!id) return;
-    const data = await services.cases.getCaseById(id);
+    const [data, docs] = await Promise.all([
+      services.cases.getCaseById(id),
+      services.documents.getDocumentsByCaseId(id),
+    ]);
     setCaseData(data);
+    setDocuments(docs);
     setLoading(false);
   }, [id, services]);
 
@@ -277,7 +284,7 @@ export default function CaseDetailScreen() {
           )}
         </View>
 
-        {/* Linked Documents Placeholder */}
+        {/* Documents Section */}
         <View
           style={{
             backgroundColor: "#FFFFFF",
@@ -297,25 +304,91 @@ export default function CaseDetailScreen() {
         >
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 12 }}>
             <Ionicons name={"document-outline" as IoniconsName} size={18} color={colors.navy.DEFAULT} style={{ marginRight: 8 }} />
-            <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT }}>
-              {t("detail.linkedDocs")}
+            <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT, flex: 1 }}>
+              {td("documentCount", { count: documents.length })}
             </Text>
           </View>
-          <View
-            style={{
-              borderWidth: 1,
-              borderStyle: "dashed",
-              borderColor: "#DDD",
-              borderRadius: 10,
-              paddingVertical: 20,
-              alignItems: "center",
-            }}
-          >
-            <Ionicons name={"cloud-upload-outline" as IoniconsName} size={28} color="#DDD" />
-            <Text style={{ fontSize: 13, color: "#AAA", marginTop: 8, textAlign: "center", paddingHorizontal: 16 }}>
-              {t("detail.noDocsYet")}
-            </Text>
-          </View>
+          {documents.length > 0 ? (
+            <>
+              {documents.slice(0, 3).map((doc) => {
+                const iconInfo = DOC_TYPE_ICONS[doc.type];
+                return (
+                  <View
+                    key={doc.id}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      paddingVertical: 8,
+                      borderBottomWidth: 1,
+                      borderBottomColor: "#F5F0E8",
+                    }}
+                  >
+                    <Ionicons
+                      name={iconInfo.icon as IoniconsName}
+                      size={20}
+                      color={iconInfo.color}
+                      style={{ marginRight: 10 }}
+                    />
+                    <Text
+                      style={{ flex: 1, fontSize: 13, color: colors.navy.DEFAULT }}
+                      numberOfLines={1}
+                    >
+                      {doc.name}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: "#BBB", marginLeft: 8 }}>
+                      {formatFileSize(doc.size)}
+                    </Text>
+                  </View>
+                );
+              })}
+              <Pressable
+                onPress={() => router.push('/(tabs)/cases/documents/' + id as any)}
+                style={{
+                  marginTop: 10,
+                  paddingVertical: 8,
+                  alignItems: "center",
+                  backgroundColor: colors.golden[50],
+                  borderRadius: 8,
+                }}
+              >
+                <Text style={{ fontSize: 13, fontWeight: "600", color: colors.golden.DEFAULT }}>
+                  {td("viewAll")}
+                </Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderStyle: "dashed",
+                  borderColor: "#DDD",
+                  borderRadius: 10,
+                  paddingVertical: 20,
+                  alignItems: "center",
+                }}
+              >
+                <Ionicons name={"cloud-upload-outline" as IoniconsName} size={28} color="#DDD" />
+                <Text style={{ fontSize: 13, color: "#AAA", marginTop: 8, textAlign: "center", paddingHorizontal: 16 }}>
+                  {td("noDocsYet")}
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => router.push('/(tabs)/cases/documents/' + id as any)}
+                style={{
+                  marginTop: 10,
+                  paddingVertical: 8,
+                  alignItems: "center",
+                  backgroundColor: colors.golden[50],
+                  borderRadius: 8,
+                }}
+              >
+                <Text style={{ fontSize: 13, fontWeight: "600", color: colors.golden.DEFAULT }}>
+                  {td("addDocument")}
+                </Text>
+              </Pressable>
+            </>
+          )}
         </View>
 
         {/* Linked Calendar Events Placeholder */}
