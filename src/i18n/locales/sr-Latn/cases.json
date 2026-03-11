@@ -1,0 +1,80 @@
+{
+  "list": {
+    "title": "Predmeti",
+    "searchPlaceholder": "Pretrazi predmete...",
+    "emptyState": "Nema predmeta",
+    "noResults": "Nema rezultata pretrage"
+  },
+  "filter": {
+    "allStatuses": "Svi statusi",
+    "allTypes": "Svi tipovi"
+  },
+  "detail": {
+    "caseNumber": "Broj predmeta",
+    "status": "Status",
+    "type": "Tip predmeta",
+    "subtype": "Podtip",
+    "client": "Klijent",
+    "opposingParty": "Suprotna strana",
+    "court": "Sud",
+    "lawyer": "Advokat",
+    "description": "Opis",
+    "linkedDocs": "Dokumenta",
+    "linkedEvents": "Kalendar",
+    "noDocsYet": "Dokumenta ce biti dostupna u narednom azuriranju",
+    "noEventsYet": "Kalendar dogadjaja ce biti dostupan u narednom azuriranju",
+    "changeStatus": "Promeni status",
+    "statusChanged": "Status uspesno promenjen"
+  },
+  "form": {
+    "createTitle": "Novi predmet",
+    "editTitle": "Izmeni predmet",
+    "selectType": "Izaberite tip predmeta",
+    "selectSubtype": "Izaberite podtip",
+    "selectClient": "Izaberite klijenta",
+    "selectCourt": "Izaberite sud",
+    "caseNumber": "Broj predmeta",
+    "title": "Naziv predmeta",
+    "opposingParty": "Suprotna strana",
+    "description": "Opis",
+    "save": "Sacuvaj",
+    "cancel": "Otkazi"
+  },
+  "type": {
+    "civil": "Gradjansko",
+    "criminal": "Krivicno",
+    "family": "Porodicno",
+    "corporate": "Privredno"
+  },
+  "subtype": {
+    "litigation": "Parnicni",
+    "non-litigation": "Vanparnicni",
+    "bankruptcy": "Stecajni",
+    "enforcement": "Izvrsni",
+    "misdemeanor": "Prekrsajni",
+    "administrative": "Upravni",
+    "investigations": "Istraga",
+    "indictments": "Optuznice",
+    "appeals": "Zalbe",
+    "post-conviction": "Vanredni pravni lekovi",
+    "divorce": "Razvod braka",
+    "child-custody": "Starateljstvo",
+    "alimony": "Alimentacija",
+    "adoption": "Usvojenje",
+    "company-formation": "Osnivanje drustva",
+    "mergers-acquisitions": "Spajanja i pripajanja",
+    "commercial-contracts": "Privredni ugovori",
+    "intellectual-property": "Intelektualna svojina"
+  },
+  "status": {
+    "new": "Novi",
+    "active": "Aktivan",
+    "pending": "Na cekanju",
+    "closed": "Zatvoren",
+    "archived": "Arhiviran"
+  },
+  "actions": {
+    "newCase": "Novi predmet",
+    "edit": "Izmeni"
+  }
+}

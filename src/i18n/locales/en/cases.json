@@ -1,0 +1,80 @@
+{
+  "list": {
+    "title": "Cases",
+    "searchPlaceholder": "Search cases...",
+    "emptyState": "No cases",
+    "noResults": "No search results"
+  },
+  "filter": {
+    "allStatuses": "All statuses",
+    "allTypes": "All types"
+  },
+  "detail": {
+    "caseNumber": "Case number",
+    "status": "Status",
+    "type": "Case type",
+    "subtype": "Subtype",
+    "client": "Client",
+    "opposingParty": "Opposing party",
+    "court": "Court",
+    "lawyer": "Lawyer",
+    "description": "Description",
+    "linkedDocs": "Documents",
+    "linkedEvents": "Calendar",
+    "noDocsYet": "Documents will be available in a future update",
+    "noEventsYet": "Calendar events will be available in a future update",
+    "changeStatus": "Change status",
+    "statusChanged": "Status changed successfully"
+  },
+  "form": {
+    "createTitle": "New case",
+    "editTitle": "Edit case",
+    "selectType": "Select case type",
+    "selectSubtype": "Select subtype",
+    "selectClient": "Select client",
+    "selectCourt": "Select court",
+    "caseNumber": "Case number",
+    "title": "Case title",
+    "opposingParty": "Opposing party",
+    "description": "Description",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "type": {
+    "civil": "Civil",
+    "criminal": "Criminal",
+    "family": "Family",
+    "corporate": "Corporate"
+  },
+  "subtype": {
+    "litigation": "Litigation",
+    "non-litigation": "Non-litigation",
+    "bankruptcy": "Bankruptcy",
+    "enforcement": "Enforcement",
+    "misdemeanor": "Misdemeanor",
+    "administrative": "Administrative",
+    "investigations": "Investigations",
+    "indictments": "Indictments",
+    "appeals": "Appeals",
+    "post-conviction": "Post-conviction",
+    "divorce": "Divorce",
+    "child-custody": "Child custody",
+    "alimony": "Alimony",
+    "adoption": "Adoption",
+    "company-formation": "Company formation",
+    "mergers-acquisitions": "Mergers & acquisitions",
+    "commercial-contracts": "Commercial contracts",
+    "intellectual-property": "Intellectual property"
+  },
+  "status": {
+    "new": "New",
+    "active": "Active",
+    "pending": "Pending",
+    "closed": "Closed",
+    "archived": "Archived"
+  },
+  "actions": {
+    "newCase": "New case",
+    "edit": "Edit"
+  }
+}

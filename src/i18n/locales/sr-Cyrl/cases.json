@@ -1,0 +1,80 @@
+{
+  "list": {
+    "title": "Предмети",
+    "searchPlaceholder": "Претражи предмете...",
+    "emptyState": "Нема предмета",
+    "noResults": "Нема резултата претраге"
+  },
+  "filter": {
+    "allStatuses": "Сви статуси",
+    "allTypes": "Сви типови"
+  },
+  "detail": {
+    "caseNumber": "Број предмета",
+    "status": "Статус",
+    "type": "Тип предмета",
+    "subtype": "Подтип",
+    "client": "Клијент",
+    "opposingParty": "Супротна страна",
+    "court": "Суд",
+    "lawyer": "Адвокат",
+    "description": "Опис",
+    "linkedDocs": "Документа",
+    "linkedEvents": "Календар",
+    "noDocsYet": "Документа ће бити доступна у наредном ажурирању",
+    "noEventsYet": "Календар догађаја ће бити доступан у наредном ажурирању",
+    "changeStatus": "Промени статус",
+    "statusChanged": "Статус успешно промењен"
+  },
+  "form": {
+    "createTitle": "Нови предмет",
+    "editTitle": "Измени предмет",
+    "selectType": "Изаберите тип предмета",
+    "selectSubtype": "Изаберите подтип",
+    "selectClient": "Изаберите клијента",
+    "selectCourt": "Изаберите суд",
+    "caseNumber": "Број предмета",
+    "title": "Назив предмета",
+    "opposingParty": "Супротна страна",
+    "description": "Опис",
+    "save": "Сачувај",
+    "cancel": "Откажи"
+  },
+  "type": {
+    "civil": "Грађанско",
+    "criminal": "Кривично",
+    "family": "Породично",
+    "corporate": "Привредно"
+  },
+  "subtype": {
+    "litigation": "Парнични",
+    "non-litigation": "Ванпарнични",
+    "bankruptcy": "Стечајни",
+    "enforcement": "Извршни",
+    "misdemeanor": "Прекршајни",
+    "administrative": "Управни",
+    "investigations": "Истрага",
+    "indictments": "Оптужнице",
+    "appeals": "Жалбе",
+    "post-conviction": "Ванредни правни лекови",
+    "divorce": "Развод брака",
+    "child-custody": "Старатељство",
+    "alimony": "Алиментација",
+    "adoption": "Усвојење",
+    "company-formation": "Оснивање друштва",
+    "mergers-acquisitions": "Спајања и припајања",
+    "commercial-contracts": "Привредни уговори",
+    "intellectual-property": "Интелектуална својина"
+  },
+  "status": {
+    "new": "Нови",
+    "active": "Активан",
+    "pending": "На чекању",
+    "closed": "Затворен",
+    "archived": "Архивиран"
+  },
+  "actions": {
+    "newCase": "Нови предмет",
+    "edit": "Измени"
+  }
+}
