@@ -1,0 +1,31 @@
+{
+  "title": "Dokumenta",
+  "noDocuments": "Nema dokumenata za ovaj predmet",
+  "capturePhoto": "Fotografisi",
+  "uploadFile": "Dodaj fajl",
+  "preview": "Pregled",
+  "permissionRequired": "Potrebna je dozvola za kameru",
+  "permissionDenied": "Dozvola za kameru je odbijena. Molimo omogucite pristup kameri u podesavanjima.",
+  "fileTypes": {
+    "pdf": "PDF dokument",
+    "image": "Slika",
+    "other": "Fajl"
+  },
+  "filter": {
+    "all": "Sve",
+    "pdf": "PDF",
+    "image": "Slike"
+  },
+  "metadata": {
+    "size": "Velicina",
+    "date": "Datum",
+    "type": "Tip"
+  },
+  "addedOn": "Dodato {{date}}",
+  "viewAll": "Pogledaj sve",
+  "addDocument": "Dodaj dokument",
+  "documentCount": "Dokumenta ({{count}})",
+  "noDocsYet": "Nema dokumenata",
+  "mockPreview": "Pregled ce biti dostupan sa pravim dokumentima",
+  "previewNotAvailable": "Pregled nije dostupan za probne podatke"
+}

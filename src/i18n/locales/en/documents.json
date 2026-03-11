@@ -1,0 +1,31 @@
+{
+  "title": "Documents",
+  "noDocuments": "No documents for this case",
+  "capturePhoto": "Capture Photo",
+  "uploadFile": "Upload File",
+  "preview": "Preview",
+  "permissionRequired": "Camera permission required",
+  "permissionDenied": "Camera permission was denied. Please enable camera access in settings.",
+  "fileTypes": {
+    "pdf": "PDF Document",
+    "image": "Image",
+    "other": "File"
+  },
+  "filter": {
+    "all": "All",
+    "pdf": "PDF",
+    "image": "Images"
+  },
+  "metadata": {
+    "size": "Size",
+    "date": "Date",
+    "type": "Type"
+  },
+  "addedOn": "Added {{date}}",
+  "viewAll": "View All",
+  "addDocument": "Add Document",
+  "documentCount": "Documents ({{count}})",
+  "noDocsYet": "No documents yet",
+  "mockPreview": "Preview will be available with real documents",
+  "previewNotAvailable": "Preview not available for mock data"
+}

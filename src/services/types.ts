@@ -123,9 +123,39 @@ export interface ICourtService {
   getCourts(): Promise<Court[]>;
 }
 
+export interface Document {
+  id: string;
+  caseId: string;
+  name: string;
+  type: 'pdf' | 'image' | 'other';
+  mimeType: string;
+  size: number;
+  uri: string;
+  createdAt: string;
+}
+
+export interface IDocumentService {
+  getDocumentsByCaseId(caseId: string): Promise<Document[]>;
+  getDocumentById(id: string): Promise<Document | null>;
+  addDocument(data: Omit<Document, 'id' | 'createdAt'>): Promise<Document>;
+}
+
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+export const DOC_TYPE_ICONS: Record<Document['type'], { icon: string; color: string }> = {
+  pdf: { icon: 'document-text-outline', color: '#E53935' },
+  image: { icon: 'image-outline', color: '#43A047' },
+  other: { icon: 'document-outline', color: '#757575' },
+};
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
   cases: ICaseService;
   courts: ICourtService;
+  documents: IDocumentService;
 }

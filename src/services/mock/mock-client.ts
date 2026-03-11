@@ -4,21 +4,25 @@ import type {
   IClientService,
   ICaseService,
   ICourtService,
+  IDocumentService,
   User,
   Client,
   CaseSummary,
   CaseStatus,
   Court,
+  Document,
 } from '../types';
 import { delay } from '../../utils/delay';
 import { mockUsers } from './data/users';
 import { mockClients } from './data/clients';
 import { mockCases } from './data/cases';
 import { mockCourts } from './data/courts';
+import { mockDocuments } from './data/documents';
 
 // Mutable copies so mutations persist within a session
 let clients = [...mockClients];
 let cases = [...mockCases];
+let documents = [...mockDocuments];
 
 const mockUserService: IUserService = {
   async getCurrentUser(): Promise<User> {
@@ -141,9 +145,33 @@ const mockCourtService: ICourtService = {
   },
 };
 
+const mockDocumentService: IDocumentService = {
+  async getDocumentsByCaseId(caseId: string): Promise<Document[]> {
+    await delay(300);
+    return documents.filter((d) => d.caseId === caseId);
+  },
+
+  async getDocumentById(id: string): Promise<Document | null> {
+    await delay(300);
+    return documents.find((d) => d.id === id) ?? null;
+  },
+
+  async addDocument(data: Omit<Document, 'id' | 'createdAt'>): Promise<Document> {
+    await delay(300);
+    const newDoc: Document = {
+      ...data,
+      id: 'doc' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    documents.push(newDoc);
+    return newDoc;
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
   cases: mockCaseService,
   courts: mockCourtService,
+  documents: mockDocumentService,
 };
