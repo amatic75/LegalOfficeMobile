@@ -6,8 +6,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
-import type { CaseSummary, CaseStatus, Document } from "../../../src/services/types";
-import { STATUS_COLORS, STATUS_TRANSITIONS, formatFileSize, DOC_TYPE_ICONS } from "../../../src/services/types";
+import type { CaseSummary, CaseStatus, Document, CalendarEvent } from "../../../src/services/types";
+import { STATUS_COLORS, STATUS_TRANSITIONS, formatFileSize, DOC_TYPE_ICONS, EVENT_TYPE_COLORS } from "../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -58,20 +58,24 @@ export default function CaseDetailScreen() {
   const insets = useSafeAreaInsets();
 
   const { t: td } = useTranslation("documents");
+  const { t: tc } = useTranslation("calendar");
 
   const [caseData, setCaseData] = useState<CaseSummary | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [caseEvents, setCaseEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusUpdating, setStatusUpdating] = useState(false);
 
   const loadCase = useCallback(async () => {
     if (!id) return;
-    const [data, docs] = await Promise.all([
+    const [data, docs, events] = await Promise.all([
       services.cases.getCaseById(id),
       services.documents.getDocumentsByCaseId(id),
+      services.calendarEvents.getEventsByCaseId(id),
     ]);
     setCaseData(data);
     setDocuments(docs);
+    setCaseEvents(events);
     setLoading(false);
   }, [id, services]);
 
@@ -391,7 +395,7 @@ export default function CaseDetailScreen() {
           )}
         </View>
 
-        {/* Linked Calendar Events Placeholder */}
+        {/* Calendar Events Section */}
         <View
           style={{
             backgroundColor: "#FFFFFF",
@@ -411,25 +415,83 @@ export default function CaseDetailScreen() {
         >
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 12 }}>
             <Ionicons name={"calendar-outline" as IoniconsName} size={18} color={colors.navy.DEFAULT} style={{ marginRight: 8 }} />
-            <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT }}>
-              {t("detail.linkedEvents")}
+            <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT, flex: 1 }}>
+              {t("detail.linkedEvents")} ({caseEvents.length})
             </Text>
           </View>
-          <View
-            style={{
-              borderWidth: 1,
-              borderStyle: "dashed",
-              borderColor: "#DDD",
-              borderRadius: 10,
-              paddingVertical: 20,
-              alignItems: "center",
-            }}
-          >
-            <Ionicons name={"time-outline" as IoniconsName} size={28} color="#DDD" />
-            <Text style={{ fontSize: 13, color: "#AAA", marginTop: 8, textAlign: "center", paddingHorizontal: 16 }}>
-              {t("detail.noEventsYet")}
-            </Text>
-          </View>
+          {caseEvents.length > 0 ? (
+            <>
+              {caseEvents
+                .sort((a, b) => a.date.localeCompare(b.date))
+                .slice(0, 3)
+                .map((evt) => {
+                  const evtColor = EVENT_TYPE_COLORS[evt.type];
+                  return (
+                    <View
+                      key={evt.id}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingVertical: 8,
+                        borderBottomWidth: 1,
+                        borderBottomColor: "#F5F0E8",
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: 4,
+                          backgroundColor: evtColor.dot,
+                          marginRight: 10,
+                        }}
+                      />
+                      <View style={{ flex: 1 }}>
+                        <Text
+                          style={{ fontSize: 13, color: colors.navy.DEFAULT }}
+                          numberOfLines={1}
+                        >
+                          {evt.title}
+                        </Text>
+                        <Text style={{ fontSize: 11, color: "#AAA", marginTop: 2 }}>
+                          {evt.date.split("-").reverse().join(".")} {evt.startTime && evt.endTime ? `${evt.startTime} - ${evt.endTime}` : tc("allDay")}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })}
+              <Pressable
+                onPress={() => router.push("/(tabs)/calendar" as any)}
+                style={{
+                  marginTop: 10,
+                  paddingVertical: 8,
+                  alignItems: "center",
+                  backgroundColor: colors.golden[50],
+                  borderRadius: 8,
+                }}
+              >
+                <Text style={{ fontSize: 13, fontWeight: "600", color: colors.golden.DEFAULT }}>
+                  {tc("viewAll")}
+                </Text>
+              </Pressable>
+            </>
+          ) : (
+            <View
+              style={{
+                borderWidth: 1,
+                borderStyle: "dashed",
+                borderColor: "#DDD",
+                borderRadius: 10,
+                paddingVertical: 20,
+                alignItems: "center",
+              }}
+            >
+              <Ionicons name={"time-outline" as IoniconsName} size={28} color="#DDD" />
+              <Text style={{ fontSize: 13, color: "#AAA", marginTop: 8, textAlign: "center", paddingHorizontal: 16 }}>
+                {t("detail.noEventsYet")}
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </>
