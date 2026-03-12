@@ -6,6 +6,7 @@ import type {
   ICourtService,
   IDocumentService,
   ICalendarEventService,
+  INotificationService,
   User,
   Client,
   CaseSummary,
@@ -13,6 +14,7 @@ import type {
   Court,
   Document,
   CalendarEvent,
+  AppNotification,
 } from '../types';
 import { delay } from '../../utils/delay';
 import { mockUsers } from './data/users';
@@ -21,12 +23,14 @@ import { mockCases } from './data/cases';
 import { mockCourts } from './data/courts';
 import { mockDocuments } from './data/documents';
 import { mockCalendarEvents } from './data/calendar-events';
+import { mockNotifications } from './data/notifications';
 
 // Mutable copies so mutations persist within a session
 let clients = [...mockClients];
 let cases = [...mockCases];
 let documents = [...mockDocuments];
 let calendarEvents = [...mockCalendarEvents];
+let notifications = [...mockNotifications];
 
 const mockUserService: IUserService = {
   async getCurrentUser(): Promise<User> {
@@ -205,6 +209,20 @@ const mockCalendarEventService: ICalendarEventService = {
   },
 };
 
+const mockNotificationService: INotificationService = {
+  async getNotifications(): Promise<AppNotification[]> {
+    await delay(300);
+    return [...notifications].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  },
+
+  async getUnreadCount(): Promise<number> {
+    await delay(200);
+    return notifications.filter((n) => !n.isRead).length;
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
@@ -212,4 +230,5 @@ export const mockServices: ServiceRegistry = {
   courts: mockCourtService,
   documents: mockDocumentService,
   calendarEvents: mockCalendarEventService,
+  notifications: mockNotificationService,
 };

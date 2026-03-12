@@ -1,0 +1,9 @@
+{
+  "placeholder": "Search clients, cases, events...",
+  "noResults": "No results found.",
+  "clients": "Clients",
+  "cases": "Cases",
+  "events": "Events",
+  "searching": "Searching...",
+  "typeToSearch": "Type to search"
+}

@@ -212,6 +212,48 @@ export function eventsToMarkedDates(
   return marked;
 }
 
+// Notification Types
+
+export interface AppNotification {
+  id: string;
+  type: 'deadline-reminder' | 'case-update';
+  title: string;
+  body: string;
+  relatedCaseId?: string;
+  relatedEventId?: string;
+  isRead: boolean;
+  urgency?: 'today' | '1d' | '3d' | '7d';
+  createdAt: string;
+}
+
+export type UrgencyLevel = 'today' | '1d' | '3d' | '7d' | 'normal';
+
+export const URGENCY_COLORS: Record<UrgencyLevel, { bg: string; text: string; label: string }> = {
+  today:  { bg: '#FFEBEE', text: '#C62828', label: 'Danas' },
+  '1d':   { bg: '#FFF3E0', text: '#E65100', label: '1 dan' },
+  '3d':   { bg: '#FFF8E1', text: '#F57F17', label: '3 dana' },
+  '7d':   { bg: '#FFFDE7', text: '#F9A825', label: '7 dana' },
+  normal: { bg: '#E8F5E9', text: '#2E7D32', label: '' },
+};
+
+export function getDeadlineUrgency(dateStr: string): UrgencyLevel {
+  const now = new Date();
+  const deadline = new Date(dateStr);
+  const diffMs = deadline.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays <= 0) return 'today';
+  if (diffDays <= 1) return '1d';
+  if (diffDays <= 3) return '3d';
+  if (diffDays <= 7) return '7d';
+  return 'normal';
+}
+
+export interface INotificationService {
+  getNotifications(): Promise<AppNotification[]>;
+  getUnreadCount(): Promise<number>;
+}
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
@@ -219,4 +261,5 @@ export interface ServiceRegistry {
   courts: ICourtService;
   documents: IDocumentService;
   calendarEvents: ICalendarEventService;
+  notifications: INotificationService;
 }

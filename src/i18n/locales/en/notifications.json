@@ -1,0 +1,13 @@
+{
+  "title": "Notifications",
+  "noNotifications": "No notifications.",
+  "markAllRead": "Mark all as read",
+  "deadlineReminder": "Deadline Reminder",
+  "caseUpdate": "Case Update",
+  "today": "Today",
+  "oneDay": "1 day",
+  "threeDays": "3 days",
+  "sevenDays": "7 days",
+  "read": "Read",
+  "unread": "Unread"
+}
