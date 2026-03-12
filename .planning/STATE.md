@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 
 ## Current Position
 
-Phase: 3 of 4 (Documents and Calendar) -- COMPLETE
-Plan: 2 of 2 in current phase -- COMPLETE
-Status: Phase Complete
-Last activity: 2026-03-12 -- Completed 03-02 (Calendar and Events)
+Phase: 4 of 4 (Dashboard, Search, and Notifications)
+Plan: 1 of 2 in current phase -- COMPLETE
+Status: Executing Phase 4
+Last activity: 2026-03-12 -- Completed 04-01-PLAN.md
 
-Progress: [██████████] 100% of Phase 3
+Progress: [█████░░░░░] 50% of Phase 4
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 12min
-- Total execution time: 1.2 hours
+- Total plans completed: 8
+- Average duration: 11min
+- Total execution time: 1.3 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [██████████] 100% of Phase 3
 | 01-foundation | 3 | 40min | 13min |
 | 02-client-case | 2 | 18min | 9min |
 | 03-documents-calendar | 2 | 21min | 10min |
+| 04-dashboard-search-and-notifications | 1 | 5min | 5min |
 
 **Recent Trend:**
-- Last 5 plans: 01-03 (20min), 02-01 (9min), 02-02 (9min), 03-01 (8min), 03-02 (13min)
-- Trend: stable
+- Last 5 plans: 02-01 (9min), 02-02 (9min), 03-01 (8min), 03-02 (13min), 04-01 (5min)
+- Trend: stable/improving
 
 *Updated after each plan completion*
 
@@ -64,6 +65,9 @@ Recent decisions affecting current work:
 - [03-02]: ExpandableCalendar with Positions.CLOSED + AgendaList for week view instead of unreliable TimelineList
 - [03-02]: eventsToMarkedDates utility in types.ts for reusable multi-dot calendar marking
 - [03-02]: Inline case picker (horizontal scroll) in event creation form matching Phase 2 pattern
+- [04-01]: Synchronous notification store init with mockNotifications to avoid badge flicker
+- [04-01]: STATUS_COLORS from types.ts reused for case badges instead of local map
+- [04-01]: Speed-dial FAB with full-screen backdrop for intuitive dismissal
 
 ### Pending Todos
 
@@ -80,5 +84,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed 03-02-PLAN.md (Calendar and Events) -- Phase 3 complete
+Stopped at: Completed 04-01-PLAN.md (Home Dashboard and Notification Foundation)
 Resume file: None
