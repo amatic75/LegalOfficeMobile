@@ -5,12 +5,14 @@ import type {
   ICaseService,
   ICourtService,
   IDocumentService,
+  ICalendarEventService,
   User,
   Client,
   CaseSummary,
   CaseStatus,
   Court,
   Document,
+  CalendarEvent,
 } from '../types';
 import { delay } from '../../utils/delay';
 import { mockUsers } from './data/users';
@@ -18,11 +20,13 @@ import { mockClients } from './data/clients';
 import { mockCases } from './data/cases';
 import { mockCourts } from './data/courts';
 import { mockDocuments } from './data/documents';
+import { mockCalendarEvents } from './data/calendar-events';
 
 // Mutable copies so mutations persist within a session
 let clients = [...mockClients];
 let cases = [...mockCases];
 let documents = [...mockDocuments];
+let calendarEvents = [...mockCalendarEvents];
 
 const mockUserService: IUserService = {
   async getCurrentUser(): Promise<User> {
@@ -168,10 +172,44 @@ const mockDocumentService: IDocumentService = {
   },
 };
 
+const mockCalendarEventService: ICalendarEventService = {
+  async getEvents(): Promise<CalendarEvent[]> {
+    await delay(400);
+    return calendarEvents;
+  },
+
+  async getEventsByDate(date: string): Promise<CalendarEvent[]> {
+    await delay(300);
+    return calendarEvents.filter((e) => e.date === date);
+  },
+
+  async getEventsByCaseId(caseId: string): Promise<CalendarEvent[]> {
+    await delay(300);
+    return calendarEvents.filter((e) => e.caseId === caseId);
+  },
+
+  async getEventById(id: string): Promise<CalendarEvent | null> {
+    await delay(300);
+    return calendarEvents.find((e) => e.id === id) ?? null;
+  },
+
+  async createEvent(data: Omit<CalendarEvent, 'id' | 'createdAt'>): Promise<CalendarEvent> {
+    await delay(300);
+    const newEvent: CalendarEvent = {
+      ...data,
+      id: 'evt' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    calendarEvents.push(newEvent);
+    return newEvent;
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
   cases: mockCaseService,
   courts: mockCourtService,
   documents: mockDocumentService,
+  calendarEvents: mockCalendarEventService,
 };

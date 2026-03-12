@@ -7,6 +7,7 @@ import srLatnSettings from './locales/sr-Latn/settings.json';
 import srLatnClients from './locales/sr-Latn/clients.json';
 import srLatnCases from './locales/sr-Latn/cases.json';
 import srLatnDocuments from './locales/sr-Latn/documents.json';
+import srLatnCalendar from './locales/sr-Latn/calendar.json';
 
 import srCyrlCommon from './locales/sr-Cyrl/common.json';
 import srCyrlNavigation from './locales/sr-Cyrl/navigation.json';
@@ -14,6 +15,7 @@ import srCyrlSettings from './locales/sr-Cyrl/settings.json';
 import srCyrlClients from './locales/sr-Cyrl/clients.json';
 import srCyrlCases from './locales/sr-Cyrl/cases.json';
 import srCyrlDocuments from './locales/sr-Cyrl/documents.json';
+import srCyrlCalendar from './locales/sr-Cyrl/calendar.json';
 
 import enCommon from './locales/en/common.json';
 import enNavigation from './locales/en/navigation.json';
@@ -21,6 +23,7 @@ import enSettings from './locales/en/settings.json';
 import enClients from './locales/en/clients.json';
 import enCases from './locales/en/cases.json';
 import enDocuments from './locales/en/documents.json';
+import enCalendar from './locales/en/calendar.json';
 
 export type Locale = 'sr-Latn' | 'sr-Cyrl' | 'en';
 
@@ -38,6 +41,7 @@ const resources = {
     clients: srLatnClients,
     cases: srLatnCases,
     documents: srLatnDocuments,
+    calendar: srLatnCalendar,
   },
   'sr-Cyrl': {
     common: srCyrlCommon,
@@ -46,6 +50,7 @@ const resources = {
     clients: srCyrlClients,
     cases: srCyrlCases,
     documents: srCyrlDocuments,
+    calendar: srCyrlCalendar,
   },
   en: {
     common: enCommon,
@@ -54,6 +59,7 @@ const resources = {
     clients: enClients,
     cases: enCases,
     documents: enDocuments,
+    calendar: enCalendar,
   },
 };
 
@@ -61,7 +67,7 @@ i18n.use(initReactI18next).init({
   resources,
   lng: 'sr-Latn',
   fallbackLng: 'sr-Latn',
-  ns: ['common', 'navigation', 'settings', 'clients', 'cases', 'documents'],
+  ns: ['common', 'navigation', 'settings', 'clients', 'cases', 'documents', 'calendar'],
   defaultNS: 'common',
   interpolation: {
     escapeValue: false,

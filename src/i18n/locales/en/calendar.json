@@ -1,0 +1,42 @@
+{
+  "title": "Calendar",
+  "views": {
+    "month": "Month",
+    "week": "Week",
+    "agenda": "Agenda"
+  },
+  "eventTypes": {
+    "hearing": "Hearing",
+    "meeting": "Meeting",
+    "deadline": "Deadline"
+  },
+  "event": {
+    "title": "Title",
+    "date": "Date",
+    "time": "Time",
+    "location": "Location",
+    "notes": "Notes",
+    "linkedCase": "Linked Case",
+    "type": "Event Type",
+    "startTime": "Start Time",
+    "endTime": "End Time"
+  },
+  "form": {
+    "createTitle": "New Event",
+    "selectType": "Select type",
+    "enterTitle": "Enter title",
+    "selectDate": "Select date",
+    "selectTime": "Select time",
+    "selectCase": "Select case",
+    "enterLocation": "Enter location",
+    "enterNotes": "Enter notes",
+    "save": "Save",
+    "cancel": "Cancel",
+    "required": "Required field"
+  },
+  "noEvents": "No events for this day",
+  "allDay": "All day",
+  "viewAll": "View all",
+  "today": "Today",
+  "noUpcoming": "No upcoming events"
+}

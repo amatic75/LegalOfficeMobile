@@ -1,0 +1,42 @@
+{
+  "title": "Календар",
+  "views": {
+    "month": "Месец",
+    "week": "Недеља",
+    "agenda": "Агенда"
+  },
+  "eventTypes": {
+    "hearing": "Рочиште",
+    "meeting": "Састанак",
+    "deadline": "Рок"
+  },
+  "event": {
+    "title": "Наслов",
+    "date": "Датум",
+    "time": "Време",
+    "location": "Локација",
+    "notes": "Белешке",
+    "linkedCase": "Повезани предмет",
+    "type": "Тип догађаја",
+    "startTime": "Почетак",
+    "endTime": "Завршетак"
+  },
+  "form": {
+    "createTitle": "Нови догађај",
+    "selectType": "Изаберите тип",
+    "enterTitle": "Унесите наслов",
+    "selectDate": "Изаберите датум",
+    "selectTime": "Изаберите време",
+    "selectCase": "Изаберите предмет",
+    "enterLocation": "Унесите локацију",
+    "enterNotes": "Унесите белешке",
+    "save": "Сачувај",
+    "cancel": "Откажи",
+    "required": "Обавезно поље"
+  },
+  "noEvents": "Нема догађаја за овај дан",
+  "allDay": "Цео дан",
+  "viewAll": "Погледај све",
+  "today": "Данас",
+  "noUpcoming": "Нема предстојећих догађаја"
+}

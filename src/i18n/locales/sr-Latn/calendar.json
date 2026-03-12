@@ -1,0 +1,42 @@
+{
+  "title": "Kalendar",
+  "views": {
+    "month": "Mesec",
+    "week": "Nedelja",
+    "agenda": "Agenda"
+  },
+  "eventTypes": {
+    "hearing": "Rociste",
+    "meeting": "Sastanak",
+    "deadline": "Rok"
+  },
+  "event": {
+    "title": "Naslov",
+    "date": "Datum",
+    "time": "Vreme",
+    "location": "Lokacija",
+    "notes": "Beleske",
+    "linkedCase": "Povezani predmet",
+    "type": "Tip dogadjaja",
+    "startTime": "Pocetak",
+    "endTime": "Zavrsetak"
+  },
+  "form": {
+    "createTitle": "Novi dogadjaj",
+    "selectType": "Izaberite tip",
+    "enterTitle": "Unesite naslov",
+    "selectDate": "Izaberite datum",
+    "selectTime": "Izaberite vreme",
+    "selectCase": "Izaberite predmet",
+    "enterLocation": "Unesite lokaciju",
+    "enterNotes": "Unesite beleske",
+    "save": "Sacuvaj",
+    "cancel": "Otkazi",
+    "required": "Obavezno polje"
+  },
+  "noEvents": "Nema dogadjaja za ovaj dan",
+  "allDay": "Ceo dan",
+  "viewAll": "Pogledaj sve",
+  "today": "Danas",
+  "noUpcoming": "Nema predstojacih dogadjaja"
+}

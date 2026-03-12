@@ -152,10 +152,71 @@ export const DOC_TYPE_ICONS: Record<Document['type'], { icon: string; color: str
   other: { icon: 'document-outline', color: '#757575' },
 };
 
+// Calendar Event Types
+
+export type EventType = 'hearing' | 'meeting' | 'deadline';
+
+export const EVENT_TYPE_COLORS: Record<EventType, { bg: string; text: string; dot: string }> = {
+  hearing:  { bg: '#FFEBEE', text: '#C62828', dot: '#EF5350' },
+  meeting:  { bg: '#E3F2FD', text: '#1565C0', dot: '#42A5F5' },
+  deadline: { bg: '#FFF3E0', text: '#E65100', dot: '#FFA726' },
+};
+
+export interface CalendarEvent {
+  id: string;
+  type: EventType;
+  title: string;
+  date: string;
+  startTime?: string;
+  endTime?: string;
+  caseId?: string;
+  caseName?: string;
+  caseNumber?: string;
+  location?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface ICalendarEventService {
+  getEvents(): Promise<CalendarEvent[]>;
+  getEventsByDate(date: string): Promise<CalendarEvent[]>;
+  getEventsByCaseId(caseId: string): Promise<CalendarEvent[]>;
+  getEventById(id: string): Promise<CalendarEvent | null>;
+  createEvent(data: Omit<CalendarEvent, 'id' | 'createdAt'>): Promise<CalendarEvent>;
+}
+
+export function eventsToMarkedDates(
+  events: CalendarEvent[],
+  selectedDate?: string
+) {
+  const marked: Record<string, { dots: Array<{ key: string; color: string }>; selected?: boolean; selectedColor?: string }> = {};
+
+  for (const event of events) {
+    if (!marked[event.date]) {
+      marked[event.date] = { dots: [] };
+    }
+    const dotColor = EVENT_TYPE_COLORS[event.type].dot;
+    if (!marked[event.date].dots.some(d => d.color === dotColor)) {
+      marked[event.date].dots.push({ key: event.type, color: dotColor });
+    }
+  }
+
+  if (selectedDate) {
+    if (!marked[selectedDate]) {
+      marked[selectedDate] = { dots: [] };
+    }
+    marked[selectedDate].selected = true;
+    marked[selectedDate].selectedColor = '#C8A951';
+  }
+
+  return marked;
+}
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
   cases: ICaseService;
   courts: ICourtService;
   documents: IDocumentService;
+  calendarEvents: ICalendarEventService;
 }
