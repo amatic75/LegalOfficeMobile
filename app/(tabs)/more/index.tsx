@@ -2,58 +2,132 @@ import { View, Text, Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { ScreenContainer, Card } from "../../../src/components/ui";
+import { ScreenContainer } from "../../../src/components/ui";
 import { colors } from "../../../src/theme/tokens";
+import { useNotificationStore } from "../../../src/stores/notification-store";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
-export default function MoreScreen() {
-  const { t } = useTranslation();
-  const router = useRouter();
+interface MenuItem {
+  icon: IoniconsName;
+  label: string;
+  route:
+    | "/(tabs)/more/settings"
+    | "/(tabs)/more/profile"
+    | "/(tabs)/more/search"
+    | "/(tabs)/more/notifications";
+  badge?: number;
+}
 
-  const menuItems: {
-    icon: IoniconsName;
-    label: string;
-    route: "./settings" | "./profile";
-  }[] = [
-    {
-      icon: "settings-outline" as IoniconsName,
-      label: t("more.settings"),
-      route: "./settings",
-    },
+export default function MoreScreen() {
+  const { t } = useTranslation(["common", "search", "notifications"]);
+  const router = useRouter();
+  const unreadCount = useNotificationStore(
+    (s) => s.notifications.filter((n) => !n.isRead).length
+  );
+
+  const menuItems: MenuItem[] = [
     {
       icon: "person-outline" as IoniconsName,
-      label: t("more.profile"),
-      route: "./profile",
+      label: t("common:more.profile"),
+      route: "/(tabs)/more/profile",
+    },
+    {
+      icon: "search-outline" as IoniconsName,
+      label: t("search:title"),
+      route: "/(tabs)/more/search",
+    },
+    {
+      icon: "notifications-outline" as IoniconsName,
+      label: t("notifications:title"),
+      route: "/(tabs)/more/notifications",
+      badge: unreadCount > 0 ? unreadCount : undefined,
+    },
+    {
+      icon: "settings-outline" as IoniconsName,
+      label: t("common:more.settings"),
+      route: "/(tabs)/more/settings",
     },
   ];
 
   return (
     <ScreenContainer>
-      <View className="mt-4">
+      <View style={{ marginTop: 16, gap: 12 }}>
         {menuItems.map((item) => (
           <Pressable
             key={item.route}
-            onPress={() => router.push(item.route)}
+            onPress={() => router.push(item.route as any)}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              backgroundColor: "#FFFFFF",
+              borderRadius: 12,
+              padding: 16,
+              borderWidth: 1,
+              borderColor: "#FFF3E0",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.05,
+              shadowRadius: 2,
+              elevation: 1,
+            }}
           >
-            <Card className="mb-3">
-              <View className="flex-row items-center">
-                <Ionicons
-                  name={item.icon}
-                  size={24}
-                  color={colors.navy.DEFAULT}
-                />
-                <Text className="ml-3 text-base font-medium text-navy">
-                  {item.label}
+            <View
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                backgroundColor: "#FDF8EC",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons
+                name={item.icon}
+                size={20}
+                color={colors.golden.DEFAULT}
+              />
+            </View>
+            <Text
+              style={{
+                marginLeft: 12,
+                fontSize: 16,
+                fontWeight: "500",
+                color: colors.navy.DEFAULT,
+                flex: 1,
+              }}
+            >
+              {item.label}
+            </Text>
+            {item.badge != null && item.badge > 0 && (
+              <View
+                style={{
+                  backgroundColor: colors.golden.DEFAULT,
+                  borderRadius: 10,
+                  minWidth: 20,
+                  height: 20,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingHorizontal: 6,
+                  marginRight: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#FFFFFF",
+                    fontSize: 11,
+                    fontWeight: "700",
+                  }}
+                >
+                  {item.badge}
                 </Text>
-                <View className="flex-1" />
-                <Ionicons
-                  name={"chevron-forward" as IoniconsName}
-                  size={20}
-                  color="#888888"
-                />
               </View>
-            </Card>
+            )}
+            <Ionicons
+              name={"chevron-forward" as IoniconsName}
+              size={20}
+              color="#CCCCCC"
+            />
           </Pressable>
         ))}
       </View>

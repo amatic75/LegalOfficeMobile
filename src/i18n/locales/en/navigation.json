@@ -9,7 +9,9 @@
   "screens": {
     "settings": "Settings",
     "profile": "Profile",
-    "about": "About"
+    "about": "About",
+    "search": "Search",
+    "notifications": "Notifications"
   },
   "back": "Back"
 }

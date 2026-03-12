@@ -35,7 +35,9 @@
   },
   "more": {
     "settings": "Подешавања",
-    "profile": "Профил"
+    "profile": "Профил",
+    "search": "Претрага",
+    "notifications": "Обавештења"
   },
   "status": {
     "new": "Нови",

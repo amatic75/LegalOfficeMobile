@@ -22,6 +22,14 @@ export default function MoreLayout() {
         name="profile"
         options={{ headerTitle: t("screens.profile") }}
       />
+      <Stack.Screen
+        name="search"
+        options={{ headerTitle: t("screens.search") }}
+      />
+      <Stack.Screen
+        name="notifications"
+        options={{ headerTitle: t("screens.notifications") }}
+      />
     </Stack>
   );
 }

@@ -9,7 +9,9 @@
   "screens": {
     "settings": "Podesavanja",
     "profile": "Profil",
-    "about": "O aplikaciji"
+    "about": "O aplikaciji",
+    "search": "Pretraga",
+    "notifications": "Obavestenja"
   },
   "back": "Nazad"
 }

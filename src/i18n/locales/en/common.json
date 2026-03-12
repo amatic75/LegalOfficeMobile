@@ -35,7 +35,9 @@
   },
   "more": {
     "settings": "Settings",
-    "profile": "Profile"
+    "profile": "Profile",
+    "search": "Search",
+    "notifications": "Notifications"
   },
   "status": {
     "new": "New",

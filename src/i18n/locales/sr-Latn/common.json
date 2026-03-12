@@ -35,7 +35,9 @@
   },
   "more": {
     "settings": "Podesavanja",
-    "profile": "Profil"
+    "profile": "Profil",
+    "search": "Pretraga",
+    "notifications": "Obavestenja"
   },
   "status": {
     "new": "Novi",
