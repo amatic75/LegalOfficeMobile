@@ -7,6 +7,10 @@ import type {
   IDocumentService,
   ICalendarEventService,
   INotificationService,
+  ICaseNoteService,
+  ITimeEntryService,
+  IExpenseService,
+  ICaseLinkService,
   User,
   Client,
   CaseSummary,
@@ -15,6 +19,11 @@ import type {
   Document,
   CalendarEvent,
   AppNotification,
+  CaseNote,
+  TimeEntry,
+  Expense,
+  CaseLink,
+  CaseLinkType,
 } from '../types';
 import { delay } from '../../utils/delay';
 import { mockUsers } from './data/users';
@@ -24,6 +33,10 @@ import { mockCourts } from './data/courts';
 import { mockDocuments } from './data/documents';
 import { mockCalendarEvents } from './data/calendar-events';
 import { mockNotifications } from './data/notifications';
+import { mockCaseNotes } from './data/case-notes';
+import { mockTimeEntries } from './data/time-entries';
+import { mockExpenses } from './data/expenses';
+import { mockCaseLinks } from './data/case-links';
 
 // Mutable copies so mutations persist within a session
 let clients = [...mockClients];
@@ -31,6 +44,10 @@ let cases = [...mockCases];
 let documents = [...mockDocuments];
 let calendarEvents = [...mockCalendarEvents];
 let notifications = [...mockNotifications];
+let caseNotes = [...mockCaseNotes];
+let timeEntries = [...mockTimeEntries];
+let expenses = [...mockExpenses];
+let caseLinks = [...mockCaseLinks];
 
 const mockUserService: IUserService = {
   async getCurrentUser(): Promise<User> {
@@ -174,12 +191,20 @@ const mockDocumentService: IDocumentService = {
     documents.push(newDoc);
     return newDoc;
   },
+
+  async deleteDocument(id: string): Promise<boolean> {
+    await delay(300);
+    const index = documents.findIndex((d) => d.id === id);
+    if (index === -1) return false;
+    documents.splice(index, 1);
+    return true;
+  },
 };
 
 const mockCalendarEventService: ICalendarEventService = {
   async getEvents(): Promise<CalendarEvent[]> {
     await delay(400);
-    return calendarEvents;
+    return [...calendarEvents];
   },
 
   async getEventsByDate(date: string): Promise<CalendarEvent[]> {
@@ -223,6 +248,130 @@ const mockNotificationService: INotificationService = {
   },
 };
 
+const mockCaseNoteService: ICaseNoteService = {
+  async getNotesByCaseId(caseId: string): Promise<CaseNote[]> {
+    await delay(300);
+    return caseNotes
+      .filter((n) => n.caseId === caseId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  async createNote(data: Omit<CaseNote, 'id' | 'createdAt'>): Promise<CaseNote> {
+    await delay(300);
+    const newNote: CaseNote = {
+      ...data,
+      id: 'cn' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    caseNotes.push(newNote);
+    return newNote;
+  },
+
+  async updateNote(id: string, content: string): Promise<CaseNote | null> {
+    await delay(300);
+    const index = caseNotes.findIndex((n) => n.id === id);
+    if (index === -1) return null;
+    caseNotes[index] = { ...caseNotes[index], content, updatedAt: new Date().toISOString() };
+    return caseNotes[index];
+  },
+
+  async deleteNote(id: string): Promise<boolean> {
+    await delay(300);
+    const index = caseNotes.findIndex((n) => n.id === id);
+    if (index === -1) return false;
+    caseNotes.splice(index, 1);
+    return true;
+  },
+};
+
+const mockTimeEntryService: ITimeEntryService = {
+  async getTimeEntriesByCaseId(caseId: string): Promise<TimeEntry[]> {
+    await delay(300);
+    return timeEntries.filter((t) => t.caseId === caseId);
+  },
+
+  async createTimeEntry(data: Omit<TimeEntry, 'id' | 'createdAt'>): Promise<TimeEntry> {
+    await delay(300);
+    const newEntry: TimeEntry = {
+      ...data,
+      id: 'te' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    timeEntries.push(newEntry);
+    return newEntry;
+  },
+
+  async deleteTimeEntry(id: string): Promise<boolean> {
+    await delay(300);
+    const index = timeEntries.findIndex((t) => t.id === id);
+    if (index === -1) return false;
+    timeEntries.splice(index, 1);
+    return true;
+  },
+};
+
+const mockExpenseService: IExpenseService = {
+  async getExpensesByCaseId(caseId: string): Promise<Expense[]> {
+    await delay(300);
+    return expenses.filter((e) => e.caseId === caseId);
+  },
+
+  async createExpense(data: Omit<Expense, 'id' | 'createdAt'>): Promise<Expense> {
+    await delay(300);
+    const newExpense: Expense = {
+      ...data,
+      id: 'exp' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    expenses.push(newExpense);
+    return newExpense;
+  },
+
+  async deleteExpense(id: string): Promise<boolean> {
+    await delay(300);
+    const index = expenses.findIndex((e) => e.id === id);
+    if (index === -1) return false;
+    expenses.splice(index, 1);
+    return true;
+  },
+};
+
+const mockCaseLinkService: ICaseLinkService = {
+  async getLinksByCaseId(caseId: string): Promise<Array<CaseLink & { linkedCase: CaseSummary }>> {
+    await delay(300);
+    const links = caseLinks.filter((l) => l.caseIdA === caseId || l.caseIdB === caseId);
+    return links
+      .map((link) => {
+        const otherCaseId = link.caseIdA === caseId ? link.caseIdB : link.caseIdA;
+        const linkedCase = cases.find((c) => c.id === otherCaseId);
+        if (!linkedCase) return null;
+        return { ...link, linkedCase };
+      })
+      .filter((item): item is CaseLink & { linkedCase: CaseSummary } => item !== null);
+  },
+
+  async createLink(caseIdA: string, caseIdB: string, linkType: CaseLinkType): Promise<CaseLink> {
+    await delay(300);
+    const newLink: CaseLink = {
+      id: 'cl' + Date.now(),
+      caseIdA,
+      caseIdB,
+      linkType,
+      createdAt: new Date().toISOString(),
+    };
+    caseLinks.push(newLink);
+    return newLink;
+  },
+
+  async deleteLink(id: string): Promise<boolean> {
+    await delay(300);
+    const index = caseLinks.findIndex((l) => l.id === id);
+    if (index === -1) return false;
+    caseLinks.splice(index, 1);
+    return true;
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
@@ -231,4 +380,8 @@ export const mockServices: ServiceRegistry = {
   documents: mockDocumentService,
   calendarEvents: mockCalendarEventService,
   notifications: mockNotificationService,
+  caseNotes: mockCaseNoteService,
+  timeEntries: mockTimeEntryService,
+  expenses: mockExpenseService,
+  caseLinks: mockCaseLinkService,
 };

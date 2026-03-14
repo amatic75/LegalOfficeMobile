@@ -76,6 +76,10 @@ export interface CaseSummary {
   caseType: CaseType;
   caseSubtype?: CaseSubtype;
   opposingParty?: string;
+  opposingPartyRepresentative?: string;
+  courtCaseNumber?: string;
+  judge?: string;
+  tags?: string[];
   lawyerId?: string;
   lawyerName?: string;
   court?: string;
@@ -138,6 +142,7 @@ export interface IDocumentService {
   getDocumentsByCaseId(caseId: string): Promise<Document[]>;
   getDocumentById(id: string): Promise<Document | null>;
   addDocument(data: Omit<Document, 'id' | 'createdAt'>): Promise<Document>;
+  deleteDocument(id: string): Promise<boolean>;
 }
 
 export function formatFileSize(bytes: number): string {
@@ -254,6 +259,181 @@ export interface INotificationService {
   getUnreadCount(): Promise<number>;
 }
 
+// Phase 5: Case Notes, Time/Expense, Case Linking
+
+export interface CaseNote {
+  id: string;
+  caseId: string;
+  type: 'text' | 'voice';
+  content?: string;
+  audioUri?: string;
+  audioDuration?: number;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface TimeEntry {
+  id: string;
+  caseId: string;
+  hours: number;
+  description: string;
+  date: string;
+  billable: boolean;
+  createdAt: string;
+}
+
+export type ExpenseCategory = 'court-fees' | 'travel' | 'expert-witnesses' | 'filing-fees' | 'postage' | 'copying' | 'custom';
+
+export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
+  'court-fees', 'travel', 'expert-witnesses', 'filing-fees', 'postage', 'copying', 'custom',
+];
+
+export interface Expense {
+  id: string;
+  caseId: string;
+  amount: number;
+  category: ExpenseCategory;
+  description: string;
+  date: string;
+  createdAt: string;
+}
+
+export type CaseLinkType = 'related' | 'appeal' | 'parent' | 'predecessor';
+
+export const CASE_LINK_TYPES: CaseLinkType[] = ['related', 'appeal', 'parent', 'predecessor'];
+
+export interface CaseLink {
+  id: string;
+  caseIdA: string;
+  caseIdB: string;
+  linkType: CaseLinkType;
+  createdAt: string;
+}
+
+export const PREDEFINED_TAGS = ['urgent', 'confidential', 'for-review', 'vip', 'pro-bono', 'high-value'] as const;
+
+export const CASE_TYPE_SUBTYPES_TREE: Record<CaseType, { label: string; subtypes: Record<string, { label: string; items: string[] }> }> = {
+  civil: {
+    label: 'Civil',
+    subtypes: {
+      litigation: {
+        label: 'Litigation',
+        items: ['Contract disputes', 'Property disputes', 'Employment disputes', 'Tort claims'],
+      },
+      'non-litigation': {
+        label: 'Non-litigation',
+        items: ['Mediation', 'Arbitration', 'Notarial matters'],
+      },
+      bankruptcy: {
+        label: 'Bankruptcy',
+        items: ['Creditor claims', 'Debtor restructuring', 'Liquidation proceedings'],
+      },
+      enforcement: {
+        label: 'Enforcement',
+        items: ['Debt collection', 'Asset seizure', 'Wage garnishment'],
+      },
+      misdemeanor: {
+        label: 'Misdemeanor',
+        items: ['Traffic violations', 'Public order offenses', 'Minor property damage'],
+      },
+      administrative: {
+        label: 'Administrative',
+        items: ['Permit appeals', 'Tax disputes', 'Regulatory compliance'],
+      },
+    },
+  },
+  criminal: {
+    label: 'Criminal',
+    subtypes: {
+      investigations: {
+        label: 'Investigations',
+        items: ['Financial crimes', 'Violent crimes', 'Cybercrime'],
+      },
+      indictments: {
+        label: 'Indictments',
+        items: ['Felony charges', 'Organized crime', 'White-collar crime'],
+      },
+      appeals: {
+        label: 'Appeals',
+        items: ['Sentence reduction', 'Procedural errors', 'New evidence'],
+      },
+      'post-conviction': {
+        label: 'Post-conviction',
+        items: ['Parole hearings', 'Sentence modification', 'Rehabilitation'],
+      },
+    },
+  },
+  family: {
+    label: 'Family',
+    subtypes: {
+      divorce: {
+        label: 'Divorce',
+        items: ['Contested divorce', 'Uncontested divorce', 'Property division'],
+      },
+      'child-custody': {
+        label: 'Child custody',
+        items: ['Sole custody', 'Joint custody', 'Visitation rights'],
+      },
+      alimony: {
+        label: 'Alimony',
+        items: ['Spousal support', 'Child support modification', 'Enforcement of support'],
+      },
+      adoption: {
+        label: 'Adoption',
+        items: ['Domestic adoption', 'International adoption', 'Step-parent adoption'],
+      },
+    },
+  },
+  corporate: {
+    label: 'Corporate',
+    subtypes: {
+      'company-formation': {
+        label: 'Company formation',
+        items: ['LLC registration', 'Joint-stock company', 'Branch office registration'],
+      },
+      'mergers-acquisitions': {
+        label: 'Mergers & acquisitions',
+        items: ['Due diligence', 'Share purchase', 'Asset acquisition'],
+      },
+      'commercial-contracts': {
+        label: 'Commercial contracts',
+        items: ['Supply agreements', 'Lease agreements', 'Service contracts'],
+      },
+      'intellectual-property': {
+        label: 'Intellectual property',
+        items: ['Trademark registration', 'Patent filing', 'Copyright protection'],
+      },
+    },
+  },
+};
+
+// Phase 5 Service Interfaces
+
+export interface ICaseNoteService {
+  getNotesByCaseId(caseId: string): Promise<CaseNote[]>;
+  createNote(data: Omit<CaseNote, 'id' | 'createdAt'>): Promise<CaseNote>;
+  updateNote(id: string, content: string): Promise<CaseNote | null>;
+  deleteNote(id: string): Promise<boolean>;
+}
+
+export interface ITimeEntryService {
+  getTimeEntriesByCaseId(caseId: string): Promise<TimeEntry[]>;
+  createTimeEntry(data: Omit<TimeEntry, 'id' | 'createdAt'>): Promise<TimeEntry>;
+  deleteTimeEntry(id: string): Promise<boolean>;
+}
+
+export interface IExpenseService {
+  getExpensesByCaseId(caseId: string): Promise<Expense[]>;
+  createExpense(data: Omit<Expense, 'id' | 'createdAt'>): Promise<Expense>;
+  deleteExpense(id: string): Promise<boolean>;
+}
+
+export interface ICaseLinkService {
+  getLinksByCaseId(caseId: string): Promise<Array<CaseLink & { linkedCase: CaseSummary }>>;
+  createLink(caseIdA: string, caseIdB: string, linkType: CaseLinkType): Promise<CaseLink>;
+  deleteLink(id: string): Promise<boolean>;
+}
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
@@ -262,4 +442,8 @@ export interface ServiceRegistry {
   documents: IDocumentService;
   calendarEvents: ICalendarEventService;
   notifications: INotificationService;
+  caseNotes: ICaseNoteService;
+  timeEntries: ITimeEntryService;
+  expenses: IExpenseService;
+  caseLinks: ICaseLinkService;
 }

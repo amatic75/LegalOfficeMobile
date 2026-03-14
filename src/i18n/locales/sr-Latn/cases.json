@@ -24,7 +24,14 @@
     "noDocsYet": "Dokumenta ce biti dostupna u narednom azuriranju",
     "noEventsYet": "Kalendar dogadjaja ce biti dostupan u narednom azuriranju",
     "changeStatus": "Promeni status",
-    "statusChanged": "Status uspesno promenjen"
+    "statusChanged": "Status uspesno promenjen",
+    "opposingPartyRep": "Zastupnik suprotne strane",
+    "courtCaseNumber": "Sudski broj predmeta",
+    "judge": "Sudija",
+    "selectSubtypeDetails": "Detalji podtipa",
+    "tapToEdit": "Dodirnite za izmenu",
+    "save": "Sacuvaj",
+    "cancel": "Otkazi"
   },
   "form": {
     "createTitle": "Novi predmet",
@@ -76,5 +83,77 @@
   "actions": {
     "newCase": "Novi predmet",
     "edit": "Izmeni"
+  },
+  "notes": {
+    "title": "Beleske",
+    "addNote": "Dodaj belesku",
+    "editNote": "Izmeni belesku",
+    "deleteNote": "Obrisi belesku",
+    "deleteConfirm": "Da li ste sigurni da zelite da obrisete ovu belesku?",
+    "placeholder": "Napisite belesku...",
+    "emptyState": "Nema beleski. Dodirnite + da dodate belesku.",
+    "voiceNote": "Glasovna beleska",
+    "recordVoice": "Snimi glasovnu belesku",
+    "recording": "Snimanje...",
+    "playing": "Reprodukcija...",
+    "dictation": "Diktiranje",
+    "dictationHint": "Dodirnite za pocetak diktiranja",
+    "save": "Sacuvaj belesku",
+    "cancel": "Otkazi"
+  },
+  "tags": {
+    "title": "Oznake",
+    "addTag": "Dodaj oznaku",
+    "customTag": "Prilagodjena oznaka...",
+    "predefined": {
+      "urgent": "Hitno",
+      "confidential": "Poverljivo",
+      "for-review": "Za pregled",
+      "vip": "VIP",
+      "pro-bono": "Pro Bono",
+      "high-value": "Visoka vrednost"
+    }
+  },
+  "billing": {
+    "title": "Vreme i troskovi",
+    "addTime": "Evidentiraj vreme",
+    "addExpense": "Dodaj trosak",
+    "hours": "Sati",
+    "amount": "Iznos",
+    "description": "Opis",
+    "date": "Datum",
+    "billable": "Naplativo",
+    "nonBillable": "Nenaplativo",
+    "category": "Kategorija",
+    "emptyState": "Nema evidentiranih vremena ili troskova.",
+    "totalHours": "Ukupno sati",
+    "totalExpenses": "Ukupni troskovi",
+    "categories": {
+      "court-fees": "Sudske takse",
+      "travel": "Putni troskovi",
+      "expert-witnesses": "Sudski vestaci",
+      "filing-fees": "Takse za podnosenje",
+      "postage": "Postarina",
+      "copying": "Kopiranje",
+      "custom": "Ostalo"
+    },
+    "save": "Sacuvaj",
+    "delete": "Obrisi",
+    "deleteConfirm": "Da li ste sigurni da zelite da obrisete ovaj unos?"
+  },
+  "related": {
+    "title": "Povezani predmeti",
+    "addLink": "Povezi predmet",
+    "searchCases": "Pretrazi predmete za povezivanje...",
+    "linkType": "Tip veze",
+    "emptyState": "Nema povezanih predmeta.",
+    "types": {
+      "related": "Povezan",
+      "appeal": "Zalba",
+      "parent": "Nadredjeni predmet",
+      "predecessor": "Prethodnik"
+    },
+    "removeLink": "Ukloni vezu",
+    "removeLinkConfirm": "Ukloniti vezu izmedju ovih predmeta?"
   }
 }

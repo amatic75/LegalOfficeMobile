@@ -24,7 +24,14 @@
     "noDocsYet": "Documents will be available in a future update",
     "noEventsYet": "Calendar events will be available in a future update",
     "changeStatus": "Change status",
-    "statusChanged": "Status changed successfully"
+    "statusChanged": "Status changed successfully",
+    "opposingPartyRep": "Opposing party representative",
+    "courtCaseNumber": "Court case number",
+    "judge": "Judge",
+    "selectSubtypeDetails": "Subtype details",
+    "tapToEdit": "Tap to edit",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "form": {
     "createTitle": "New case",
@@ -76,5 +83,77 @@
   "actions": {
     "newCase": "New case",
     "edit": "Edit"
+  },
+  "notes": {
+    "title": "Notes",
+    "addNote": "Add note",
+    "editNote": "Edit note",
+    "deleteNote": "Delete note",
+    "deleteConfirm": "Are you sure you want to delete this note?",
+    "placeholder": "Write your note...",
+    "emptyState": "No notes yet. Tap + to add a note.",
+    "voiceNote": "Voice note",
+    "recordVoice": "Record voice note",
+    "recording": "Recording...",
+    "playing": "Playing...",
+    "dictation": "Dictation",
+    "dictationHint": "Tap to start dictation",
+    "save": "Save note",
+    "cancel": "Cancel"
+  },
+  "tags": {
+    "title": "Tags",
+    "addTag": "Add tag",
+    "customTag": "Custom tag...",
+    "predefined": {
+      "urgent": "Urgent",
+      "confidential": "Confidential",
+      "for-review": "For Review",
+      "vip": "VIP",
+      "pro-bono": "Pro Bono",
+      "high-value": "High Value"
+    }
+  },
+  "billing": {
+    "title": "Time & Expenses",
+    "addTime": "Log time",
+    "addExpense": "Add expense",
+    "hours": "Hours",
+    "amount": "Amount",
+    "description": "Description",
+    "date": "Date",
+    "billable": "Billable",
+    "nonBillable": "Non-billable",
+    "category": "Category",
+    "emptyState": "No time entries or expenses logged yet.",
+    "totalHours": "Total hours",
+    "totalExpenses": "Total expenses",
+    "categories": {
+      "court-fees": "Court fees",
+      "travel": "Travel",
+      "expert-witnesses": "Expert witnesses",
+      "filing-fees": "Filing fees",
+      "postage": "Postage",
+      "copying": "Copying",
+      "custom": "Custom"
+    },
+    "save": "Save",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this entry?"
+  },
+  "related": {
+    "title": "Related Cases",
+    "addLink": "Link case",
+    "searchCases": "Search cases to link...",
+    "linkType": "Relationship type",
+    "emptyState": "No related cases linked.",
+    "types": {
+      "related": "Related",
+      "appeal": "Appeal",
+      "parent": "Parent case",
+      "predecessor": "Predecessor"
+    },
+    "removeLink": "Remove link",
+    "removeLinkConfirm": "Remove link between these cases?"
   }
 }
