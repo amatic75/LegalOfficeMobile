@@ -1,9 +1,10 @@
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Audio } from "expo-av";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
 import type { CaseSummary, CaseStatus, Document, CalendarEvent, CaseNote, TimeEntry, Expense, ExpenseCategory, CaseLink, CaseLinkType } from "../../../src/services/types";
@@ -34,6 +35,9 @@ const SECTION_CARD = {
   borderWidth: 1,
   borderColor: "#FFF3E0" as const,
 };
+
+// Static waveform bar heights (consistent pattern for voice note visualization)
+const WAVEFORM_BARS = [0.3, 0.5, 0.8, 0.6, 0.9, 0.4, 0.7, 1.0, 0.5, 0.3, 0.6, 0.8, 0.4, 0.7, 0.5, 0.9, 0.6, 0.3, 0.8, 0.5, 0.7, 0.4, 0.6, 0.9, 0.3];
 
 function InfoRow({ icon, label, value, onPress, linkColor }: {
   icon: IoniconsName;
@@ -183,6 +187,21 @@ export default function CaseDetailScreen() {
   const [expenseDescription, setExpenseDescription] = useState("");
   const [expenseDate, setExpenseDate] = useState("");
   const [expenseCustomCategory, setExpenseCustomCategory] = useState("");
+
+  // Voice recording state
+  const [isRecording, setIsRecording] = useState(false);
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Voice playback state
+  const [playingNoteId, setPlayingNoteId] = useState<string | null>(null);
+  const [playbackProgress, setPlaybackProgress] = useState(0);
+  const soundRef = useRef<Audio.Sound | null>(null);
+
+  // Dictation state
+  const [isDictating, setIsDictating] = useState(false);
+  const dictationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Related cases state
   const [caseLinksData, setCaseLinksData] = useState<Array<CaseLink & { linkedCase: CaseSummary }>>([]);
@@ -411,6 +430,146 @@ export default function CaseDetailScreen() {
     setLinkSearchQuery("");
     setSelectedLinkType("related");
   };
+
+  // Voice recording handlers
+  const handleStartRecording = async () => {
+    try {
+      const { status } = await Audio.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(t('notes.recordVoice'), 'Microphone permission is required to record voice notes.');
+        return;
+      }
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
+      const { recording: newRecording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(newRecording);
+      setIsRecording(true);
+      setRecordingDuration(0);
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingDuration((prev) => prev + 1);
+      }, 1000);
+    } catch (err) {
+      Alert.alert('Error', 'Failed to start recording.');
+    }
+  };
+
+  const handleStopRecording = async () => {
+    if (!recording || !id) return;
+    try {
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+        recordingTimerRef.current = null;
+      }
+      await recording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
+      const uri = recording.getURI();
+      const status = await recording.getStatusAsync();
+      const durationSeconds = Math.round((status.durationMillis ?? 0) / 1000);
+      if (uri) {
+        await services.caseNotes.createNote({
+          caseId: id,
+          type: 'voice',
+          audioUri: uri,
+          audioDuration: durationSeconds || recordingDuration,
+        });
+        const refreshed = await services.caseNotes.getNotesByCaseId(id);
+        setNotes(refreshed);
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Failed to save voice note.');
+    } finally {
+      setRecording(null);
+      setIsRecording(false);
+      setRecordingDuration(0);
+    }
+  };
+
+  // Voice playback handlers
+  const handlePlayVoiceNote = async (note: CaseNote) => {
+    try {
+      // Stop any currently playing sound
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+      if (playingNoteId === note.id) {
+        setPlayingNoteId(null);
+        setPlaybackProgress(0);
+        return;
+      }
+      if (!note.audioUri) return;
+      const { sound } = await Audio.Sound.createAsync({ uri: note.audioUri });
+      soundRef.current = sound;
+      setPlayingNoteId(note.id);
+      setPlaybackProgress(0);
+
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.isLoaded) {
+          if (status.isPlaying && status.durationMillis) {
+            setPlaybackProgress(status.positionMillis / status.durationMillis);
+          }
+          if (status.didJustFinish) {
+            setPlayingNoteId(null);
+            setPlaybackProgress(0);
+            sound.unloadAsync();
+            soundRef.current = null;
+          }
+        }
+      });
+
+      await sound.playAsync();
+    } catch (err) {
+      Alert.alert('Error', 'Failed to play voice note.');
+      setPlayingNoteId(null);
+      setPlaybackProgress(0);
+    }
+  };
+
+  const handlePausePlayback = async () => {
+    if (soundRef.current) {
+      await soundRef.current.pauseAsync();
+      setPlayingNoteId(null);
+    }
+  };
+
+  // Dictation handler (simulated)
+  const handleDictation = () => {
+    if (isDictating) {
+      if (dictationTimerRef.current) {
+        clearTimeout(dictationTimerRef.current);
+        dictationTimerRef.current = null;
+      }
+      setIsDictating(false);
+      setNewNoteContent((prev) =>
+        prev + (prev ? ' ' : '') + '[Dictation: audio recorded - transcription requires backend service]'
+      );
+      return;
+    }
+    setIsDictating(true);
+    dictationTimerRef.current = setTimeout(() => {
+      setIsDictating(false);
+      setNewNoteContent((prev) =>
+        prev + (prev ? ' ' : '') + '[Dictation: audio recorded - transcription requires backend service]'
+      );
+      dictationTimerRef.current = null;
+    }, 3000);
+  };
+
+  // Cleanup sound on unmount
+  useEffect(() => {
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+      }
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+      }
+      if (dictationTimerRef.current) {
+        clearTimeout(dictationTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleRemoveLink = (linkId: string) => {
     Alert.alert(
@@ -827,35 +986,74 @@ export default function CaseDetailScreen() {
             <Pressable onPress={() => setAddingNote(!addingNote)} style={{ marginRight: 8 }}>
               <Ionicons name={(addingNote ? "close-outline" : "add-outline") as IoniconsName} size={22} color={colors.golden.DEFAULT} />
             </Pressable>
-            <Pressable disabled style={{ opacity: 0.4 }}>
-              <Ionicons name={"mic-outline" as IoniconsName} size={20} color={colors.navy.DEFAULT} />
-            </Pressable>
+            {isRecording ? (
+              <Pressable onPress={handleStopRecording}>
+                <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: '#FFEBEE', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, gap: 4 }}>
+                  <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#E53935' }} />
+                  <Text style={{ fontSize: 11, fontWeight: "600", color: '#E53935' }}>
+                    {t("notes.recording")} {Math.floor(recordingDuration / 60)}:{String(recordingDuration % 60).padStart(2, '0')}
+                  </Text>
+                  <Ionicons name={"stop-outline" as IoniconsName} size={14} color="#E53935" />
+                </View>
+              </Pressable>
+            ) : (
+              <Pressable onPress={handleStartRecording}>
+                <Ionicons name={"mic-outline" as IoniconsName} size={20} color={colors.navy.DEFAULT} />
+              </Pressable>
+            )}
           </View>
 
           {/* Add Note Form */}
           {addingNote && (
             <View style={{ marginBottom: 12, backgroundColor: colors.golden[50] + "40", borderRadius: 8, padding: 12 }}>
-              <TextInput
-                style={{
-                  fontSize: 14,
-                  color: colors.navy.DEFAULT,
-                  borderWidth: 1,
-                  borderColor: colors.golden[100],
-                  borderRadius: 8,
-                  padding: 10,
-                  minHeight: 60,
-                  textAlignVertical: "top",
-                  backgroundColor: "#FFF",
-                }}
-                multiline
-                placeholder={t("notes.placeholder")}
-                placeholderTextColor="#CCC"
-                value={newNoteContent}
-                onChangeText={setNewNoteContent}
-                autoFocus
-              />
+              <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 8 }}>
+                <TextInput
+                  style={{
+                    flex: 1,
+                    fontSize: 14,
+                    color: colors.navy.DEFAULT,
+                    borderWidth: 1,
+                    borderColor: colors.golden[100],
+                    borderRadius: 8,
+                    padding: 10,
+                    minHeight: 60,
+                    textAlignVertical: "top",
+                    backgroundColor: "#FFF",
+                  }}
+                  multiline
+                  placeholder={t("notes.placeholder")}
+                  placeholderTextColor="#CCC"
+                  value={newNoteContent}
+                  onChangeText={setNewNoteContent}
+                  autoFocus
+                />
+                <Pressable
+                  onPress={handleDictation}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: isDictating ? '#FFEBEE' : '#F5F0E8',
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: 10,
+                  }}
+                >
+                  <Ionicons
+                    name={(isDictating ? "radio-outline" : "mic-outline") as IoniconsName}
+                    size={20}
+                    color={isDictating ? '#E53935' : colors.navy.DEFAULT}
+                  />
+                </Pressable>
+              </View>
+              {isDictating && (
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 6, paddingLeft: 4 }}>
+                  <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: '#E53935' }} />
+                  <Text style={{ fontSize: 12, color: '#E53935' }}>{t("notes.dictationHint")}</Text>
+                </View>
+              )}
               <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 12, marginTop: 8 }}>
-                <Pressable onPress={() => { setAddingNote(false); setNewNoteContent(""); }}>
+                <Pressable onPress={() => { setAddingNote(false); setNewNoteContent(""); setIsDictating(false); if (dictationTimerRef.current) { clearTimeout(dictationTimerRef.current); dictationTimerRef.current = null; } }}>
                   <Text style={{ fontSize: 13, color: "#AAA" }}>{t("notes.cancel")}</Text>
                 </Pressable>
                 <Pressable onPress={handleAddNote}>
@@ -920,14 +1118,44 @@ export default function CaseDetailScreen() {
                       </View>
                     </>
                   ) : isVoice ? (
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                      <Ionicons name={"mic-outline" as IoniconsName} size={20} color="#42A5F5" />
-                      <Text style={{ fontSize: 13, color: "#888", flex: 1 }}>
-                        {t("notes.voiceNote")} ({note.audioDuration ? `${Math.floor(note.audioDuration / 60)}:${String(note.audioDuration % 60).padStart(2, '0')}` : '--:--'})
+                    <View>
+                      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                        <Ionicons name={"mic-outline" as IoniconsName} size={20} color="#42A5F5" />
+                        <Text style={{ fontSize: 13, color: "#888", flex: 1 }}>
+                          {t("notes.voiceNote")} ({note.audioDuration ? `${Math.floor(note.audioDuration / 60)}:${String(note.audioDuration % 60).padStart(2, '0')}` : '--:--'})
+                        </Text>
+                        <Pressable onPress={() => playingNoteId === note.id ? handlePausePlayback() : handlePlayVoiceNote(note)}>
+                          <Ionicons
+                            name={(playingNoteId === note.id ? "pause-circle-outline" : "play-circle-outline") as IoniconsName}
+                            size={28}
+                            color="#42A5F5"
+                          />
+                        </Pressable>
+                        <Pressable onPress={() => handleDeleteNote(note.id)}>
+                          <Ionicons name={"trash-outline" as IoniconsName} size={16} color="#E57373" />
+                        </Pressable>
+                      </View>
+                      {/* Waveform visualization */}
+                      <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 1, marginTop: 8, height: 24 }}>
+                        {WAVEFORM_BARS.map((height, idx) => {
+                          const barProgress = idx / WAVEFORM_BARS.length;
+                          const isPlayed = playingNoteId === note.id && barProgress <= playbackProgress;
+                          return (
+                            <View
+                              key={idx}
+                              style={{
+                                flex: 1,
+                                height: height * 24,
+                                backgroundColor: isPlayed ? '#42A5F5' : '#E0E0E0',
+                                borderRadius: 1,
+                              }}
+                            />
+                          );
+                        })}
+                      </View>
+                      <Text style={{ fontSize: 11, color: "#BBB", marginTop: 4 }}>
+                        {new Date(note.createdAt).toLocaleDateString('sr-Latn-RS', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                       </Text>
-                      <Pressable disabled style={{ opacity: 0.4 }}>
-                        <Ionicons name={"play-circle-outline" as IoniconsName} size={24} color="#42A5F5" />
-                      </Pressable>
                     </View>
                   ) : (
                     <>
