@@ -525,6 +525,43 @@ export interface IClientDocumentService {
   delete(id: string): Promise<boolean>;
 }
 
+// Phase 7: Advanced Search
+
+export interface SavedSearch {
+  id: string;
+  name: string;
+  query: string;
+  filters: SearchFilter;
+  createdAt: string;
+}
+
+export interface SearchHistoryEntry {
+  id: string;
+  query: string;
+  resultCount: number;
+  searchedAt: string;
+}
+
+export interface SearchFilter {
+  types?: ('client' | 'case' | 'event')[];
+  status?: string[];       // case statuses: 'active', 'closed', etc.
+  dateFrom?: string;       // ISO date
+  dateTo?: string;         // ISO date
+  lawyerId?: string;       // filter by assigned lawyer
+}
+
+// Quick filter presets
+export type QuickFilterId = 'my-cases' | 'urgent' | 'new-this-week';
+
+export interface ISearchService {
+  getSavedSearches(): Promise<SavedSearch[]>;
+  saveSearch(search: Omit<SavedSearch, 'id' | 'createdAt'>): Promise<SavedSearch>;
+  deleteSavedSearch(id: string): Promise<void>;
+  getSearchHistory(): Promise<SearchHistoryEntry[]>;
+  addToHistory(entry: Omit<SearchHistoryEntry, 'id'>): Promise<SearchHistoryEntry>;
+  clearHistory(): Promise<void>;
+}
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
@@ -539,4 +576,5 @@ export interface ServiceRegistry {
   caseLinks: ICaseLinkService;
   communications: ICommunicationService;
   clientDocuments: IClientDocumentService;
+  search: ISearchService;
 }

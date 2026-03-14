@@ -13,6 +13,7 @@ import type {
   ICaseLinkService,
   ICommunicationService,
   IClientDocumentService,
+  ISearchService,
   User,
   Client,
   CaseSummary,
@@ -30,6 +31,8 @@ import type {
   CaseLinkType,
   CommunicationEntry,
   ClientDocument,
+  SavedSearch,
+  SearchHistoryEntry,
 } from '../types';
 import { DOCUMENT_FOLDER_CATEGORIES, FOLDER_ICONS } from '../types';
 import { delay } from '../../utils/delay';
@@ -46,6 +49,8 @@ import { mockExpenses } from './data/expenses';
 import { mockCaseLinks } from './data/case-links';
 import { mockCommunicationHistory } from './data/communication-history';
 import { mockClientDocuments } from './data/client-documents';
+import { mockSavedSearches } from './data/saved-searches';
+import { mockSearchHistory } from './data/search-history';
 
 // Mutable copies so mutations persist within a session
 let clients = [...mockClients];
@@ -59,6 +64,8 @@ let expenses = [...mockExpenses];
 let caseLinks = [...mockCaseLinks];
 let communicationHistory = [...mockCommunicationHistory];
 let clientDocuments = [...mockClientDocuments];
+let savedSearches = [...mockSavedSearches];
+let searchHistory = [...mockSearchHistory];
 
 const mockUserService: IUserService = {
   async getCurrentUser(): Promise<User> {
@@ -513,6 +520,54 @@ const mockClientDocumentService: IClientDocumentService = {
   },
 };
 
+const mockSearchService: ISearchService = {
+  async getSavedSearches(): Promise<SavedSearch[]> {
+    await delay(300);
+    return [...savedSearches];
+  },
+
+  async saveSearch(search: Omit<SavedSearch, 'id' | 'createdAt'>): Promise<SavedSearch> {
+    await delay(300);
+    const newSearch: SavedSearch = {
+      ...search,
+      id: 'ss' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    savedSearches.push(newSearch);
+    return newSearch;
+  },
+
+  async deleteSavedSearch(id: string): Promise<void> {
+    await delay(300);
+    const index = savedSearches.findIndex((s) => s.id === id);
+    if (index !== -1) {
+      savedSearches.splice(index, 1);
+    }
+  },
+
+  async getSearchHistory(): Promise<SearchHistoryEntry[]> {
+    await delay(300);
+    return [...searchHistory].sort(
+      (a, b) => new Date(b.searchedAt).getTime() - new Date(a.searchedAt).getTime(),
+    );
+  },
+
+  async addToHistory(entry: Omit<SearchHistoryEntry, 'id'>): Promise<SearchHistoryEntry> {
+    await delay(200);
+    const newEntry: SearchHistoryEntry = {
+      ...entry,
+      id: 'sh' + Date.now(),
+    };
+    searchHistory.push(newEntry);
+    return newEntry;
+  },
+
+  async clearHistory(): Promise<void> {
+    await delay(200);
+    searchHistory = [];
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
@@ -527,4 +582,5 @@ export const mockServices: ServiceRegistry = {
   caseLinks: mockCaseLinkService,
   communications: mockCommunicationService,
   clientDocuments: mockClientDocumentService,
+  search: mockSearchService,
 };
