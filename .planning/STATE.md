@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.1 Phase 6 — Next phase in roadmap
+**Current focus:** v1.1 Phase 6 in progress — Enhanced Documents, Clients, Calendar, and Mobile
 
 ## Current Position
 
 Milestone: v1.1 Enhanced Features
-Phase: 5 of 9 (Enhanced Case Management and Voice Notes) -- COMPLETE
-Plan: 2 of 2 in current phase (all plans complete)
-Status: Phase Complete
-Last activity: 2026-03-14 — Completed 05-02-PLAN.md (billing, related cases, voice notes)
+Phase: 6 of 9 (Enhanced Documents, Clients, Calendar, and Mobile)
+Plan: 1/2 complete
+Status: Plan 06-01 complete, ready for 06-02
+Last activity: 2026-03-14 — Completed 06-01-PLAN.md
 
-Progress: [██░░░░░░░░] 20%
+Progress: [███░░░░░░░] 30%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: 10min
-- Total execution time: 1h 40min
+- Total execution time: 1h 54min
 
 **By Phase:**
 
@@ -33,9 +33,10 @@ Progress: [██░░░░░░░░] 20%
 | 03-documents-calendar | 2 | 21min | 10min |
 | 04-dashboard-search-and-notifications | 2 | 11min | 5.5min |
 | 05-enhanced-case-management-and-voice-notes | 2 | 18min | 9min |
+| 06-enhanced-documents-clients-calendar-and-mobile | 1 | 14min | 14min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (13min), 04-01 (5min), 04-02 (6min), 05-01 (8min), 05-02 (10min)
+- Last 5 plans: 04-01 (5min), 04-02 (6min), 05-01 (8min), 05-02 (10min), 06-01 (14min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -59,6 +60,10 @@ Recent decisions affecting current work:
 - [05-02]: Dictation simulated with placeholder text (real STT needs native modules, not Expo Go compatible)
 - [05-02]: Waveform visualization with 25 static bars and animated playhead
 - [05-02]: expo-av added for voice recording/playback (Expo Go compatible)
+- [06-01]: Folder chip selector pattern for categorized document browsing
+- [06-01]: Document scanning confirmation uses Alert + setTimeout overlay (Expo Go compatible)
+- [06-01]: Version history generated inline from document version field and createdAt
+- [06-01]: Tag editing reuses PREDEFINED_TAGS from case management
 
 ### Pending Todos
 
@@ -73,5 +78,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-14
-Stopped at: Completed 05-02-PLAN.md (Phase 5 complete)
+Stopped at: Completed 06-01-PLAN.md
 Resume file: None
