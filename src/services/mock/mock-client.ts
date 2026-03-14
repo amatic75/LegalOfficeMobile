@@ -11,12 +11,16 @@ import type {
   ITimeEntryService,
   IExpenseService,
   ICaseLinkService,
+  ICommunicationService,
+  IClientDocumentService,
   User,
   Client,
   CaseSummary,
   CaseStatus,
   Court,
   Document,
+  DocumentFolder,
+  DocumentVersion,
   CalendarEvent,
   AppNotification,
   CaseNote,
@@ -24,7 +28,10 @@ import type {
   Expense,
   CaseLink,
   CaseLinkType,
+  CommunicationEntry,
+  ClientDocument,
 } from '../types';
+import { DOCUMENT_FOLDER_CATEGORIES, FOLDER_ICONS } from '../types';
 import { delay } from '../../utils/delay';
 import { mockUsers } from './data/users';
 import { mockClients } from './data/clients';
@@ -37,6 +44,8 @@ import { mockCaseNotes } from './data/case-notes';
 import { mockTimeEntries } from './data/time-entries';
 import { mockExpenses } from './data/expenses';
 import { mockCaseLinks } from './data/case-links';
+import { mockCommunicationHistory } from './data/communication-history';
+import { mockClientDocuments } from './data/client-documents';
 
 // Mutable copies so mutations persist within a session
 let clients = [...mockClients];
@@ -48,6 +57,8 @@ let caseNotes = [...mockCaseNotes];
 let timeEntries = [...mockTimeEntries];
 let expenses = [...mockExpenses];
 let caseLinks = [...mockCaseLinks];
+let communicationHistory = [...mockCommunicationHistory];
+let clientDocuments = [...mockClientDocuments];
 
 const mockUserService: IUserService = {
   async getCurrentUser(): Promise<User> {
@@ -170,6 +181,15 @@ const mockCourtService: ICourtService = {
   },
 };
 
+const FOLDER_NAMES: Record<string, string> = {
+  pleadings: 'Podnesci',
+  evidence: 'Dokazi',
+  correspondence: 'Prepiska',
+  contracts: 'Ugovori',
+  'court-decisions': 'Sudske odluke',
+  other: 'Ostalo',
+};
+
 const mockDocumentService: IDocumentService = {
   async getDocumentsByCaseId(caseId: string): Promise<Document[]> {
     await delay(300);
@@ -198,6 +218,51 @@ const mockDocumentService: IDocumentService = {
     if (index === -1) return false;
     documents.splice(index, 1);
     return true;
+  },
+
+  async getDocumentFolders(caseId: string): Promise<DocumentFolder[]> {
+    await delay(200);
+    return DOCUMENT_FOLDER_CATEGORIES.map((category, index) => ({
+      id: `fldr-${caseId}-${category}`,
+      caseId,
+      name: FOLDER_NAMES[category] || category,
+      icon: FOLDER_ICONS[category],
+      order: index,
+    }));
+  },
+
+  async getDocumentVersions(documentId: string): Promise<DocumentVersion[]> {
+    await delay(200);
+    const doc = documents.find((d) => d.id === documentId);
+    if (!doc) return [];
+    const currentVersion = doc.version ?? 1;
+    const versions: DocumentVersion[] = [];
+    for (let v = currentVersion; v >= 1; v--) {
+      const createdDate = new Date(doc.createdAt);
+      createdDate.setDate(createdDate.getDate() - (currentVersion - v) * 7);
+      versions.push({
+        id: `ver-${documentId}-${v}`,
+        documentId,
+        version: v,
+        size: Math.round(doc.size * (0.8 + v * 0.1)),
+        modifiedBy: v === currentVersion ? 'Marko Petrovic' : 'Ana Jovanovic',
+        createdAt: createdDate.toISOString(),
+        changes: v === currentVersion
+          ? 'Azurirana finalna verzija'
+          : v === 1
+            ? 'Inicijalna verzija dokumenta'
+            : 'Ispravke i dopune teksta',
+      });
+    }
+    return versions;
+  },
+
+  async updateDocument(id: string, data: Partial<Document>): Promise<Document | null> {
+    await delay(300);
+    const index = documents.findIndex((d) => d.id === id);
+    if (index === -1) return null;
+    documents[index] = { ...documents[index], ...data };
+    return documents[index];
   },
 };
 
@@ -231,6 +296,36 @@ const mockCalendarEventService: ICalendarEventService = {
     };
     calendarEvents.push(newEvent);
     return newEvent;
+  },
+
+  async updateEvent(id: string, data: Partial<CalendarEvent>): Promise<CalendarEvent | null> {
+    await delay(300);
+    const index = calendarEvents.findIndex((e) => e.id === id);
+    if (index === -1) return null;
+    calendarEvents[index] = { ...calendarEvents[index], ...data };
+    return calendarEvents[index];
+  },
+
+  async deleteEvent(id: string): Promise<boolean> {
+    await delay(300);
+    const index = calendarEvents.findIndex((e) => e.id === id);
+    if (index === -1) return false;
+    calendarEvents.splice(index, 1);
+    return true;
+  },
+
+  async getConflictingEvents(date: string, startTime?: string, endTime?: string, excludeId?: string): Promise<CalendarEvent[]> {
+    await delay(200);
+    return calendarEvents.filter((e) => {
+      if (e.id === excludeId) return false;
+      if (e.date !== date) return false;
+      // If no time provided, any event on same date is a conflict
+      if (!startTime || !endTime) return true;
+      // All-day events (no start/end) always conflict
+      if (!e.startTime || !e.endTime) return true;
+      // Check time overlap
+      return e.startTime < endTime && e.endTime > startTime;
+    });
   },
 };
 
@@ -372,6 +467,52 @@ const mockCaseLinkService: ICaseLinkService = {
   },
 };
 
+const mockCommunicationService: ICommunicationService = {
+  async getByClientId(clientId: string): Promise<CommunicationEntry[]> {
+    await delay(300);
+    return communicationHistory
+      .filter((c) => c.clientId === clientId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  },
+
+  async create(data: Omit<CommunicationEntry, 'id' | 'createdAt'>): Promise<CommunicationEntry> {
+    await delay(300);
+    const newEntry: CommunicationEntry = {
+      ...data,
+      id: 'comm' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    communicationHistory.push(newEntry);
+    return newEntry;
+  },
+};
+
+const mockClientDocumentService: IClientDocumentService = {
+  async getByClientId(clientId: string): Promise<ClientDocument[]> {
+    await delay(300);
+    return clientDocuments.filter((d) => d.clientId === clientId);
+  },
+
+  async create(data: Omit<ClientDocument, 'id' | 'createdAt'>): Promise<ClientDocument> {
+    await delay(300);
+    const newDoc: ClientDocument = {
+      ...data,
+      id: 'cdoc' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    clientDocuments.push(newDoc);
+    return newDoc;
+  },
+
+  async delete(id: string): Promise<boolean> {
+    await delay(300);
+    const index = clientDocuments.findIndex((d) => d.id === id);
+    if (index === -1) return false;
+    clientDocuments.splice(index, 1);
+    return true;
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
@@ -384,4 +525,6 @@ export const mockServices: ServiceRegistry = {
   timeEntries: mockTimeEntryService,
   expenses: mockExpenseService,
   caseLinks: mockCaseLinkService,
+  communications: mockCommunicationService,
+  clientDocuments: mockClientDocumentService,
 };

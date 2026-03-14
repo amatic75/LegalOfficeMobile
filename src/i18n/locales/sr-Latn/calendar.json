@@ -34,6 +34,30 @@
     "cancel": "Otkazi",
     "required": "Obavezno polje"
   },
+  "recurrence": {
+    "recurrence": "Ponavljanje",
+    "noRecurrence": "Bez ponavljanja",
+    "daily": "Dnevno",
+    "weekly": "Nedeljno",
+    "monthly": "Mesecno",
+    "interval": "Ponavljaj svakih",
+    "endDate": "Datum zavrsetka",
+    "daysOfWeek": "Dani u nedelji"
+  },
+  "conflict": {
+    "conflict": "Konflikt",
+    "conflictWarning": "Konflikt u rasporedu",
+    "conflictingEvents": "Dogadjaji u konfliktu",
+    "proceedAnyway": "Nastavi svejedno"
+  },
+  "edit": {
+    "editEvent": "Izmeni dogadjaj",
+    "deleteEvent": "Obrisi dogadjaj",
+    "confirmDelete": "Potvrdi brisanje",
+    "deleteConfirmMessage": "Da li ste sigurni da zelite da obrisete ovaj dogadjaj?",
+    "save": "Sacuvaj",
+    "eventUpdated": "Dogadjaj azuriran"
+  },
   "noEvents": "Nema dogadjaja za ovaj dan",
   "allDay": "Ceo dan",
   "viewAll": "Pogledaj sve",

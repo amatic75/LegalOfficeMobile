@@ -41,6 +41,7 @@ export const mockClients: Client[] = [
         role: 'Direktor',
         phone: '+381 63 111 2222',
         email: 'dragan@zivkovic-gradnja.rs',
+        isPrimary: true,
       },
       {
         name: 'Jelena Zivkovic',
@@ -78,6 +79,7 @@ export const mockClients: Client[] = [
         role: 'Direktor',
         phone: '+381 64 555 6666',
         email: 'marko@itsolutions.rs',
+        isPrimary: true,
       },
     ],
     createdAt: '2024-05-22T08:45:00Z',
@@ -110,6 +112,7 @@ export const mockClients: Client[] = [
         role: 'Vlasnik',
         phone: '+381 63 777 8888',
         email: 'slobodan@pekarnica-brkic.rs',
+        isPrimary: true,
       },
       {
         name: 'Mirjana Brkic',

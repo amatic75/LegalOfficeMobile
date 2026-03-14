@@ -1,4 +1,4 @@
-import type { CalendarEvent } from '../../types';
+import type { CalendarEvent, RecurrencePattern } from '../../types';
 
 // Helper to get dates relative to today
 function getDate(offsetDays: number): string {
@@ -138,6 +138,7 @@ export const mockCalendarEvents: CalendarEvent[] = [
     startTime: '12:30',
     endTime: '14:00',
     location: 'Restoran Dva Jelena',
+    recurrence: { type: 'monthly', interval: 1 },
     createdAt: '2025-03-01T16:00:00Z',
   },
   {
@@ -162,6 +163,7 @@ export const mockCalendarEvents: CalendarEvent[] = [
     startTime: '09:00',
     endTime: '10:00',
     location: 'Kancelarija, konferencijska sala',
+    recurrence: { type: 'weekly', interval: 1, daysOfWeek: [1] },
     createdAt: '2025-03-07T08:00:00Z',
   },
   // Deadlines (orange) - no startTime/endTime

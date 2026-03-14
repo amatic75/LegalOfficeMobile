@@ -19,13 +19,42 @@
   "metadata": {
     "size": "Velicina",
     "date": "Datum",
-    "type": "Tip"
+    "type": "Tip",
+    "tags": "Oznake",
+    "description": "Opis",
+    "version": "Verzija",
+    "versionHistory": "Istorija verzija",
+    "noVersions": "Nema istorije verzija",
+    "addedBy": "Dodao",
+    "changes": "Izmene"
   },
+  "folders": {
+    "all": "Sve",
+    "pleadings": "Podnesci",
+    "evidence": "Dokazi",
+    "correspondence": "Prepiska",
+    "contracts": "Ugovori",
+    "court-decisions": "Sudske odluke",
+    "other": "Ostalo"
+  },
+  "scanning": {
+    "enhancing": "Poboljsavanje...",
+    "usePhoto": "Koristi fotografiju",
+    "retake": "Ponovi",
+    "scanConfirmTitle": "Dokument snimljen",
+    "scanConfirmMessage": "Da li zelite da koristite ovu fotografiju ili da ponovite snimanje?"
+  },
+  "selectFolder": "Izaberite fasciklu",
   "addedOn": "Dodato {{date}}",
   "viewAll": "Pogledaj sve",
   "addDocument": "Dodaj dokument",
   "documentCount": "Dokumenta ({{count}})",
   "noDocsYet": "Nema dokumenata",
   "mockPreview": "Pregled ce biti dostupan sa pravim dokumentima",
-  "previewNotAvailable": "Pregled nije dostupan za probne podatke"
+  "previewNotAvailable": "Pregled nije dostupan za probne podatke",
+  "deleteDocument": "Obrisi dokument",
+  "deleteConfirmTitle": "Brisanje dokumenta",
+  "deleteConfirmMessage": "Da li ste sigurni da zelite da obrisete \"{{name}}\"?",
+  "cancel": "Otkazi",
+  "deleted": "Dokument obrisan"
 }

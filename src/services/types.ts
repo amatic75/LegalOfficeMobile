@@ -14,6 +14,7 @@ export interface Representative {
   role: string;
   phone?: string;
   email?: string;
+  isPrimary?: boolean;
 }
 
 export interface Client {
@@ -135,6 +136,10 @@ export interface Document {
   mimeType: string;
   size: number;
   uri: string;
+  folderId?: string;
+  tags?: string[];
+  description?: string;
+  version?: number;
   createdAt: string;
 }
 
@@ -143,6 +148,9 @@ export interface IDocumentService {
   getDocumentById(id: string): Promise<Document | null>;
   addDocument(data: Omit<Document, 'id' | 'createdAt'>): Promise<Document>;
   deleteDocument(id: string): Promise<boolean>;
+  getDocumentFolders(caseId: string): Promise<DocumentFolder[]>;
+  getDocumentVersions(documentId: string): Promise<DocumentVersion[]>;
+  updateDocument(id: string, data: Partial<Document>): Promise<Document | null>;
 }
 
 export function formatFileSize(bytes: number): string {
@@ -179,6 +187,7 @@ export interface CalendarEvent {
   caseNumber?: string;
   location?: string;
   notes?: string;
+  recurrence?: RecurrencePattern;
   createdAt: string;
 }
 
@@ -188,6 +197,9 @@ export interface ICalendarEventService {
   getEventsByCaseId(caseId: string): Promise<CalendarEvent[]>;
   getEventById(id: string): Promise<CalendarEvent | null>;
   createEvent(data: Omit<CalendarEvent, 'id' | 'createdAt'>): Promise<CalendarEvent>;
+  updateEvent(id: string, data: Partial<CalendarEvent>): Promise<CalendarEvent | null>;
+  deleteEvent(id: string): Promise<boolean>;
+  getConflictingEvents(date: string, startTime?: string, endTime?: string, excludeId?: string): Promise<CalendarEvent[]>;
 }
 
 export function eventsToMarkedDates(
@@ -434,6 +446,85 @@ export interface ICaseLinkService {
   deleteLink(id: string): Promise<boolean>;
 }
 
+// Phase 6: Document Folders, Versions, Communications, Client Documents
+
+export type DocumentFolderCategory = 'pleadings' | 'evidence' | 'correspondence' | 'contracts' | 'court-decisions' | 'other';
+
+export const DOCUMENT_FOLDER_CATEGORIES: DocumentFolderCategory[] = [
+  'pleadings', 'evidence', 'correspondence', 'contracts', 'court-decisions', 'other',
+];
+
+export const FOLDER_ICONS: Record<DocumentFolderCategory, string> = {
+  pleadings: 'document-text-outline',
+  evidence: 'camera-outline',
+  correspondence: 'mail-outline',
+  contracts: 'create-outline',
+  'court-decisions': 'hammer-outline',
+  other: 'folder-outline',
+};
+
+export interface DocumentFolder {
+  id: string;
+  caseId: string;
+  name: string;
+  icon: string;
+  order: number;
+}
+
+export interface DocumentVersion {
+  id: string;
+  documentId: string;
+  version: number;
+  size: number;
+  modifiedBy: string;
+  createdAt: string;
+  changes?: string;
+}
+
+export interface RecurrencePattern {
+  type: 'daily' | 'weekly' | 'monthly';
+  interval: number;
+  endDate?: string;
+  daysOfWeek?: number[];
+}
+
+export interface CommunicationEntry {
+  id: string;
+  clientId: string;
+  type: 'call' | 'meeting' | 'email' | 'note';
+  subject: string;
+  content?: string;
+  date: string;
+  createdAt: string;
+}
+
+export interface ClientDocument {
+  id: string;
+  clientId: string;
+  type: 'id-card' | 'passport' | 'power-of-attorney' | 'engagement-letter' | 'other';
+  name: string;
+  uri: string;
+  createdAt: string;
+  expiresAt?: string;
+}
+
+export const CLIENT_DOC_TYPES: ClientDocument['type'][] = [
+  'id-card', 'passport', 'power-of-attorney', 'engagement-letter', 'other',
+];
+
+export type IntakeStep = 'contact' | 'conflict-check' | 'consultation' | 'onboarding';
+
+export interface ICommunicationService {
+  getByClientId(clientId: string): Promise<CommunicationEntry[]>;
+  create(data: Omit<CommunicationEntry, 'id' | 'createdAt'>): Promise<CommunicationEntry>;
+}
+
+export interface IClientDocumentService {
+  getByClientId(clientId: string): Promise<ClientDocument[]>;
+  create(data: Omit<ClientDocument, 'id' | 'createdAt'>): Promise<ClientDocument>;
+  delete(id: string): Promise<boolean>;
+}
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
@@ -446,4 +537,6 @@ export interface ServiceRegistry {
   timeEntries: ITimeEntryService;
   expenses: IExpenseService;
   caseLinks: ICaseLinkService;
+  communications: ICommunicationService;
+  clientDocuments: IClientDocumentService;
 }

@@ -57,5 +57,41 @@
     "sendEmail": "Posalji email",
     "edit": "Izmeni",
     "newClient": "Novi klijent"
+  },
+  "intake": {
+    "contact": "Kontakt",
+    "conflictCheck": "Provera konflikta",
+    "consultation": "Konsultacija",
+    "onboarding": "Prijem",
+    "nextStep": "Sledeci korak",
+    "previousStep": "Prethodni korak",
+    "startIntake": "Zapocni prijem",
+    "completeIntake": "Zavrsi prijem"
+  },
+  "communication": {
+    "communicationHistory": "Istorija komunikacije",
+    "noCommunications": "Nema istorije komunikacije",
+    "addCommunication": "Dodaj komunikaciju",
+    "call": "Poziv",
+    "meeting": "Sastanak",
+    "email": "Email",
+    "note": "Beleska",
+    "subject": "Predmet",
+    "content": "Sadrzaj"
+  },
+  "clientDocuments": {
+    "clientDocuments": "Dokumenta klijenta",
+    "noClientDocuments": "Nema dokumenata klijenta",
+    "addDocument": "Dodaj dokument",
+    "idCard": "Licna karta",
+    "passport": "Pasos",
+    "powerOfAttorney": "Punomocje",
+    "engagementLetter": "Ugovor o zastupanju",
+    "expiresAt": "Istice"
+  },
+  "contacts": {
+    "contacts": "Kontakti",
+    "addContact": "Dodaj kontakt",
+    "primaryContact": "Primarni kontakt"
   }
 }

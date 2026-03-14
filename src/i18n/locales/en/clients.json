@@ -57,5 +57,41 @@
     "sendEmail": "Send email",
     "edit": "Edit",
     "newClient": "New Client"
+  },
+  "intake": {
+    "contact": "Contact",
+    "conflictCheck": "Conflict Check",
+    "consultation": "Consultation",
+    "onboarding": "Onboarding",
+    "nextStep": "Next Step",
+    "previousStep": "Previous Step",
+    "startIntake": "Start Intake",
+    "completeIntake": "Complete Intake"
+  },
+  "communication": {
+    "communicationHistory": "Communication History",
+    "noCommunications": "No communication history",
+    "addCommunication": "Add Communication",
+    "call": "Call",
+    "meeting": "Meeting",
+    "email": "Email",
+    "note": "Note",
+    "subject": "Subject",
+    "content": "Content"
+  },
+  "clientDocuments": {
+    "clientDocuments": "Client Documents",
+    "noClientDocuments": "No client documents",
+    "addDocument": "Add Document",
+    "idCard": "ID Card",
+    "passport": "Passport",
+    "powerOfAttorney": "Power of Attorney",
+    "engagementLetter": "Engagement Letter",
+    "expiresAt": "Expires"
+  },
+  "contacts": {
+    "contacts": "Contacts",
+    "addContact": "Add Contact",
+    "primaryContact": "Primary Contact"
   }
 }

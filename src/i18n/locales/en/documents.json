@@ -19,13 +19,42 @@
   "metadata": {
     "size": "Size",
     "date": "Date",
-    "type": "Type"
+    "type": "Type",
+    "tags": "Tags",
+    "description": "Description",
+    "version": "Version",
+    "versionHistory": "Version History",
+    "noVersions": "No version history available",
+    "addedBy": "Added by",
+    "changes": "Changes"
   },
+  "folders": {
+    "all": "All",
+    "pleadings": "Pleadings",
+    "evidence": "Evidence",
+    "correspondence": "Correspondence",
+    "contracts": "Contracts",
+    "court-decisions": "Court Decisions",
+    "other": "Other"
+  },
+  "scanning": {
+    "enhancing": "Enhancing...",
+    "usePhoto": "Use Photo",
+    "retake": "Retake",
+    "scanConfirmTitle": "Document Captured",
+    "scanConfirmMessage": "Would you like to use this photo or retake it?"
+  },
+  "selectFolder": "Select Folder",
   "addedOn": "Added {{date}}",
   "viewAll": "View All",
   "addDocument": "Add Document",
   "documentCount": "Documents ({{count}})",
   "noDocsYet": "No documents yet",
   "mockPreview": "Preview will be available with real documents",
-  "previewNotAvailable": "Preview not available for mock data"
+  "previewNotAvailable": "Preview not available for mock data",
+  "deleteDocument": "Delete Document",
+  "deleteConfirmTitle": "Delete Document",
+  "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"?",
+  "cancel": "Cancel",
+  "deleted": "Document deleted"
 }
