@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.1 Phase 6 complete — Ready for Phase 7
+**Current focus:** v1.1 Phase 7 in progress — Advanced Search and Notifications
 
 ## Current Position
 
 Milestone: v1.1 Enhanced Features
-Phase: 6 of 9 (Enhanced Documents, Clients, Calendar, and Mobile) -- COMPLETE
-Plan: 2/2 complete
-Status: Phase 6 complete, ready for Phase 7
-Last activity: 2026-03-14 — Completed 06-02-PLAN.md
+Phase: 7 of 9 (Advanced Search and Notifications)
+Plan: 1/2 complete
+Status: Executing phase 7
+Last activity: 2026-03-14 — Completed 07-01-PLAN.md
 
-Progress: [████░░░░░░] 35%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 10min
-- Total execution time: 2h 10min
+- Total execution time: 2h 26min
 
 **By Phase:**
 
@@ -34,9 +34,10 @@ Progress: [████░░░░░░] 35%
 | 04-dashboard-search-and-notifications | 2 | 11min | 5.5min |
 | 05-enhanced-case-management-and-voice-notes | 2 | 18min | 9min |
 | 06-enhanced-documents-clients-calendar-and-mobile | 2 | 30min | 15min |
+| 07-advanced-search-and-notifications | 1 | 16min | 16min |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (6min), 05-01 (8min), 05-02 (10min), 06-01 (14min), 06-02 (16min)
+- Last 5 plans: 05-01 (8min), 05-02 (10min), 06-01 (14min), 06-02 (16min), 07-01 (16min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -68,6 +69,10 @@ Recent decisions affecting current work:
 - [06-02]: Conflict detection uses debounced useEffect (300ms) for reactive overlap checking
 - [06-02]: Event edit mode reuses same screen with state toggle (editMode flag)
 - [06-02]: Quick-action bar loads client via case.clientId for phone/court data
+- [07-01]: Quick filter chips use toggle behavior (tap again to deactivate)
+- [07-01]: Filter modals use temp state pattern to allow cancel without applying
+- [07-01]: Search history auto-tracked on debounced query, deduplicated against last entry
+- [07-01]: MOCK_LAWYERS array inline in search screen (users service returns single user)
 
 ### Pending Todos
 
@@ -82,5 +87,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-14
-Stopped at: Completed 06-02-PLAN.md (Phase 6 complete)
+Stopped at: Completed 07-01-PLAN.md
 Resume file: None
