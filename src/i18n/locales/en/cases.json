@@ -155,5 +155,9 @@
     },
     "removeLink": "Remove link",
     "removeLinkConfirm": "Remove link between these cases?"
+  },
+  "quickActions": {
+    "callClient": "Call Client",
+    "navigateCourt": "Navigate"
   }
 }

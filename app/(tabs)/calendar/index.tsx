@@ -1,7 +1,8 @@
 import { View, Text, Pressable, ActivityIndicator, SectionList, FlatList } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Calendar, CalendarProvider, ExpandableCalendar, AgendaList } from "react-native-calendars";
@@ -84,6 +85,9 @@ function EventCard({ event, onPress }: { event: CalendarEvent; onPress: () => vo
               ? `${event.startTime} - ${event.endTime}`
               : t("allDay")}
           </Text>
+          {event.recurrence && (
+            <Ionicons name={"repeat-outline" as IoniconsName} size={14} color={colors.golden.DEFAULT} />
+          )}
         </View>
         {event.caseName && (
           <Text style={{ fontSize: 12, color: "#AAA", marginTop: 3 }} numberOfLines={1}>
@@ -346,13 +350,19 @@ export default function CalendarScreen() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      const data = await services.calendarEvents.getEvents();
-      setEvents(data);
-      setLoading(false);
-    })();
-  }, [services]);
+  useFocusEffect(
+    useCallback(() => {
+      let isMounted = true;
+      (async () => {
+        const data = await services.calendarEvents.getEvents();
+        if (isMounted) {
+          setEvents(data);
+          setLoading(false);
+        }
+      })();
+      return () => { isMounted = false; };
+    }, [services])
+  );
 
   const handleEventPress = useCallback((event: CalendarEvent) => {
     router.push(('/(tabs)/calendar/event/' + event.id) as any);

@@ -155,5 +155,9 @@
     },
     "removeLink": "Ukloni vezu",
     "removeLinkConfirm": "Ukloniti vezu izmedju ovih predmeta?"
+  },
+  "quickActions": {
+    "callClient": "Pozovi klijenta",
+    "navigateCourt": "Navigacija"
   }
 }

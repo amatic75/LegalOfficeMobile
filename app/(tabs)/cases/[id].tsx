@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput } from "react-native";
+import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from "expo-router";
@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Audio } from "expo-av";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
-import type { CaseSummary, CaseStatus, Document, CalendarEvent, CaseNote, TimeEntry, Expense, ExpenseCategory, CaseLink, CaseLinkType } from "../../../src/services/types";
+import type { CaseSummary, CaseStatus, Document, CalendarEvent, CaseNote, TimeEntry, Expense, ExpenseCategory, CaseLink, CaseLinkType, Client } from "../../../src/services/types";
 import { STATUS_COLORS, STATUS_TRANSITIONS, formatFileSize, DOC_TYPE_ICONS, EVENT_TYPE_COLORS, PREDEFINED_TAGS, CASE_TYPE_SUBTYPES_TREE, EXPENSE_CATEGORIES, CASE_LINK_TYPES } from "../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
@@ -161,6 +161,7 @@ export default function CaseDetailScreen() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [clientData, setClientData] = useState<Client | null>(null);
 
   // Notes state
   const [addingNote, setAddingNote] = useState(false);
@@ -229,6 +230,11 @@ export default function CaseDetailScreen() {
     setTimeEntries(caseTimeEntries);
     setExpenses(caseExpenses);
     setCaseLinksData(caseLinksList);
+    // Load client data for quick actions
+    if (data?.clientId) {
+      const client = await services.clients.getClientById(data.clientId);
+      setClientData(client);
+    }
     setLoading(false);
   }, [id, services]);
 
@@ -1802,6 +1808,72 @@ export default function CaseDetailScreen() {
           )}
         </View>
       </ScrollView>
+
+      {/* Quick Action Bar */}
+      <View
+        style={{
+          flexDirection: "row",
+          gap: 12,
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          paddingBottom: 12 + insets.bottom,
+          backgroundColor: "#FFFFFF",
+          borderTopWidth: 1,
+          borderTopColor: "#F5F0E8",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.06,
+          shadowRadius: 4,
+          elevation: 4,
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            if (clientData?.phone) {
+              Linking.openURL(`tel:${clientData.phone}`);
+            }
+          }}
+          disabled={!clientData?.phone}
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            paddingVertical: 14,
+            borderRadius: 12,
+            backgroundColor: clientData?.phone ? colors.navy.DEFAULT : "#E0E0E0",
+          }}
+        >
+          <Ionicons name={"call-outline" as IoniconsName} size={18} color={clientData?.phone ? "#FFFFFF" : "#AAA"} />
+          <Text style={{ fontSize: 14, fontWeight: "700", color: clientData?.phone ? "#FFFFFF" : "#AAA" }}>
+            {t("quickActions.callClient")}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            if (caseData?.court) {
+              Linking.openURL(`https://maps.google.com/?q=${encodeURIComponent(caseData.court)}`);
+            }
+          }}
+          disabled={!caseData?.court}
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            paddingVertical: 14,
+            borderRadius: 12,
+            backgroundColor: caseData?.court ? colors.golden.DEFAULT : "#E0E0E0",
+          }}
+        >
+          <Ionicons name={"navigate-outline" as IoniconsName} size={18} color={caseData?.court ? "#FFFFFF" : "#AAA"} />
+          <Text style={{ fontSize: 14, fontWeight: "700", color: caseData?.court ? "#FFFFFF" : "#AAA" }}>
+            {t("quickActions.navigateCourt")}
+          </Text>
+        </Pressable>
+      </View>
     </>
   );
 }
