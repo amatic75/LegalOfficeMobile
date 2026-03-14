@@ -6,8 +6,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
-import type { CaseSummary, CaseStatus, Document, CalendarEvent, CaseNote, TimeEntry, Expense, ExpenseCategory } from "../../../src/services/types";
-import { STATUS_COLORS, STATUS_TRANSITIONS, formatFileSize, DOC_TYPE_ICONS, EVENT_TYPE_COLORS, PREDEFINED_TAGS, CASE_TYPE_SUBTYPES_TREE, EXPENSE_CATEGORIES } from "../../../src/services/types";
+import type { CaseSummary, CaseStatus, Document, CalendarEvent, CaseNote, TimeEntry, Expense, ExpenseCategory, CaseLink, CaseLinkType } from "../../../src/services/types";
+import { STATUS_COLORS, STATUS_TRANSITIONS, formatFileSize, DOC_TYPE_ICONS, EVENT_TYPE_COLORS, PREDEFINED_TAGS, CASE_TYPE_SUBTYPES_TREE, EXPENSE_CATEGORIES, CASE_LINK_TYPES } from "../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -184,15 +184,24 @@ export default function CaseDetailScreen() {
   const [expenseDate, setExpenseDate] = useState("");
   const [expenseCustomCategory, setExpenseCustomCategory] = useState("");
 
+  // Related cases state
+  const [caseLinksData, setCaseLinksData] = useState<Array<CaseLink & { linkedCase: CaseSummary }>>([]);
+  const [showLinkPicker, setShowLinkPicker] = useState(false);
+  const [linkSearchQuery, setLinkSearchQuery] = useState("");
+  const [allCases, setAllCases] = useState<CaseSummary[]>([]);
+  const [selectedLinkCase, setSelectedLinkCase] = useState<CaseSummary | null>(null);
+  const [selectedLinkType, setSelectedLinkType] = useState<CaseLinkType>("related");
+
   const loadCase = useCallback(async () => {
     if (!id) return;
-    const [data, docs, events, caseNotes, caseTimeEntries, caseExpenses] = await Promise.all([
+    const [data, docs, events, caseNotes, caseTimeEntries, caseExpenses, caseLinksList] = await Promise.all([
       services.cases.getCaseById(id),
       services.documents.getDocumentsByCaseId(id),
       services.calendarEvents.getEventsByCaseId(id),
       services.caseNotes.getNotesByCaseId(id),
       services.timeEntries.getTimeEntriesByCaseId(id),
       services.expenses.getExpensesByCaseId(id),
+      services.caseLinks.getLinksByCaseId(id),
     ]);
     setCaseData(data);
     setDocuments(docs);
@@ -200,6 +209,7 @@ export default function CaseDetailScreen() {
     setNotes(caseNotes);
     setTimeEntries(caseTimeEntries);
     setExpenses(caseExpenses);
+    setCaseLinksData(caseLinksList);
     setLoading(false);
   }, [id, services]);
 
@@ -379,6 +389,50 @@ export default function CaseDetailScreen() {
     );
   };
 
+  // Related cases handlers
+  const handleOpenLinkPicker = async () => {
+    if (!showLinkPicker) {
+      const fetchedCases = await services.cases.getCases();
+      setAllCases(fetchedCases);
+    }
+    setShowLinkPicker(!showLinkPicker);
+    setLinkSearchQuery("");
+    setSelectedLinkCase(null);
+    setSelectedLinkType("related");
+  };
+
+  const handleConfirmLink = async () => {
+    if (!id || !selectedLinkCase) return;
+    await services.caseLinks.createLink(id, selectedLinkCase.id, selectedLinkType);
+    const refreshed = await services.caseLinks.getLinksByCaseId(id);
+    setCaseLinksData(refreshed);
+    setShowLinkPicker(false);
+    setSelectedLinkCase(null);
+    setLinkSearchQuery("");
+    setSelectedLinkType("related");
+  };
+
+  const handleRemoveLink = (linkId: string) => {
+    Alert.alert(
+      t('related.removeLink'),
+      t('related.removeLinkConfirm'),
+      [
+        { text: t('notes.cancel'), style: 'cancel' },
+        {
+          text: t('related.removeLink'),
+          style: 'destructive',
+          onPress: async () => {
+            await services.caseLinks.deleteLink(linkId);
+            if (id) {
+              const refreshed = await services.caseLinks.getLinksByCaseId(id);
+              setCaseLinksData(refreshed);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   if (loading || !caseData) {
     return (
       <>
@@ -405,6 +459,17 @@ export default function CaseDetailScreen() {
     ...timeEntries.map((te) => ({ type: 'time' as const, data: te })),
     ...expenses.map((ex) => ({ type: 'expense' as const, data: ex })),
   ].sort((a, b) => b.data.date.localeCompare(a.data.date));
+
+  // Related cases computed data
+  const linkedCaseIds = new Set(caseLinksData.map((l) => l.linkedCase.id));
+  const linkSearchResults = linkSearchQuery.trim().length > 0
+    ? allCases.filter((c) =>
+        c.id !== id &&
+        !linkedCaseIds.has(c.id) &&
+        (c.caseNumber.toLowerCase().includes(linkSearchQuery.toLowerCase()) ||
+          c.title.toLowerCase().includes(linkSearchQuery.toLowerCase()))
+      )
+    : [];
 
   return (
     <>
@@ -1173,6 +1238,162 @@ export default function CaseDetailScreen() {
                 <Ionicons name={"cash-outline" as IoniconsName} size={28} color="#DDD" />
                 <Text style={{ fontSize: 13, color: "#AAA", marginTop: 8, textAlign: "center", paddingHorizontal: 16 }}>
                   {t("billing.emptyState")}
+                </Text>
+              </View>
+            )
+          )}
+        </View>
+
+        {/* Related Cases Section */}
+        <View style={SECTION_CARD}>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 12 }}>
+            <Ionicons name={"link-outline" as IoniconsName} size={18} color={colors.navy.DEFAULT} style={{ marginRight: 8 }} />
+            <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT, flex: 1 }}>
+              {t("related.title")} ({caseLinksData.length})
+            </Text>
+            <Pressable onPress={handleOpenLinkPicker}>
+              <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: colors.golden[50], paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, gap: 4 }}>
+                <Ionicons name={(showLinkPicker ? "close-outline" : "add-outline") as IoniconsName} size={14} color={colors.golden.DEFAULT} />
+                <Text style={{ fontSize: 11, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("related.addLink")}</Text>
+              </View>
+            </Pressable>
+          </View>
+
+          {/* Link Case Picker */}
+          {showLinkPicker && (
+            <View style={{ marginBottom: 12, backgroundColor: colors.golden[50] + "40", borderRadius: 8, padding: 12 }}>
+              {!selectedLinkCase ? (
+                <>
+                  <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#FFF", borderRadius: 8, borderWidth: 1, borderColor: colors.golden[100], paddingHorizontal: 10, marginBottom: 8 }}>
+                    <Ionicons name={"search-outline" as IoniconsName} size={16} color="#AAA" />
+                    <TextInput
+                      style={{ flex: 1, fontSize: 14, color: colors.navy.DEFAULT, padding: 10 }}
+                      placeholder={t("related.searchCases")}
+                      placeholderTextColor="#CCC"
+                      value={linkSearchQuery}
+                      onChangeText={setLinkSearchQuery}
+                      autoFocus
+                    />
+                  </View>
+                  {linkSearchResults.length > 0 && (
+                    <View style={{ maxHeight: 180 }}>
+                      {linkSearchResults.slice(0, 5).map((c) => (
+                        <Pressable
+                          key={c.id}
+                          onPress={() => setSelectedLinkCase(c)}
+                          style={{ flexDirection: "row", alignItems: "center", paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: "#F5F0E8" }}
+                        >
+                          <View style={{ flex: 1 }}>
+                            <Text style={{ fontSize: 13, fontWeight: "600", color: colors.navy.DEFAULT }}>{c.caseNumber}</Text>
+                            <Text style={{ fontSize: 12, color: "#888" }} numberOfLines={1}>{c.title}</Text>
+                          </View>
+                          <Ionicons name={"chevron-forward" as IoniconsName} size={14} color="#DDD" />
+                        </Pressable>
+                      ))}
+                    </View>
+                  )}
+                </>
+              ) : (
+                <>
+                  <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10, backgroundColor: "#FFF", borderRadius: 8, padding: 10 }}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 13, fontWeight: "600", color: colors.navy.DEFAULT }}>{selectedLinkCase.caseNumber}</Text>
+                      <Text style={{ fontSize: 12, color: "#888" }} numberOfLines={1}>{selectedLinkCase.title}</Text>
+                    </View>
+                    <Pressable onPress={() => setSelectedLinkCase(null)}>
+                      <Ionicons name={"close-circle" as IoniconsName} size={20} color="#AAA" />
+                    </Pressable>
+                  </View>
+                  <Text style={{ fontSize: 12, color: "#888", marginBottom: 6 }}>{t("related.linkType")}</Text>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
+                    {CASE_LINK_TYPES.map((lt) => (
+                      <Pressable key={lt} onPress={() => setSelectedLinkType(lt)}>
+                        <View style={{
+                          paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16,
+                          borderWidth: 1,
+                          borderColor: selectedLinkType === lt ? '#1565C0' : '#DDD',
+                          backgroundColor: selectedLinkType === lt ? '#E3F2FD' : '#FFF',
+                        }}>
+                          <Text style={{ fontSize: 12, color: selectedLinkType === lt ? '#1565C0' : '#888' }}>
+                            {t(`related.types.${lt}`)}
+                          </Text>
+                        </View>
+                      </Pressable>
+                    ))}
+                  </View>
+                  <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 12 }}>
+                    <Pressable onPress={() => { setShowLinkPicker(false); setSelectedLinkCase(null); }}>
+                      <Text style={{ fontSize: 13, color: "#AAA" }}>{t("notes.cancel")}</Text>
+                    </Pressable>
+                    <Pressable onPress={handleConfirmLink}>
+                      <Text style={{ fontSize: 13, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("billing.save")}</Text>
+                    </Pressable>
+                  </View>
+                </>
+              )}
+            </View>
+          )}
+
+          {/* Linked Cases List */}
+          {caseLinksData.length > 0 ? (
+            caseLinksData.map((link) => (
+              <Pressable
+                key={link.id}
+                onPress={() => router.push(`/(tabs)/cases/${link.linkedCase.id}` as any)}
+              >
+                <View
+                  style={{
+                    backgroundColor: "#FFF",
+                    borderRadius: 10,
+                    padding: 12,
+                    marginBottom: 8,
+                    borderLeftWidth: 3,
+                    borderLeftColor: colors.golden.DEFAULT,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.03,
+                    shadowRadius: 2,
+                    elevation: 1,
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                      <Text style={{ fontSize: 14, fontWeight: "600", color: colors.navy.DEFAULT }}>{link.linkedCase.caseNumber}</Text>
+                      <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, backgroundColor: '#E3F2FD' }}>
+                        <Text style={{ fontSize: 10, fontWeight: "600", color: '#1565C0' }}>
+                          {t(`related.types.${link.linkType}`)}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text style={{ fontSize: 12, color: "#888" }} numberOfLines={1}>{link.linkedCase.title}</Text>
+                  </View>
+                  <Pressable
+                    onPress={(e) => { e.stopPropagation(); handleRemoveLink(link.id); }}
+                    style={{ padding: 4, marginRight: 4 }}
+                  >
+                    <Ionicons name={"close-outline" as IoniconsName} size={18} color="#E57373" />
+                  </Pressable>
+                  <Ionicons name={"chevron-forward" as IoniconsName} size={14} color="#DDD" />
+                </View>
+              </Pressable>
+            ))
+          ) : (
+            !showLinkPicker && (
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderStyle: "dashed",
+                  borderColor: "#DDD",
+                  borderRadius: 10,
+                  paddingVertical: 20,
+                  alignItems: "center",
+                }}
+              >
+                <Ionicons name={"link-outline" as IoniconsName} size={28} color="#DDD" />
+                <Text style={{ fontSize: 13, color: "#AAA", marginTop: 8, textAlign: "center", paddingHorizontal: 16 }}>
+                  {t("related.emptyState")}
                 </Text>
               </View>
             )
