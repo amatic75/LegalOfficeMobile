@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.1 Phase 7 in progress — Advanced Search and Notifications
+**Current focus:** v1.1 Phase 7 complete — Ready for Phase 8 (Billing)
 
 ## Current Position
 
 Milestone: v1.1 Enhanced Features
 Phase: 7 of 9 (Advanced Search and Notifications)
-Plan: 1/2 complete
-Status: Executing phase 7
-Last activity: 2026-03-14 — Completed 07-01-PLAN.md
+Plan: 2/2 complete
+Status: Phase 7 complete
+Last activity: 2026-03-14 — Completed 07-02-PLAN.md
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 56%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: 10min
-- Total execution time: 2h 26min
+- Total execution time: 2h 32min
 
 **By Phase:**
 
@@ -34,10 +34,10 @@ Progress: [█████░░░░░] 50%
 | 04-dashboard-search-and-notifications | 2 | 11min | 5.5min |
 | 05-enhanced-case-management-and-voice-notes | 2 | 18min | 9min |
 | 06-enhanced-documents-clients-calendar-and-mobile | 2 | 30min | 15min |
-| 07-advanced-search-and-notifications | 1 | 16min | 16min |
+| 07-advanced-search-and-notifications | 2 | 22min | 11min |
 
 **Recent Trend:**
-- Last 5 plans: 05-01 (8min), 05-02 (10min), 06-01 (14min), 06-02 (16min), 07-01 (16min)
+- Last 5 plans: 05-02 (10min), 06-01 (14min), 06-02 (16min), 07-01 (16min), 07-02 (6min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -73,6 +73,10 @@ Recent decisions affecting current work:
 - [07-01]: Filter modals use temp state pattern to allow cancel without applying
 - [07-01]: Search history auto-tracked on debounced query, deduplicated against last entry
 - [07-01]: MOCK_LAWYERS array inline in search screen (users service returns single user)
+- [07-02]: Long-press action menu for snooze/quick-actions (Expo Go compatible, no gesture handler)
+- [07-02]: Custom ToggleSwitch using Pressable+View instead of RN Switch (consistent golden styling)
+- [07-02]: Snoozed notifications hidden from list while snoozedUntil is in the future
+- [07-02]: Overdue urgency derived from today urgency + isRead on deadline notifications
 
 ### Pending Todos
 
@@ -87,5 +91,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-14
-Stopped at: Completed 07-01-PLAN.md
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None
