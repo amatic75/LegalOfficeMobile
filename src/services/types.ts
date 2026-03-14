@@ -240,6 +240,8 @@ export interface AppNotification {
   relatedEventId?: string;
   isRead: boolean;
   urgency?: 'today' | '1d' | '3d' | '7d';
+  snoozedUntil?: string;
+  completed?: boolean;
   createdAt: string;
 }
 
@@ -266,9 +268,30 @@ export function getDeadlineUrgency(dateStr: string): UrgencyLevel {
   return 'normal';
 }
 
+// Phase 7: Enhanced Notifications
+
+export interface NotificationPreferences {
+  quietHoursEnabled: boolean;
+  quietHoursStart: string;    // "22:00" format
+  quietHoursEnd: string;      // "07:00" format
+  deadlineReminders: boolean; // toggle for deadline-reminder type
+  caseUpdates: boolean;       // toggle for case-update type
+}
+
+export type SnoozeOption = '1h' | '3h' | 'tomorrow' | 'next-week';
+
+export interface QuickAction {
+  type: 'mark-complete' | 'reschedule';
+  label: string;
+}
+
 export interface INotificationService {
   getNotifications(): Promise<AppNotification[]>;
   getUnreadCount(): Promise<number>;
+  getPreferences(): Promise<NotificationPreferences>;
+  updatePreferences(prefs: Partial<NotificationPreferences>): Promise<NotificationPreferences>;
+  snoozeNotification(id: string, option: SnoozeOption): Promise<void>;
+  markComplete(id: string): Promise<void>;
 }
 
 // Phase 5: Case Notes, Time/Expense, Case Linking

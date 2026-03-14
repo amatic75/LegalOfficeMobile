@@ -33,6 +33,8 @@ import type {
   ClientDocument,
   SavedSearch,
   SearchHistoryEntry,
+  NotificationPreferences,
+  SnoozeOption,
 } from '../types';
 import { DOCUMENT_FOLDER_CATEGORIES, FOLDER_ICONS } from '../types';
 import { delay } from '../../utils/delay';
@@ -66,6 +68,14 @@ let communicationHistory = [...mockCommunicationHistory];
 let clientDocuments = [...mockClientDocuments];
 let savedSearches = [...mockSavedSearches];
 let searchHistory = [...mockSearchHistory];
+
+let notificationPreferences: NotificationPreferences = {
+  quietHoursEnabled: false,
+  quietHoursStart: '22:00',
+  quietHoursEnd: '07:00',
+  deadlineReminders: true,
+  caseUpdates: true,
+};
 
 const mockUserService: IUserService = {
   async getCurrentUser(): Promise<User> {
@@ -336,6 +346,30 @@ const mockCalendarEventService: ICalendarEventService = {
   },
 };
 
+function computeSnoozeUntil(option: SnoozeOption): string {
+  const now = new Date();
+  switch (option) {
+    case '1h':
+      return new Date(now.getTime() + 60 * 60 * 1000).toISOString();
+    case '3h':
+      return new Date(now.getTime() + 3 * 60 * 60 * 1000).toISOString();
+    case 'tomorrow': {
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(9, 0, 0, 0);
+      return tomorrow.toISOString();
+    }
+    case 'next-week': {
+      const nextMonday = new Date(now);
+      const dayOfWeek = nextMonday.getDay();
+      const daysUntilMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+      nextMonday.setDate(nextMonday.getDate() + daysUntilMonday);
+      nextMonday.setHours(9, 0, 0, 0);
+      return nextMonday.toISOString();
+    }
+  }
+}
+
 const mockNotificationService: INotificationService = {
   async getNotifications(): Promise<AppNotification[]> {
     await delay(300);
@@ -347,6 +381,41 @@ const mockNotificationService: INotificationService = {
   async getUnreadCount(): Promise<number> {
     await delay(200);
     return notifications.filter((n) => !n.isRead).length;
+  },
+
+  async getPreferences(): Promise<NotificationPreferences> {
+    await delay(200);
+    return { ...notificationPreferences };
+  },
+
+  async updatePreferences(prefs: Partial<NotificationPreferences>): Promise<NotificationPreferences> {
+    await delay(300);
+    Object.assign(notificationPreferences, prefs);
+    return { ...notificationPreferences };
+  },
+
+  async snoozeNotification(id: string, option: SnoozeOption): Promise<void> {
+    await delay(300);
+    const index = notifications.findIndex((n) => n.id === id);
+    if (index !== -1) {
+      notifications[index] = {
+        ...notifications[index],
+        snoozedUntil: computeSnoozeUntil(option),
+        isRead: true,
+      };
+    }
+  },
+
+  async markComplete(id: string): Promise<void> {
+    await delay(300);
+    const index = notifications.findIndex((n) => n.id === id);
+    if (index !== -1) {
+      notifications[index] = {
+        ...notifications[index],
+        isRead: true,
+        completed: true,
+      };
+    }
   },
 };
 
