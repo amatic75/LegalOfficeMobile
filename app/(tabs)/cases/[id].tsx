@@ -6,8 +6,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
-import type { CaseSummary, CaseStatus, Document, CalendarEvent, CaseNote } from "../../../src/services/types";
-import { STATUS_COLORS, STATUS_TRANSITIONS, formatFileSize, DOC_TYPE_ICONS, EVENT_TYPE_COLORS, PREDEFINED_TAGS, CASE_TYPE_SUBTYPES_TREE } from "../../../src/services/types";
+import type { CaseSummary, CaseStatus, Document, CalendarEvent, CaseNote, TimeEntry, Expense, ExpenseCategory } from "../../../src/services/types";
+import { STATUS_COLORS, STATUS_TRANSITIONS, formatFileSize, DOC_TYPE_ICONS, EVENT_TYPE_COLORS, PREDEFINED_TAGS, CASE_TYPE_SUBTYPES_TREE, EXPENSE_CATEGORIES } from "../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -153,6 +153,8 @@ export default function CaseDetailScreen() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [caseEvents, setCaseEvents] = useState<CalendarEvent[]>([]);
   const [notes, setNotes] = useState<CaseNote[]>([]);
+  const [timeEntries, setTimeEntries] = useState<TimeEntry[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusUpdating, setStatusUpdating] = useState(false);
 
@@ -169,18 +171,35 @@ export default function CaseDetailScreen() {
   // Tree picker state
   const [showTreePicker, setShowTreePicker] = useState(false);
 
+  // Billing state
+  const [addingTime, setAddingTime] = useState(false);
+  const [addingExpense, setAddingExpense] = useState(false);
+  const [timeHours, setTimeHours] = useState("");
+  const [timeDescription, setTimeDescription] = useState("");
+  const [timeDate, setTimeDate] = useState("");
+  const [timeBillable, setTimeBillable] = useState(true);
+  const [expenseAmount, setExpenseAmount] = useState("");
+  const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory>("court-fees");
+  const [expenseDescription, setExpenseDescription] = useState("");
+  const [expenseDate, setExpenseDate] = useState("");
+  const [expenseCustomCategory, setExpenseCustomCategory] = useState("");
+
   const loadCase = useCallback(async () => {
     if (!id) return;
-    const [data, docs, events, caseNotes] = await Promise.all([
+    const [data, docs, events, caseNotes, caseTimeEntries, caseExpenses] = await Promise.all([
       services.cases.getCaseById(id),
       services.documents.getDocumentsByCaseId(id),
       services.calendarEvents.getEventsByCaseId(id),
       services.caseNotes.getNotesByCaseId(id),
+      services.timeEntries.getTimeEntriesByCaseId(id),
+      services.expenses.getExpensesByCaseId(id),
     ]);
     setCaseData(data);
     setDocuments(docs);
     setCaseEvents(events);
     setNotes(caseNotes);
+    setTimeEntries(caseTimeEntries);
+    setExpenses(caseExpenses);
     setLoading(false);
   }, [id, services]);
 
@@ -283,6 +302,83 @@ export default function CaseDetailScreen() {
     setCustomTagText("");
   };
 
+  // Billing handlers
+  const handleAddTimeEntry = async () => {
+    if (!id) return;
+    const hours = parseFloat(timeHours);
+    if (isNaN(hours) || hours <= 0 || !timeDescription.trim()) return;
+    await services.timeEntries.createTimeEntry({
+      caseId: id,
+      hours,
+      description: timeDescription.trim(),
+      date: timeDate || new Date().toISOString().split('T')[0],
+      billable: timeBillable,
+    });
+    const refreshed = await services.timeEntries.getTimeEntriesByCaseId(id);
+    setTimeEntries(refreshed);
+    setTimeHours(""); setTimeDescription(""); setTimeDate(""); setTimeBillable(true);
+    setAddingTime(false);
+  };
+
+  const handleDeleteTimeEntry = (entryId: string) => {
+    Alert.alert(
+      t('billing.delete'),
+      t('billing.deleteConfirm'),
+      [
+        { text: t('notes.cancel'), style: 'cancel' },
+        {
+          text: t('billing.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            await services.timeEntries.deleteTimeEntry(entryId);
+            if (id) {
+              const refreshed = await services.timeEntries.getTimeEntriesByCaseId(id);
+              setTimeEntries(refreshed);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleAddExpense = async () => {
+    if (!id) return;
+    const amount = parseFloat(expenseAmount);
+    if (isNaN(amount) || amount <= 0 || !expenseDescription.trim()) return;
+    await services.expenses.createExpense({
+      caseId: id,
+      amount,
+      category: expenseCategory,
+      description: expenseDescription.trim(),
+      date: expenseDate || new Date().toISOString().split('T')[0],
+    });
+    const refreshed = await services.expenses.getExpensesByCaseId(id);
+    setExpenses(refreshed);
+    setExpenseAmount(""); setExpenseCategory("court-fees"); setExpenseDescription(""); setExpenseDate(""); setExpenseCustomCategory("");
+    setAddingExpense(false);
+  };
+
+  const handleDeleteExpense = (expenseId: string) => {
+    Alert.alert(
+      t('billing.delete'),
+      t('billing.deleteConfirm'),
+      [
+        { text: t('notes.cancel'), style: 'cancel' },
+        {
+          text: t('billing.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            await services.expenses.deleteExpense(expenseId);
+            if (id) {
+              const refreshed = await services.expenses.getExpensesByCaseId(id);
+              setExpenses(refreshed);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   if (loading || !caseData) {
     return (
       <>
@@ -301,6 +397,14 @@ export default function CaseDetailScreen() {
 
   // Tree picker data
   const treeData = caseData.caseType ? CASE_TYPE_SUBTYPES_TREE[caseData.caseType] : null;
+
+  // Billing computed data
+  const totalHours = timeEntries.reduce((sum, te) => sum + te.hours, 0);
+  const totalExpenseAmount = expenses.reduce((sum, ex) => sum + ex.amount, 0);
+  const billingItems: Array<{ type: 'time'; data: TimeEntry } | { type: 'expense'; data: Expense }> = [
+    ...timeEntries.map((te) => ({ type: 'time' as const, data: te })),
+    ...expenses.map((ex) => ({ type: 'expense' as const, data: ex })),
+  ].sort((a, b) => b.data.date.localeCompare(a.data.date));
 
   return (
     <>
@@ -799,6 +903,276 @@ export default function CaseDetailScreen() {
                 <Ionicons name={"document-text-outline" as IoniconsName} size={28} color="#DDD" />
                 <Text style={{ fontSize: 13, color: "#AAA", marginTop: 8, textAlign: "center", paddingHorizontal: 16 }}>
                   {t("notes.emptyState")}
+                </Text>
+              </View>
+            )
+          )}
+        </View>
+
+        {/* Billing Section (Time & Expenses) */}
+        <View style={SECTION_CARD}>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 12 }}>
+            <Ionicons name={"cash-outline" as IoniconsName} size={18} color={colors.navy.DEFAULT} style={{ marginRight: 8 }} />
+            <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT, flex: 1 }}>
+              {t("billing.title")}
+            </Text>
+            <Pressable onPress={() => { setAddingTime(!addingTime); setAddingExpense(false); }} style={{ marginRight: 8 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: colors.golden[50], paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, gap: 4 }}>
+                <Ionicons name={"time-outline" as IoniconsName} size={14} color={colors.golden.DEFAULT} />
+                <Text style={{ fontSize: 11, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("billing.addTime")}</Text>
+              </View>
+            </Pressable>
+            <Pressable onPress={() => { setAddingExpense(!addingExpense); setAddingTime(false); }}>
+              <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: colors.golden[50], paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, gap: 4 }}>
+                <Ionicons name={"wallet-outline" as IoniconsName} size={14} color={colors.golden.DEFAULT} />
+                <Text style={{ fontSize: 11, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("billing.addExpense")}</Text>
+              </View>
+            </Pressable>
+          </View>
+
+          {/* Summary Stats */}
+          {(timeEntries.length > 0 || expenses.length > 0) && (
+            <View style={{ flexDirection: "row", gap: 12, marginBottom: 12 }}>
+              <View style={{ flex: 1, backgroundColor: "#F5F0E8", borderRadius: 8, padding: 10, alignItems: "center" }}>
+                <Text style={{ fontSize: 11, color: "#888" }}>{t("billing.totalHours")}</Text>
+                <Text style={{ fontSize: 16, fontWeight: "700", color: colors.navy.DEFAULT }}>{totalHours.toFixed(1)}h</Text>
+              </View>
+              <View style={{ flex: 1, backgroundColor: "#F5F0E8", borderRadius: 8, padding: 10, alignItems: "center" }}>
+                <Text style={{ fontSize: 11, color: "#888" }}>{t("billing.totalExpenses")}</Text>
+                <Text style={{ fontSize: 16, fontWeight: "700", color: colors.navy.DEFAULT }}>{totalExpenseAmount.toLocaleString('sr-Latn-RS')} RSD</Text>
+              </View>
+            </View>
+          )}
+
+          {/* Log Time Form */}
+          {addingTime && (
+            <View style={{ marginBottom: 12, backgroundColor: colors.golden[50] + "40", borderRadius: 8, padding: 12 }}>
+              <View style={{ flexDirection: "row", gap: 8, marginBottom: 8 }}>
+                <TextInput
+                  style={{ flex: 1, fontSize: 14, color: colors.navy.DEFAULT, borderWidth: 1, borderColor: colors.golden[100], borderRadius: 8, padding: 10, backgroundColor: "#FFF" }}
+                  keyboardType="decimal-pad"
+                  placeholder="0.0"
+                  placeholderTextColor="#CCC"
+                  value={timeHours}
+                  onChangeText={setTimeHours}
+                  autoFocus
+                />
+                <TextInput
+                  style={{ flex: 2, fontSize: 14, color: colors.navy.DEFAULT, borderWidth: 1, borderColor: colors.golden[100], borderRadius: 8, padding: 10, backgroundColor: "#FFF" }}
+                  placeholder={t("billing.description")}
+                  placeholderTextColor="#CCC"
+                  value={timeDescription}
+                  onChangeText={setTimeDescription}
+                />
+              </View>
+              <View style={{ flexDirection: "row", gap: 8, marginBottom: 8 }}>
+                <TextInput
+                  style={{ flex: 1, fontSize: 14, color: colors.navy.DEFAULT, borderWidth: 1, borderColor: colors.golden[100], borderRadius: 8, padding: 10, backgroundColor: "#FFF" }}
+                  placeholder="DD.MM.YYYY"
+                  placeholderTextColor="#CCC"
+                  value={timeDate}
+                  onChangeText={setTimeDate}
+                />
+                <View style={{ flex: 1, flexDirection: "row", borderRadius: 8, overflow: "hidden", borderWidth: 1, borderColor: colors.golden[100] }}>
+                  <Pressable
+                    onPress={() => setTimeBillable(true)}
+                    style={{ flex: 1, backgroundColor: timeBillable ? '#E8F5E9' : '#FFF', paddingVertical: 10, alignItems: "center" }}
+                  >
+                    <Text style={{ fontSize: 12, fontWeight: "600", color: timeBillable ? '#2E7D32' : '#AAA' }}>{t("billing.billable")}</Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => setTimeBillable(false)}
+                    style={{ flex: 1, backgroundColor: !timeBillable ? '#ECEFF1' : '#FFF', paddingVertical: 10, alignItems: "center" }}
+                  >
+                    <Text style={{ fontSize: 12, fontWeight: "600", color: !timeBillable ? '#546E7A' : '#AAA' }}>{t("billing.nonBillable")}</Text>
+                  </Pressable>
+                </View>
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 12 }}>
+                <Pressable onPress={() => { setAddingTime(false); setTimeHours(""); setTimeDescription(""); setTimeDate(""); }}>
+                  <Text style={{ fontSize: 13, color: "#AAA" }}>{t("notes.cancel")}</Text>
+                </Pressable>
+                <Pressable onPress={handleAddTimeEntry}>
+                  <Text style={{ fontSize: 13, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("billing.save")}</Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+
+          {/* Add Expense Form */}
+          {addingExpense && (
+            <View style={{ marginBottom: 12, backgroundColor: colors.golden[50] + "40", borderRadius: 8, padding: 12 }}>
+              <View style={{ flexDirection: "row", gap: 8, marginBottom: 8 }}>
+                <TextInput
+                  style={{ flex: 1, fontSize: 14, color: colors.navy.DEFAULT, borderWidth: 1, borderColor: colors.golden[100], borderRadius: 8, padding: 10, backgroundColor: "#FFF" }}
+                  keyboardType="decimal-pad"
+                  placeholder="0"
+                  placeholderTextColor="#CCC"
+                  value={expenseAmount}
+                  onChangeText={setExpenseAmount}
+                  autoFocus
+                />
+                <TextInput
+                  style={{ flex: 2, fontSize: 14, color: colors.navy.DEFAULT, borderWidth: 1, borderColor: colors.golden[100], borderRadius: 8, padding: 10, backgroundColor: "#FFF" }}
+                  placeholder={t("billing.description")}
+                  placeholderTextColor="#CCC"
+                  value={expenseDescription}
+                  onChangeText={setExpenseDescription}
+                />
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 8 }}>
+                <View style={{ flexDirection: "row", gap: 6 }}>
+                  {EXPENSE_CATEGORIES.map((cat) => (
+                    <Pressable key={cat} onPress={() => setExpenseCategory(cat)}>
+                      <View style={{
+                        paddingHorizontal: 10, paddingVertical: 6, borderRadius: 16,
+                        borderWidth: 1,
+                        borderColor: expenseCategory === cat ? colors.golden.DEFAULT : '#DDD',
+                        backgroundColor: expenseCategory === cat ? colors.golden[50] : '#FFF',
+                      }}>
+                        <Text style={{ fontSize: 11, color: expenseCategory === cat ? colors.golden[700] : '#888' }}>
+                          {t(`billing.categories.${cat}`)}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  ))}
+                </View>
+              </ScrollView>
+              {expenseCategory === 'custom' && (
+                <TextInput
+                  style={{ fontSize: 14, color: colors.navy.DEFAULT, borderWidth: 1, borderColor: colors.golden[100], borderRadius: 8, padding: 10, backgroundColor: "#FFF", marginBottom: 8 }}
+                  placeholder={t("billing.category")}
+                  placeholderTextColor="#CCC"
+                  value={expenseCustomCategory}
+                  onChangeText={setExpenseCustomCategory}
+                />
+              )}
+              <View style={{ flexDirection: "row", gap: 8, marginBottom: 8 }}>
+                <TextInput
+                  style={{ flex: 1, fontSize: 14, color: colors.navy.DEFAULT, borderWidth: 1, borderColor: colors.golden[100], borderRadius: 8, padding: 10, backgroundColor: "#FFF" }}
+                  placeholder="DD.MM.YYYY"
+                  placeholderTextColor="#CCC"
+                  value={expenseDate}
+                  onChangeText={setExpenseDate}
+                />
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 12 }}>
+                <Pressable onPress={() => { setAddingExpense(false); setExpenseAmount(""); setExpenseDescription(""); setExpenseDate(""); setExpenseCategory("court-fees"); }}>
+                  <Text style={{ fontSize: 13, color: "#AAA" }}>{t("notes.cancel")}</Text>
+                </Pressable>
+                <Pressable onPress={handleAddExpense}>
+                  <Text style={{ fontSize: 13, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("billing.save")}</Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+
+          {/* Combined Billing List */}
+          {billingItems.length > 0 ? (
+            billingItems.map((item) => {
+              if (item.type === 'time') {
+                const te = item.data as TimeEntry;
+                return (
+                  <View
+                    key={te.id}
+                    style={{
+                      backgroundColor: "#FFF",
+                      borderRadius: 10,
+                      padding: 12,
+                      marginBottom: 8,
+                      borderLeftWidth: 3,
+                      borderLeftColor: colors.golden.DEFAULT,
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 1 },
+                      shadowOpacity: 0.03,
+                      shadowRadius: 2,
+                      elevation: 1,
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                      <Ionicons name={"time-outline" as IoniconsName} size={18} color={colors.golden.DEFAULT} />
+                      <Text style={{ fontSize: 15, fontWeight: "700", color: colors.navy.DEFAULT }}>{te.hours}h</Text>
+                      <View style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 2,
+                        borderRadius: 10,
+                        backgroundColor: te.billable ? '#E8F5E9' : '#ECEFF1',
+                      }}>
+                        <Text style={{ fontSize: 10, fontWeight: "600", color: te.billable ? '#2E7D32' : '#546E7A' }}>
+                          {te.billable ? t("billing.billable") : t("billing.nonBillable")}
+                        </Text>
+                      </View>
+                      <View style={{ flex: 1 }} />
+                      <Pressable onPress={() => handleDeleteTimeEntry(te.id)}>
+                        <Ionicons name={"trash-outline" as IoniconsName} size={16} color="#E57373" />
+                      </Pressable>
+                    </View>
+                    <Text style={{ fontSize: 13, color: colors.navy.DEFAULT, marginTop: 4 }}>{te.description}</Text>
+                    <Text style={{ fontSize: 11, color: "#BBB", marginTop: 4 }}>
+                      {te.date.split("-").reverse().join(".")}
+                    </Text>
+                  </View>
+                );
+              } else {
+                const ex = item.data as Expense;
+                return (
+                  <View
+                    key={ex.id}
+                    style={{
+                      backgroundColor: "#FFF",
+                      borderRadius: 10,
+                      padding: 12,
+                      marginBottom: 8,
+                      borderLeftWidth: 3,
+                      borderLeftColor: '#43A047',
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 1 },
+                      shadowOpacity: 0.03,
+                      shadowRadius: 2,
+                      elevation: 1,
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                      <Ionicons name={"wallet-outline" as IoniconsName} size={18} color="#43A047" />
+                      <Text style={{ fontSize: 15, fontWeight: "700", color: colors.navy.DEFAULT }}>{ex.amount.toLocaleString('sr-Latn-RS')} RSD</Text>
+                      <View style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 2,
+                        borderRadius: 10,
+                        backgroundColor: colors.golden[50],
+                      }}>
+                        <Text style={{ fontSize: 10, fontWeight: "600", color: colors.golden.DEFAULT }}>
+                          {t(`billing.categories.${ex.category}`)}
+                        </Text>
+                      </View>
+                      <View style={{ flex: 1 }} />
+                      <Pressable onPress={() => handleDeleteExpense(ex.id)}>
+                        <Ionicons name={"trash-outline" as IoniconsName} size={16} color="#E57373" />
+                      </Pressable>
+                    </View>
+                    <Text style={{ fontSize: 13, color: colors.navy.DEFAULT, marginTop: 4 }}>{ex.description}</Text>
+                    <Text style={{ fontSize: 11, color: "#BBB", marginTop: 4 }}>
+                      {ex.date.split("-").reverse().join(".")}
+                    </Text>
+                  </View>
+                );
+              }
+            })
+          ) : (
+            !addingTime && !addingExpense && (
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderStyle: "dashed",
+                  borderColor: "#DDD",
+                  borderRadius: 10,
+                  paddingVertical: 20,
+                  alignItems: "center",
+                }}
+              >
+                <Ionicons name={"cash-outline" as IoniconsName} size={28} color="#DDD" />
+                <Text style={{ fontSize: 13, color: "#AAA", marginTop: 8, textAlign: "center", paddingHorizontal: 16 }}>
+                  {t("billing.emptyState")}
                 </Text>
               </View>
             )

@@ -2,26 +2,27 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-10)
+See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** Phase 4 - Dashboard, Search, and Notifications
+**Current focus:** v1.1 Phase 5 — Enhanced Case Management and Voice Notes
 
 ## Current Position
 
-Phase: 4 of 4 (Dashboard, Search, and Notifications)
-Plan: 2 of 2 in current phase -- COMPLETE
-Status: Phase 4 Complete -- All phases complete
-Last activity: 2026-03-12 -- Completed 04-02-PLAN.md
+Milestone: v1.1 Enhanced Features
+Phase: 5 of 9 (Enhanced Case Management and Voice Notes)
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-03-14 — Completed 05-01-PLAN.md (types, notes, tags, inline editing)
 
-Progress: [██████████] 100% of Phase 4
+Progress: [█░░░░░░░░░] 10%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 10min
-- Total execution time: 1.4 hours
+- Total execution time: 1.5 hours
 
 **By Phase:**
 
@@ -31,10 +32,11 @@ Progress: [██████████] 100% of Phase 4
 | 02-client-case | 2 | 18min | 9min |
 | 03-documents-calendar | 2 | 21min | 10min |
 | 04-dashboard-search-and-notifications | 2 | 11min | 5.5min |
+| 05-enhanced-case-management-and-voice-notes | 1 | 8min | 8min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (9min), 03-01 (8min), 03-02 (13min), 04-01 (5min), 04-02 (6min)
-- Trend: stable/improving
+- Last 5 plans: 03-01 (8min), 03-02 (13min), 04-01 (5min), 04-02 (6min), 05-01 (8min)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -45,32 +47,14 @@ Progress: [██████████] 100% of Phase 4
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [Roadmap]: 4 phases at quick depth -- Foundation/Shell, Clients/Cases, Docs/Calendar, Dashboard/Search/Notifications
-- [Roadmap]: Settings (language switcher, profile) grouped with Foundation since i18n is a foundation concern
-- [Roadmap]: Clients and Cases combined into one phase -- same CRUD pattern, clients built first as case dependency
-- [01-01]: SDK downgraded to 54 per user request -- expo-router v6, react 19.1.0, react-native 0.81.5
-- [01-01]: Button uses useState for pressed state instead of Pressable className function -- avoids NativeWind type conflict
-- [01-02]: auth-store uses dynamic import() for services to avoid circular dependency between stores and services
-- [01-02]: LOCALES array uses native-script labels for intuitive language switcher UX
-- [01-02]: Service layer created during i18n task because auth-store type-check requires api-client module to exist
-- [01-03]: All screens use inline styles instead of NativeWind className for reliable rendering on device
-- [01-03]: expo-router v6 requires absolute paths (/(tabs)/more/settings) not relative (./settings)
-- [01-03]: Tab bar height includes insets.bottom for Android 3-button navigation compatibility
-- [01-03]: Home screen follows GoldenHomeDesignIdea.png: navy header, stat cards, case carousel, deadlines, FAB
-- [02-01]: Mutable mock arrays for session-persistent CRUD instead of static data returns
-- [02-01]: Form duplication between new and edit screens for simplicity over shared component abstraction
-- [02-01]: Client type indicator read-only on edit screen (cannot change type after creation)
-- [03-01]: Mock URI placeholder approach for document preview -- shows info message instead of broken viewer
-- [03-01]: DOC_TYPE_ICONS as exported constant in types.ts for reuse across screens
-- [03-02]: ExpandableCalendar with Positions.CLOSED + AgendaList for week view instead of unreliable TimelineList
-- [03-02]: eventsToMarkedDates utility in types.ts for reusable multi-dot calendar marking
-- [03-02]: Inline case picker (horizontal scroll) in event creation form matching Phase 2 pattern
-- [04-01]: Synchronous notification store init with mockNotifications to avoid badge flicker
-- [04-01]: STATUS_COLORS from types.ts reused for case badges instead of local map
-- [04-01]: Speed-dial FAB with full-screen backdrop for intuitive dismissal
-- [04-02]: Cross-entity search fetches all data in parallel then filters client-side for simplicity
-- [04-02]: Hardcoded Cases tab badge removed in favor of dynamic More tab badge for clarity
-- [04-02]: Search title key added to search i18n namespace for consistent header/menu labeling
+- [v1.1 Roadmap]: 5 phases at quick depth -- CaseManagement+Voice, Docs+Clients+Calendar+Mobile, Search+Notifications, Billing, Reporting
+- [v1.1 Roadmap]: Voice notes grouped with case management (VOICE relates to CASE-01 notes)
+- [v1.1 Roadmap]: Billing (Phase 8) depends on time/expense tracking from Phase 5 (CASE-06/CASE-07)
+- [v1.1 Roadmap]: Reporting (Phase 9) depends on billing data from Phase 8
+- [v1.0]: Inline styles over NativeWind, absolute paths in expo-router v6, mutable mock arrays for CRUD
+- [05-01]: EditableInfoRow component for inline field editing (tap-to-edit with golden highlight)
+- [05-01]: Tree picker is read-only display; actual subtype changed via edit screen
+- [05-01]: SECTION_CARD style constant for white card sections with golden border
 
 ### Pending Todos
 
@@ -78,14 +62,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- [RESOLVED] NativeWind v4 + Expo SDK 54 setup validated -- but inline styles preferred for reliability
-- [RESOLVED] expo-router v6 relative routing doesn't work -- use absolute paths
-- [RESOLVED] Android 3-button nav overlaps tab bar -- fixed with safe area insets
-- [RESOLVED] react-native-calendars Expo Go compatibility -- confirmed working, pure JS library
-- [RESOLVED] Bottom sheet (gorhom) SDK 54 stability -- confirmed unstable, using Modal instead
+- [RESOLVED] NativeWind v4 + Expo SDK 54 -- inline styles preferred for reliability
+- [RESOLVED] expo-router v6 relative routing -- use absolute paths
+- [RESOLVED] gorhom bottom-sheet SDK 54 stability -- using Modal instead
 
 ## Session Continuity
 
-Last session: 2026-03-12
-Stopped at: Completed 04-02-PLAN.md (Global Search and Notification Center) -- All phases complete
+Last session: 2026-03-14
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
