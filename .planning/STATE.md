@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.1 Phase 7 complete — Ready for Phase 8 (Billing)
+**Current focus:** v1.1 Phase 8 in progress — Billing and Invoicing
 
 ## Current Position
 
 Milestone: v1.1 Enhanced Features
-Phase: 7 of 9 (Advanced Search and Notifications)
-Plan: 2/2 complete
-Status: Phase 7 complete
-Last activity: 2026-03-14 — Completed 07-02-PLAN.md
+Phase: 8 of 9 (Billing and Invoicing)
+Plan: 1/2 complete
+Status: Plan 08-01 complete, Plan 08-02 next
+Last activity: 2026-03-15 — Plan 08-01 executed
 
-Progress: [██████░░░░] 56%
+Progress: [███████░░░] 70%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 10min
-- Total execution time: 2h 32min
+- Total execution time: 2h 40min
 
 **By Phase:**
 
@@ -35,9 +35,10 @@ Progress: [██████░░░░] 56%
 | 05-enhanced-case-management-and-voice-notes | 2 | 18min | 9min |
 | 06-enhanced-documents-clients-calendar-and-mobile | 2 | 30min | 15min |
 | 07-advanced-search-and-notifications | 2 | 22min | 11min |
+| 08-billing-and-invoicing | 1 | 8min | 8min |
 
 **Recent Trend:**
-- Last 5 plans: 05-02 (10min), 06-01 (14min), 06-02 (16min), 07-01 (16min), 07-02 (6min)
+- Last 5 plans: 06-01 (14min), 06-02 (16min), 07-01 (16min), 07-02 (6min), 08-01 (8min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -77,6 +78,9 @@ Recent decisions affecting current work:
 - [07-02]: Custom ToggleSwitch using Pressable+View instead of RN Switch (consistent golden styling)
 - [07-02]: Snoozed notifications hidden from list while snoozedUntil is in the future
 - [07-02]: Overdue urgency derived from today urgency + isRead on deadline notifications
+- [08-01]: formatRSD helper for Serbian number formatting (dot thousands, comma decimal) across billing screens
+- [08-01]: Payment recording deferred to Plan 02, placeholder Alert on detail screen
+- [08-01]: Invoice number format INV-YYYY-NNN generated on creation
 
 ### Pending Todos
 
@@ -90,6 +94,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14
-Stopped at: Completed 07-02-PLAN.md
+Last session: 2026-03-15
+Stopped at: Completed 08-01-PLAN.md
 Resume file: None
