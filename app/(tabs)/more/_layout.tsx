@@ -34,6 +34,10 @@ export default function MoreLayout() {
         name="billing"
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="reports"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }
