@@ -30,6 +30,10 @@ export default function MoreLayout() {
         name="notifications"
         options={{ headerTitle: t("screens.notifications") }}
       />
+      <Stack.Screen
+        name="billing"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }
