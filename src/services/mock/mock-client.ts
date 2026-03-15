@@ -14,6 +14,7 @@ import type {
   ICommunicationService,
   IClientDocumentService,
   ISearchService,
+  IBillingService,
   User,
   Client,
   CaseSummary,
@@ -35,6 +36,9 @@ import type {
   SearchHistoryEntry,
   NotificationPreferences,
   SnoozeOption,
+  Invoice,
+  InvoiceStatus,
+  Payment,
 } from '../types';
 import { DOCUMENT_FOLDER_CATEGORIES, FOLDER_ICONS } from '../types';
 import { delay } from '../../utils/delay';
@@ -53,6 +57,7 @@ import { mockCommunicationHistory } from './data/communication-history';
 import { mockClientDocuments } from './data/client-documents';
 import { mockSavedSearches } from './data/saved-searches';
 import { mockSearchHistory } from './data/search-history';
+import { mockInvoices } from './data/invoices';
 
 // Mutable copies so mutations persist within a session
 let clients = [...mockClients];
@@ -68,6 +73,7 @@ let communicationHistory = [...mockCommunicationHistory];
 let clientDocuments = [...mockClientDocuments];
 let savedSearches = [...mockSavedSearches];
 let searchHistory = [...mockSearchHistory];
+let invoices = mockInvoices.map(inv => ({ ...inv, payments: [...inv.payments], lineItems: [...inv.lineItems] }));
 
 let notificationPreferences: NotificationPreferences = {
   quietHoursEnabled: false,
@@ -637,6 +643,117 @@ const mockSearchService: ISearchService = {
   },
 };
 
+const mockBillingService: IBillingService = {
+  async getInvoices(): Promise<Invoice[]> {
+    await delay(400);
+    return [...invoices];
+  },
+
+  async getInvoiceById(id: string): Promise<Invoice | null> {
+    await delay(300);
+    return invoices.find((inv) => inv.id === id) ?? null;
+  },
+
+  async getInvoicesByCaseId(caseId: string): Promise<Invoice[]> {
+    await delay(300);
+    return invoices.filter((inv) => inv.caseId === caseId);
+  },
+
+  async getInvoicesByClientId(clientId: string): Promise<Invoice[]> {
+    await delay(300);
+    return invoices.filter((inv) => inv.clientId === clientId);
+  },
+
+  async createInvoice(data: Omit<Invoice, 'id' | 'createdAt'>): Promise<Invoice> {
+    await delay(300);
+    const newInvoice: Invoice = {
+      ...data,
+      id: 'inv' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    invoices.push(newInvoice);
+    return newInvoice;
+  },
+
+  async updateInvoiceStatus(id: string, status: InvoiceStatus): Promise<Invoice | null> {
+    await delay(300);
+    const index = invoices.findIndex((inv) => inv.id === id);
+    if (index === -1) return null;
+    invoices[index] = { ...invoices[index], status };
+    return invoices[index];
+  },
+
+  async addPayment(invoiceId: string, data: Omit<Payment, 'id' | 'createdAt'>): Promise<Payment> {
+    await delay(300);
+    const newPayment: Payment = {
+      ...data,
+      id: 'pay' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    const index = invoices.findIndex((inv) => inv.id === invoiceId);
+    if (index !== -1) {
+      invoices[index].payments.push(newPayment);
+      invoices[index].paidAmount += newPayment.amount;
+      if (invoices[index].paidAmount >= invoices[index].total) {
+        invoices[index].status = 'paid';
+      } else if (invoices[index].paidAmount > 0) {
+        invoices[index].status = 'partially-paid';
+      }
+    }
+    return newPayment;
+  },
+
+  async getOutstandingByClient(): Promise<Array<{ clientId: string; clientName: string; totalOutstanding: number; invoiceCount: number }>> {
+    await delay(300);
+    const map = new Map<string, { clientId: string; clientName: string; totalOutstanding: number; invoiceCount: number }>();
+    for (const inv of invoices) {
+      if (inv.status === 'paid' || inv.status === 'draft') continue;
+      const outstanding = inv.total - inv.paidAmount;
+      if (outstanding <= 0) continue;
+      const existing = map.get(inv.clientId);
+      if (existing) {
+        existing.totalOutstanding += outstanding;
+        existing.invoiceCount += 1;
+      } else {
+        map.set(inv.clientId, {
+          clientId: inv.clientId,
+          clientName: inv.clientName,
+          totalOutstanding: outstanding,
+          invoiceCount: 1,
+        });
+      }
+    }
+    return Array.from(map.values());
+  },
+
+  async getOutstandingByCase(): Promise<Array<{ caseId: string; caseName: string; caseNumber: string; clientName: string; totalOutstanding: number; invoiceCount: number }>> {
+    await delay(300);
+    const map = new Map<string, { caseId: string; caseName: string; caseNumber: string; clientName: string; totalOutstanding: number; invoiceCount: number }>();
+    for (const inv of invoices) {
+      if (inv.status === 'paid' || inv.status === 'draft') continue;
+      const outstanding = inv.total - inv.paidAmount;
+      if (outstanding <= 0) continue;
+      const caseData = cases.find((c) => c.id === inv.caseId);
+      const caseNumber = caseData?.caseNumber ?? '';
+      const existing = map.get(inv.caseId);
+      if (existing) {
+        existing.totalOutstanding += outstanding;
+        existing.invoiceCount += 1;
+      } else {
+        map.set(inv.caseId, {
+          caseId: inv.caseId,
+          caseName: inv.caseName,
+          caseNumber,
+          clientName: inv.clientName,
+          totalOutstanding: outstanding,
+          invoiceCount: 1,
+        });
+      }
+    }
+    return Array.from(map.values());
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
@@ -652,4 +769,5 @@ export const mockServices: ServiceRegistry = {
   communications: mockCommunicationService,
   clientDocuments: mockClientDocumentService,
   search: mockSearchService,
+  billing: mockBillingService,
 };

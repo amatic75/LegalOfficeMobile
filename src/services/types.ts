@@ -585,6 +585,76 @@ export interface ISearchService {
   clearHistory(): Promise<void>;
 }
 
+// Phase 8: Billing and Invoicing
+
+export type BillingMode = 'tariff' | 'hourly' | 'flat-fee';
+
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'partially-paid';
+
+export const INVOICE_STATUS_COLORS: Record<InvoiceStatus, { bg: string; text: string }> = {
+  draft: { bg: '#ECEFF1', text: '#546E7A' },
+  sent: { bg: '#E3F2FD', text: '#1565C0' },
+  paid: { bg: '#E8F5E9', text: '#2E7D32' },
+  overdue: { bg: '#FFEBEE', text: '#C62828' },
+  'partially-paid': { bg: '#FFF3E0', text: '#E65100' },
+};
+
+export interface InvoiceLineItem {
+  id: string;
+  type: 'time-entry' | 'expense';
+  referenceId: string;
+  description: string;
+  quantity?: number;
+  unitPrice?: number;
+  amount: number;
+}
+
+export interface Payment {
+  id: string;
+  invoiceId: string;
+  amount: number;
+  date: string;
+  method: 'cash' | 'bank-transfer' | 'card';
+  note?: string;
+  createdAt: string;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  caseId: string;
+  caseName: string;
+  clientId: string;
+  clientName: string;
+  billingMode: BillingMode;
+  status: InvoiceStatus;
+  lineItems: InvoiceLineItem[];
+  subtotal: number;
+  tax: number;
+  total: number;
+  paidAmount: number;
+  payments: Payment[];
+  hourlyRate?: number;
+  flatFeeAmount?: number;
+  tariffAmount?: number;
+  notes?: string;
+  issuedDate: string;
+  dueDate: string;
+  createdAt: string;
+}
+
+export interface IBillingService {
+  getInvoices(): Promise<Invoice[]>;
+  getInvoiceById(id: string): Promise<Invoice | null>;
+  getInvoicesByCaseId(caseId: string): Promise<Invoice[]>;
+  getInvoicesByClientId(clientId: string): Promise<Invoice[]>;
+  createInvoice(data: Omit<Invoice, 'id' | 'createdAt'>): Promise<Invoice>;
+  updateInvoiceStatus(id: string, status: InvoiceStatus): Promise<Invoice | null>;
+  addPayment(invoiceId: string, data: Omit<Payment, 'id' | 'createdAt'>): Promise<Payment>;
+  getOutstandingByClient(): Promise<Array<{ clientId: string; clientName: string; totalOutstanding: number; invoiceCount: number }>>;
+  getOutstandingByCase(): Promise<Array<{ caseId: string; caseName: string; caseNumber: string; clientName: string; totalOutstanding: number; invoiceCount: number }>>;
+}
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
@@ -600,4 +670,5 @@ export interface ServiceRegistry {
   communications: ICommunicationService;
   clientDocuments: IClientDocumentService;
   search: ISearchService;
+  billing: IBillingService;
 }

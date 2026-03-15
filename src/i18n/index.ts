@@ -11,6 +11,7 @@ import srLatnCalendar from './locales/sr-Latn/calendar.json';
 import srLatnHome from './locales/sr-Latn/home.json';
 import srLatnSearch from './locales/sr-Latn/search.json';
 import srLatnNotifications from './locales/sr-Latn/notifications.json';
+import srLatnBilling from './locales/sr-Latn/billing.json';
 
 import srCyrlCommon from './locales/sr-Cyrl/common.json';
 import srCyrlNavigation from './locales/sr-Cyrl/navigation.json';
@@ -22,6 +23,7 @@ import srCyrlCalendar from './locales/sr-Cyrl/calendar.json';
 import srCyrlHome from './locales/sr-Cyrl/home.json';
 import srCyrlSearch from './locales/sr-Cyrl/search.json';
 import srCyrlNotifications from './locales/sr-Cyrl/notifications.json';
+import srCyrlBilling from './locales/sr-Cyrl/billing.json';
 
 import enCommon from './locales/en/common.json';
 import enNavigation from './locales/en/navigation.json';
@@ -33,6 +35,7 @@ import enCalendar from './locales/en/calendar.json';
 import enHome from './locales/en/home.json';
 import enSearch from './locales/en/search.json';
 import enNotifications from './locales/en/notifications.json';
+import enBilling from './locales/en/billing.json';
 
 export type Locale = 'sr-Latn' | 'sr-Cyrl' | 'en';
 
@@ -54,6 +57,7 @@ const resources = {
     home: srLatnHome,
     search: srLatnSearch,
     notifications: srLatnNotifications,
+    billing: srLatnBilling,
   },
   'sr-Cyrl': {
     common: srCyrlCommon,
@@ -66,6 +70,7 @@ const resources = {
     home: srCyrlHome,
     search: srCyrlSearch,
     notifications: srCyrlNotifications,
+    billing: srCyrlBilling,
   },
   en: {
     common: enCommon,
@@ -78,6 +83,7 @@ const resources = {
     home: enHome,
     search: enSearch,
     notifications: enNotifications,
+    billing: enBilling,
   },
 };
 
@@ -85,7 +91,7 @@ i18n.use(initReactI18next).init({
   resources,
   lng: 'sr-Latn',
   fallbackLng: 'sr-Latn',
-  ns: ['common', 'navigation', 'settings', 'clients', 'cases', 'documents', 'calendar', 'home', 'search', 'notifications'],
+  ns: ['common', 'navigation', 'settings', 'clients', 'cases', 'documents', 'calendar', 'home', 'search', 'notifications', 'billing'],
   defaultNS: 'common',
   interpolation: {
     escapeValue: false,

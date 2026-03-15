@@ -1,0 +1,78 @@
+{
+  "title": "Фактурисање",
+  "list": {
+    "title": "Фактуре",
+    "searchPlaceholder": "Претражи фактуре...",
+    "emptyState": "Нема фактура",
+    "noResults": "Нема фактура за изабрани филтер"
+  },
+  "filter": {
+    "allStatuses": "Сви статуси"
+  },
+  "status": {
+    "draft": "Нацрт",
+    "sent": "Послата",
+    "paid": "Плаћена",
+    "overdue": "Доспела",
+    "partially-paid": "Делимично плаћена"
+  },
+  "mode": {
+    "tariff": "Тарифни обрачун",
+    "hourly": "Часовни обрачун",
+    "flat-fee": "Паушални износ"
+  },
+  "detail": {
+    "invoiceNumber": "Број фактуре",
+    "case": "Предмет",
+    "client": "Клијент",
+    "billingMode": "Начин обрачуна",
+    "status": "Статус",
+    "issuedDate": "Датум издавања",
+    "dueDate": "Рок плаћања",
+    "lineItems": "Ставке",
+    "subtotal": "Међузбир",
+    "tax": "ПДВ (20%)",
+    "total": "Укупно",
+    "paidAmount": "Уплаћени износ",
+    "remainingBalance": "Преостали салдо",
+    "payments": "Уплате",
+    "noPayments": "Нема евидентираних уплата",
+    "notes": "Напомене"
+  },
+  "create": {
+    "title": "Нова фактура",
+    "selectCase": "Изаберите предмет",
+    "selectMode": "Изаберите начин обрачуна",
+    "hourlyRate": "Часовна тарифа (РСД)",
+    "flatFeeAmount": "Паушални износ (РСД)",
+    "tariffAmount": "Тарифни износ (РСД)",
+    "notes": "Напомене",
+    "generate": "Креирај фактуру",
+    "lineItemsPreview": "Преглед ставки",
+    "noTimeEntries": "Нема наплативих временских уноса за овај предмет",
+    "noExpenses": "Нема трошкова за овај предмет",
+    "calculatedTotal": "Израчунати укупан износ"
+  },
+  "payment": {
+    "record": "Евидентирај уплату",
+    "amount": "Износ",
+    "method": "Начин плаћања",
+    "cash": "Готовина",
+    "bankTransfer": "Банкарски пренос",
+    "card": "Картица",
+    "note": "Напомена",
+    "save": "Сачувај уплату"
+  },
+  "balance": {
+    "title": "Дуговања",
+    "byClient": "По клијенту",
+    "byCase": "По предмету",
+    "outstanding": "Дуговање",
+    "invoices": "фактура",
+    "noOutstanding": "Нема дуговања"
+  },
+  "actions": {
+    "markSent": "Означи као послату",
+    "markOverdue": "Означи као доспелу"
+  }
+}
