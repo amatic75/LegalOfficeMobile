@@ -61,7 +61,8 @@
     "bankTransfer": "Bankarski prenos",
     "card": "Kartica",
     "note": "Napomena",
-    "save": "Sacuvaj uplatu"
+    "save": "Sacuvaj uplatu",
+    "cancel": "Otkazi"
   },
   "balance": {
     "title": "Dugovanja",

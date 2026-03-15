@@ -61,7 +61,8 @@
     "bankTransfer": "Bank transfer",
     "card": "Card",
     "note": "Note",
-    "save": "Save payment"
+    "save": "Save payment",
+    "cancel": "Cancel"
   },
   "balance": {
     "title": "Outstanding Balance",
