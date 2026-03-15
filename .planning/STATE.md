@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.1 Phase 9 in progress — Reporting and Analytics
+**Current focus:** v1.1 Phase 9 COMPLETE — All Enhanced Features delivered
 
 ## Current Position
 
 Milestone: v1.1 Enhanced Features
 Phase: 9 of 9 (Reporting and Analytics)
-Plan: 1/2 complete
-Status: Plan 09-01 complete, Plan 09-02 next
-Last activity: 2026-03-15 — Completed 09-01 (reports hub + financial dashboard)
+Plan: 2/2 complete
+Status: Phase 9 COMPLETE -- all v1.1 phases done
+Last activity: 2026-03-15 — Completed 09-02 (case management + performance dashboards)
 
-Progress: [█████████░] 90%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 9min
-- Total execution time: 2h 50min
+- Total execution time: 2h 53min
 
 **By Phase:**
 
@@ -36,10 +36,10 @@ Progress: [█████████░] 90%
 | 06-enhanced-documents-clients-calendar-and-mobile | 2 | 30min | 15min |
 | 07-advanced-search-and-notifications | 2 | 22min | 11min |
 | 08-billing-and-invoicing | 2 | 12min | 6min |
-| 09-reporting-and-analytics | 1 | 6min | 6min |
+| 09-reporting-and-analytics | 2 | 9min | 4.5min |
 
 **Recent Trend:**
-- Last 5 plans: 07-01 (16min), 07-02 (6min), 08-01 (8min), 08-02 (4min), 09-01 (6min)
+- Last 5 plans: 07-02 (6min), 08-01 (8min), 08-02 (4min), 09-01 (6min), 09-02 (3min)
 - Trend: accelerating
 
 *Updated after each plan completion*
@@ -88,6 +88,10 @@ Recent decisions affecting current work:
 - [09-01]: Chart values in thousands with 'k' suffix for mobile readability
 - [09-01]: Pie chart colors: navy=tariff, golden=hourly, green=flat-fee (app color system)
 - [09-01]: formatRSD defined inline per screen (same pattern as billing screens)
+- [09-02]: Pie chart uses absolute count labels (not percentages) for status breakdown clarity
+- [09-02]: Horizontal progress bar for closure rate (reliable cross-platform vs circular arc)
+- [09-02]: Deadline dates DD.MM.YYYY (Serbian format) with red dot indicators
+- [09-02]: Lawyer names truncated to first name (max 8 chars) for bar chart readability
 
 ### Pending Todos
 
@@ -102,5 +106,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-15
-Stopped at: Completed 09-01-PLAN.md
+Stopped at: Completed 09-02-PLAN.md -- ALL v1.1 phases complete
 Resume file: None
