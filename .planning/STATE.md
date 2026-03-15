@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.1 Phase 8 in progress — Billing and Invoicing
+**Current focus:** v1.1 Phase 8 complete — Billing and Invoicing done, Phase 9 next
 
 ## Current Position
 
 Milestone: v1.1 Enhanced Features
 Phase: 8 of 9 (Billing and Invoicing)
-Plan: 1/2 complete
-Status: Plan 08-01 complete, Plan 08-02 next
-Last activity: 2026-03-15 — Plan 08-01 executed
+Plan: 2/2 complete
+Status: Phase 08 complete, Phase 09 next
+Last activity: 2026-03-15 — Plan 08-02 executed
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 10min
-- Total execution time: 2h 40min
+- Total execution time: 2h 44min
 
 **By Phase:**
 
@@ -35,11 +35,11 @@ Progress: [███████░░░] 70%
 | 05-enhanced-case-management-and-voice-notes | 2 | 18min | 9min |
 | 06-enhanced-documents-clients-calendar-and-mobile | 2 | 30min | 15min |
 | 07-advanced-search-and-notifications | 2 | 22min | 11min |
-| 08-billing-and-invoicing | 1 | 8min | 8min |
+| 08-billing-and-invoicing | 2 | 12min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 06-01 (14min), 06-02 (16min), 07-01 (16min), 07-02 (6min), 08-01 (8min)
-- Trend: stable
+- Last 5 plans: 06-02 (16min), 07-01 (16min), 07-02 (6min), 08-01 (8min), 08-02 (4min)
+- Trend: accelerating
 
 *Updated after each plan completion*
 
@@ -81,6 +81,9 @@ Recent decisions affecting current work:
 - [08-01]: formatRSD helper for Serbian number formatting (dot thousands, comma decimal) across billing screens
 - [08-01]: Payment recording deferred to Plan 02, placeholder Alert on detail screen
 - [08-01]: Invoice number format INV-YYYY-NNN generated on creation
+- [08-02]: Payment method badges use distinct colors (cash=green, bank-transfer=blue, card=purple)
+- [08-02]: Balances screen loads both client and case data upfront via Promise.all for instant tab switching
+- [08-02]: Invoice list shows total outstanding in golden-bordered card for quick balances access
 
 ### Pending Todos
 
@@ -95,5 +98,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-15
-Stopped at: Completed 08-01-PLAN.md
+Stopped at: Completed 08-02-PLAN.md
 Resume file: None
