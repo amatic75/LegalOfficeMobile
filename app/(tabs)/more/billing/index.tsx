@@ -40,14 +40,20 @@ export default function InvoiceListScreen() {
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | "all">(
     "all"
   );
+  const [totalOutstanding, setTotalOutstanding] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
       let active = true;
       setLoading(true);
-      services.billing.getInvoices().then((data) => {
+      Promise.all([
+        services.billing.getInvoices(),
+        services.billing.getOutstandingByClient(),
+      ]).then(([data, byClient]) => {
         if (active) {
           setInvoices(data);
+          const total = byClient.reduce((sum, c) => sum + c.totalOutstanding, 0);
+          setTotalOutstanding(total);
           setLoading(false);
         }
       });
@@ -199,6 +205,61 @@ export default function InvoiceListScreen() {
           );
         })}
       </ScrollView>
+
+      {/* Outstanding balances card */}
+      <Pressable
+        onPress={() => router.push("/(tabs)/more/billing/balances" as any)}
+        style={{
+          backgroundColor: "#FFFFFF",
+          borderRadius: 12,
+          padding: 14,
+          marginHorizontal: 16,
+          marginBottom: 8,
+          borderWidth: 1,
+          borderColor: "#FFF3E0",
+          borderLeftWidth: 4,
+          borderLeftColor: colors.golden.DEFAULT,
+          flexDirection: "row",
+          alignItems: "center",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.05,
+          shadowRadius: 2,
+          elevation: 1,
+        }}
+      >
+        <Ionicons
+          name="wallet-outline"
+          size={24}
+          color={colors.golden.DEFAULT}
+        />
+        <View style={{ flex: 1, marginLeft: 12 }}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: "600",
+              color: colors.navy.DEFAULT,
+            }}
+          >
+            {t("balance.title")}
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "700",
+              color: totalOutstanding > 0 ? "#C62828" : "#2E7D32",
+              marginTop: 2,
+            }}
+          >
+            {formatRSD(totalOutstanding)}
+          </Text>
+        </View>
+        <Ionicons
+          name="chevron-forward"
+          size={20}
+          color="#8899AA"
+        />
+      </Pressable>
 
       {/* Invoice list */}
       <FlatList
