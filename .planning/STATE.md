@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.1 Phase 8 complete — Phase 9 next
+**Current focus:** v1.1 Phase 9 in progress — Reporting and Analytics
 
 ## Current Position
 
 Milestone: v1.1 Enhanced Features
-Phase: 8 of 9 (Billing and Invoicing) — VERIFIED ✓
-Plan: 2/2 complete, verified 8/8 must-haves
-Status: Phase 8 complete, Phase 9 ready to plan
-Last activity: 2026-03-15 — Phase 8 verified and complete
+Phase: 9 of 9 (Reporting and Analytics)
+Plan: 1/2 complete
+Status: Plan 09-01 complete, Plan 09-02 next
+Last activity: 2026-03-15 — Completed 09-01 (reports hub + financial dashboard)
 
-Progress: [████████░░] 80%
+Progress: [█████████░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
-- Average duration: 10min
-- Total execution time: 2h 44min
+- Total plans completed: 18
+- Average duration: 9min
+- Total execution time: 2h 50min
 
 **By Phase:**
 
@@ -36,9 +36,10 @@ Progress: [████████░░] 80%
 | 06-enhanced-documents-clients-calendar-and-mobile | 2 | 30min | 15min |
 | 07-advanced-search-and-notifications | 2 | 22min | 11min |
 | 08-billing-and-invoicing | 2 | 12min | 6min |
+| 09-reporting-and-analytics | 1 | 6min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 06-02 (16min), 07-01 (16min), 07-02 (6min), 08-01 (8min), 08-02 (4min)
+- Last 5 plans: 07-01 (16min), 07-02 (6min), 08-01 (8min), 08-02 (4min), 09-01 (6min)
 - Trend: accelerating
 
 *Updated after each plan completion*
@@ -84,6 +85,9 @@ Recent decisions affecting current work:
 - [08-02]: Payment method badges use distinct colors (cash=green, bank-transfer=blue, card=purple)
 - [08-02]: Balances screen loads both client and case data upfront via Promise.all for instant tab switching
 - [08-02]: Invoice list shows total outstanding in golden-bordered card for quick balances access
+- [09-01]: Chart values in thousands with 'k' suffix for mobile readability
+- [09-01]: Pie chart colors: navy=tariff, golden=hourly, green=flat-fee (app color system)
+- [09-01]: formatRSD defined inline per screen (same pattern as billing screens)
 
 ### Pending Todos
 
@@ -98,5 +102,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-15
-Stopped at: Phase 8 verified complete
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None
