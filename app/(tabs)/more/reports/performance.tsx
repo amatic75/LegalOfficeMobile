@@ -79,7 +79,7 @@ export default function PerformanceDashboard() {
     );
   }
 
-  const closurePercent = Math.round(metrics.closureRate * 100);
+  const closurePercent = Math.round(metrics.closureRate);
 
   const lawyerLabels = metrics.casesByLawyer.map((l) => {
     const firstName = l.lawyerName.split(" ")[0];
