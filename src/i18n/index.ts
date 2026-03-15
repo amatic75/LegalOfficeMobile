@@ -12,6 +12,7 @@ import srLatnHome from './locales/sr-Latn/home.json';
 import srLatnSearch from './locales/sr-Latn/search.json';
 import srLatnNotifications from './locales/sr-Latn/notifications.json';
 import srLatnBilling from './locales/sr-Latn/billing.json';
+import srLatnReports from './locales/sr-Latn/reports.json';
 
 import srCyrlCommon from './locales/sr-Cyrl/common.json';
 import srCyrlNavigation from './locales/sr-Cyrl/navigation.json';
@@ -24,6 +25,7 @@ import srCyrlHome from './locales/sr-Cyrl/home.json';
 import srCyrlSearch from './locales/sr-Cyrl/search.json';
 import srCyrlNotifications from './locales/sr-Cyrl/notifications.json';
 import srCyrlBilling from './locales/sr-Cyrl/billing.json';
+import srCyrlReports from './locales/sr-Cyrl/reports.json';
 
 import enCommon from './locales/en/common.json';
 import enNavigation from './locales/en/navigation.json';
@@ -36,6 +38,7 @@ import enHome from './locales/en/home.json';
 import enSearch from './locales/en/search.json';
 import enNotifications from './locales/en/notifications.json';
 import enBilling from './locales/en/billing.json';
+import enReports from './locales/en/reports.json';
 
 export type Locale = 'sr-Latn' | 'sr-Cyrl' | 'en';
 
@@ -58,6 +61,7 @@ const resources = {
     search: srLatnSearch,
     notifications: srLatnNotifications,
     billing: srLatnBilling,
+    reports: srLatnReports,
   },
   'sr-Cyrl': {
     common: srCyrlCommon,
@@ -71,6 +75,7 @@ const resources = {
     search: srCyrlSearch,
     notifications: srCyrlNotifications,
     billing: srCyrlBilling,
+    reports: srCyrlReports,
   },
   en: {
     common: enCommon,
@@ -84,6 +89,7 @@ const resources = {
     search: enSearch,
     notifications: enNotifications,
     billing: enBilling,
+    reports: enReports,
   },
 };
 
@@ -91,7 +97,7 @@ i18n.use(initReactI18next).init({
   resources,
   lng: 'sr-Latn',
   fallbackLng: 'sr-Latn',
-  ns: ['common', 'navigation', 'settings', 'clients', 'cases', 'documents', 'calendar', 'home', 'search', 'notifications', 'billing'],
+  ns: ['common', 'navigation', 'settings', 'clients', 'cases', 'documents', 'calendar', 'home', 'search', 'notifications', 'billing', 'reports'],
   defaultNS: 'common',
   interpolation: {
     escapeValue: false,

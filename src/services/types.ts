@@ -655,6 +655,73 @@ export interface IBillingService {
   getOutstandingByCase(): Promise<Array<{ caseId: string; caseName: string; caseNumber: string; clientName: string; totalOutstanding: number; invoiceCount: number }>>;
 }
 
+// Phase 9: Reporting and Analytics
+
+export interface FinancialSummary {
+  totalRevenue: number;
+  totalCollected: number;
+  totalOutstanding: number;
+  invoiceCount: number;
+  overdueCount: number;
+}
+
+export interface MonthlyRevenue {
+  month: string;
+  label: string;
+  revenue: number;
+}
+
+export interface RevenueByMode {
+  mode: BillingMode;
+  total: number;
+  count: number;
+}
+
+export interface TopClient {
+  clientId: string;
+  clientName: string;
+  totalBilled: number;
+  invoiceCount: number;
+}
+
+export interface CaseStatusBreakdown {
+  status: CaseStatus;
+  count: number;
+}
+
+export interface CaseTypeBreakdown {
+  caseType: CaseType;
+  count: number;
+}
+
+export interface UpcomingDeadline {
+  eventId: string;
+  title: string;
+  date: string;
+  caseId?: string;
+  caseName?: string;
+}
+
+export interface PerformanceMetrics {
+  totalCases: number;
+  activeCases: number;
+  closedCases: number;
+  closureRate: number;
+  averageCaseDuration: number;
+  casesByLawyer: Array<{ lawyerId: string; lawyerName: string; caseCount: number }>;
+}
+
+export interface IReportService {
+  getFinancialSummary(): Promise<FinancialSummary>;
+  getMonthlyRevenue(months?: number): Promise<MonthlyRevenue[]>;
+  getRevenueByMode(): Promise<RevenueByMode[]>;
+  getTopClients(limit?: number): Promise<TopClient[]>;
+  getCaseStatusBreakdown(): Promise<CaseStatusBreakdown[]>;
+  getCaseTypeBreakdown(): Promise<CaseTypeBreakdown[]>;
+  getUpcomingDeadlines(days?: number): Promise<UpcomingDeadline[]>;
+  getPerformanceMetrics(): Promise<PerformanceMetrics>;
+}
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
@@ -671,4 +738,5 @@ export interface ServiceRegistry {
   clientDocuments: IClientDocumentService;
   search: ISearchService;
   billing: IBillingService;
+  reports: IReportService;
 }

@@ -22,9 +22,9 @@
 **Milestone Goal:** Deepen existing v1.0 screens with case notes, time/expense tracking, document folders, advanced search, notification preferences, client intake, calendar enhancements, billing, voice notes, and reporting dashboards.
 
 - [x] **Phase 5: Enhanced Case Management and Voice Notes** (2/2 plans) — completed 2026-03-14
-- [ ] **Phase 6: Enhanced Documents, Clients, Calendar, and Mobile** - Document folders and metadata, client intake workflow, calendar conflict detection, mobile scanning and quick actions
-- [ ] **Phase 7: Advanced Search and Notifications** - Saved searches, quick filters, search history, notification preferences, snooze, and escalation
-- [ ] **Phase 8: Billing and Invoicing** - Invoice generation, payment recording, fee calculator, outstanding balances
+- [x] **Phase 6: Enhanced Documents, Clients, Calendar, and Mobile** (2/2 plans) — completed 2026-03-14
+- [x] **Phase 7: Advanced Search and Notifications** (2/2 plans) — completed 2026-03-14
+- [x] **Phase 8: Billing and Invoicing** (2/2 plans) — completed 2026-03-15
 - [ ] **Phase 9: Reporting and Analytics** - Financial overview, case management, performance dashboards, visual charts
 
 ## Phase Details
@@ -58,8 +58,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Types, mock data, i18n, document folders, metadata, version history
-- [ ] 06-02-PLAN.md — Client intake workflow, communication history, client docs, calendar enhancements, mobile quick actions
+- [x] 06-01-PLAN.md — Types, mock data, i18n, document folders, metadata, version history, scanning confirmation
+- [x] 06-02-PLAN.md — Client intake workflow, communication history, client docs, calendar enhancements, mobile quick actions
 
 ### Phase 7: Advanced Search and Notifications
 **Goal**: Lawyers can find anything instantly through saved searches and smart filters, and stay on top of deadlines with configurable, actionable notifications
@@ -71,11 +71,11 @@ Plans:
   3. User can view and re-execute recent search history
   4. User can configure notification preferences (quiet hours, per-event type), snooze notifications, and take quick actions (mark complete, reschedule) from the notification screen
   5. User can see escalation urgency indicators on deadline notifications and browse full notification history with read/unread state
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 07-01: TBD
-- [ ] 07-02: TBD
+- [x] 07-01-PLAN.md — Advanced search with saved searches, quick filters, history, and multi-dimensional filtering
+- [x] 07-02-PLAN.md — Enhanced notifications with preferences, snooze, quick actions, escalation, and history browsing
 
 ### Phase 8: Billing and Invoicing
 **Goal**: Lawyers can generate invoices from tracked time and expenses, record payments, and monitor outstanding balances
@@ -86,10 +86,11 @@ Plans:
   2. User can record payments against invoices and see the remaining balance update
   3. User can view outstanding balances aggregated per client and per case
   4. User can calculate fees using different billing modes (tariff-based, hourly rate, flat fee)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 08-01: TBD
+- [x] 08-01-PLAN.md — Billing types, mock data, i18n, invoice list, creation with fee calculator, and detail screens
+- [x] 08-02-PLAN.md — Payment recording modal on invoice detail and outstanding balances screen
 
 ### Phase 9: Reporting and Analytics
 **Goal**: Lawyers can view visual dashboards summarizing their financial performance, case workload, and productivity metrics
@@ -117,7 +118,7 @@ Phases execute in numeric order: 5 > 6 > 7 > 8 > 9
 | 3. Documents and Calendar | v1.0 | 2/2 | Complete | 2026-03-12 |
 | 4. Dashboard, Search, and Notifications | v1.0 | 2/2 | Complete | 2026-03-12 |
 | 5. Enhanced Case Management and Voice Notes | v1.1 | 2/2 | Complete | 2026-03-14 |
-| 6. Enhanced Documents, Clients, Calendar, and Mobile | v1.1 | 0/2 | Not started | - |
-| 7. Advanced Search and Notifications | v1.1 | 0/2 | Not started | - |
-| 8. Billing and Invoicing | v1.1 | 0/1 | Not started | - |
+| 6. Enhanced Documents, Clients, Calendar, and Mobile | v1.1 | 2/2 | Complete | 2026-03-14 |
+| 7. Advanced Search and Notifications | v1.1 | 2/2 | Complete | 2026-03-14 |
+| 8. Billing and Invoicing | v1.1 | 2/2 | Complete | 2026-03-15 |
 | 9. Reporting and Analytics | v1.1 | 0/1 | Not started | - |

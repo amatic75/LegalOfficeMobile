@@ -1,0 +1,47 @@
+{
+  "title": "Izvestaji",
+  "hub": {
+    "title": "Izvestaji i analitika",
+    "financial": "Finansijski pregled",
+    "financialDesc": "Prihod, fakture, klijenti",
+    "caseManagement": "Upravljanje predmetima",
+    "caseManagementDesc": "Aktivni predmeti, status, rokovi",
+    "performance": "Performanse",
+    "performanceDesc": "Stopa zatvaranja, raspodela opterecenja"
+  },
+  "financial": {
+    "title": "Finansijski pregled",
+    "totalRevenue": "Ukupan prihod",
+    "totalCollected": "Naplaceno",
+    "totalOutstanding": "Neplaceno",
+    "overdueInvoices": "Dospele fakture",
+    "monthlyRevenue": "Mesecni prihod",
+    "revenueByMode": "Prihod po nacinu obracuna",
+    "topClients": "Najvazniji klijenti",
+    "invoices": "faktura",
+    "noData": "Nema finansijskih podataka"
+  },
+  "billingMode": {
+    "tariff": "Tarifa",
+    "hourly": "Po satu",
+    "flat-fee": "Pausalno"
+  },
+  "cases": {
+    "title": "Upravljanje predmetima",
+    "activeCases": "Aktivni predmeti",
+    "totalCases": "Ukupno predmeta",
+    "statusBreakdown": "Raspodela po statusu",
+    "typeBreakdown": "Raspodela po vrsti predmeta",
+    "upcomingDeadlines": "Predstojeci rokovi",
+    "noDeadlines": "Nema predstojecih rokova"
+  },
+  "performance": {
+    "title": "Performanse",
+    "closureRate": "Stopa zatvaranja predmeta",
+    "closedCases": "Zatvoreni predmeti",
+    "avgDuration": "Prosecno trajanje predmeta",
+    "days": "dana",
+    "workload": "Raspodela opterecenja",
+    "cases": "predmeta"
+  }
+}

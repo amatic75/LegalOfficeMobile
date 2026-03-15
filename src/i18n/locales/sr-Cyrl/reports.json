@@ -1,0 +1,47 @@
+{
+  "title": "Извештаји",
+  "hub": {
+    "title": "Извештаји и аналитика",
+    "financial": "Финансијски преглед",
+    "financialDesc": "Приход, фактуре, клијенти",
+    "caseManagement": "Управљање предметима",
+    "caseManagementDesc": "Активни предмети, статус, рокови",
+    "performance": "Перформансе",
+    "performanceDesc": "Стопа затварања, расподела оптерећења"
+  },
+  "financial": {
+    "title": "Финансијски преглед",
+    "totalRevenue": "Укупан приход",
+    "totalCollected": "Наплаћено",
+    "totalOutstanding": "Неплаћено",
+    "overdueInvoices": "Доспеле фактуре",
+    "monthlyRevenue": "Месечни приход",
+    "revenueByMode": "Приход по начину обрачуна",
+    "topClients": "Најважнији клијенти",
+    "invoices": "фактура",
+    "noData": "Нема финансијских података"
+  },
+  "billingMode": {
+    "tariff": "Тарифа",
+    "hourly": "По сату",
+    "flat-fee": "Паушално"
+  },
+  "cases": {
+    "title": "Управљање предметима",
+    "activeCases": "Активни предмети",
+    "totalCases": "Укупно предмета",
+    "statusBreakdown": "Расподела по статусу",
+    "typeBreakdown": "Расподела по врсти предмета",
+    "upcomingDeadlines": "Предстојећи рокови",
+    "noDeadlines": "Нема предстојећих рокова"
+  },
+  "performance": {
+    "title": "Перформансе",
+    "closureRate": "Стопа затварања предмета",
+    "closedCases": "Затворени предмети",
+    "avgDuration": "Просечно трајање предмета",
+    "days": "дана",
+    "workload": "Расподела оптерећења",
+    "cases": "предмета"
+  }
+}

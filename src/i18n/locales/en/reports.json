@@ -1,0 +1,47 @@
+{
+  "title": "Reports",
+  "hub": {
+    "title": "Reports & Analytics",
+    "financial": "Financial Overview",
+    "financialDesc": "Revenue, invoices, top clients",
+    "caseManagement": "Case Management",
+    "caseManagementDesc": "Active cases, status, deadlines",
+    "performance": "Performance",
+    "performanceDesc": "Closure rate, workload distribution"
+  },
+  "financial": {
+    "title": "Financial Overview",
+    "totalRevenue": "Total Revenue",
+    "totalCollected": "Collected",
+    "totalOutstanding": "Outstanding",
+    "overdueInvoices": "Overdue Invoices",
+    "monthlyRevenue": "Monthly Revenue",
+    "revenueByMode": "Revenue by Billing Mode",
+    "topClients": "Top Clients",
+    "invoices": "invoices",
+    "noData": "No financial data yet"
+  },
+  "billingMode": {
+    "tariff": "Tariff",
+    "hourly": "Hourly",
+    "flat-fee": "Flat Fee"
+  },
+  "cases": {
+    "title": "Case Management",
+    "activeCases": "Active Cases",
+    "totalCases": "Total Cases",
+    "statusBreakdown": "Status Breakdown",
+    "typeBreakdown": "Case Type Distribution",
+    "upcomingDeadlines": "Upcoming Deadlines",
+    "noDeadlines": "No upcoming deadlines"
+  },
+  "performance": {
+    "title": "Performance",
+    "closureRate": "Case Closure Rate",
+    "closedCases": "Closed Cases",
+    "avgDuration": "Avg. Case Duration",
+    "days": "days",
+    "workload": "Workload Distribution",
+    "cases": "cases"
+  }
+}

@@ -15,10 +15,13 @@ import type {
   IClientDocumentService,
   ISearchService,
   IBillingService,
+  IReportService,
   User,
   Client,
   CaseSummary,
   CaseStatus,
+  CaseType,
+  BillingMode,
   Court,
   Document,
   DocumentFolder,
@@ -39,6 +42,14 @@ import type {
   Invoice,
   InvoiceStatus,
   Payment,
+  FinancialSummary,
+  MonthlyRevenue,
+  RevenueByMode,
+  TopClient,
+  CaseStatusBreakdown,
+  CaseTypeBreakdown,
+  UpcomingDeadline,
+  PerformanceMetrics,
 } from '../types';
 import { DOCUMENT_FOLDER_CATEGORIES, FOLDER_ICONS } from '../types';
 import { delay } from '../../utils/delay';
@@ -754,6 +765,194 @@ const mockBillingService: IBillingService = {
   },
 };
 
+const mockReportService: IReportService = {
+  async getFinancialSummary(): Promise<FinancialSummary> {
+    await delay(300);
+    let totalRevenue = 0;
+    let totalCollected = 0;
+    let totalOutstanding = 0;
+    let invoiceCount = 0;
+    let overdueCount = 0;
+
+    for (const inv of invoices) {
+      totalRevenue += inv.total;
+      totalCollected += inv.paidAmount;
+      if (inv.status !== 'draft') {
+        totalOutstanding += inv.total - inv.paidAmount;
+      }
+      invoiceCount += 1;
+      if (inv.status === 'overdue') {
+        overdueCount += 1;
+      }
+    }
+
+    return { totalRevenue, totalCollected, totalOutstanding, invoiceCount, overdueCount };
+  },
+
+  async getMonthlyRevenue(months: number = 6): Promise<MonthlyRevenue[]> {
+    await delay(300);
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const now = new Date();
+    const result: MonthlyRevenue[] = [];
+
+    for (let i = months - 1; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = monthNames[d.getMonth()];
+      let revenue = 0;
+
+      for (const inv of invoices) {
+        const issuedMonth = inv.issuedDate.substring(0, 7);
+        if (issuedMonth === monthKey) {
+          revenue += inv.total;
+        }
+      }
+
+      result.push({ month: monthKey, label, revenue });
+    }
+
+    return result;
+  },
+
+  async getRevenueByMode(): Promise<RevenueByMode[]> {
+    await delay(300);
+    const map = new Map<BillingMode, { total: number; count: number }>();
+
+    for (const inv of invoices) {
+      const existing = map.get(inv.billingMode);
+      if (existing) {
+        existing.total += inv.total;
+        existing.count += 1;
+      } else {
+        map.set(inv.billingMode, { total: inv.total, count: 1 });
+      }
+    }
+
+    return Array.from(map.entries()).map(([mode, data]) => ({
+      mode,
+      total: data.total,
+      count: data.count,
+    }));
+  },
+
+  async getTopClients(limit: number = 5): Promise<TopClient[]> {
+    await delay(300);
+    const map = new Map<string, TopClient>();
+
+    for (const inv of invoices) {
+      const existing = map.get(inv.clientId);
+      if (existing) {
+        existing.totalBilled += inv.total;
+        existing.invoiceCount += 1;
+      } else {
+        map.set(inv.clientId, {
+          clientId: inv.clientId,
+          clientName: inv.clientName,
+          totalBilled: inv.total,
+          invoiceCount: 1,
+        });
+      }
+    }
+
+    return Array.from(map.values())
+      .sort((a, b) => b.totalBilled - a.totalBilled)
+      .slice(0, limit);
+  },
+
+  async getCaseStatusBreakdown(): Promise<CaseStatusBreakdown[]> {
+    await delay(300);
+    const map = new Map<CaseStatus, number>();
+
+    for (const c of cases) {
+      map.set(c.status, (map.get(c.status) ?? 0) + 1);
+    }
+
+    return Array.from(map.entries()).map(([status, count]) => ({ status, count }));
+  },
+
+  async getCaseTypeBreakdown(): Promise<CaseTypeBreakdown[]> {
+    await delay(300);
+    const map = new Map<CaseType, number>();
+
+    for (const c of cases) {
+      map.set(c.caseType, (map.get(c.caseType) ?? 0) + 1);
+    }
+
+    return Array.from(map.entries()).map(([caseType, count]) => ({ caseType, count }));
+  },
+
+  async getUpcomingDeadlines(days: number = 30): Promise<UpcomingDeadline[]> {
+    await delay(300);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endDate = new Date(today);
+    endDate.setDate(endDate.getDate() + days);
+
+    return calendarEvents
+      .filter((e) => {
+        if (e.type !== 'deadline') return false;
+        const eventDate = new Date(e.date);
+        return eventDate >= today && eventDate <= endDate;
+      })
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .map((e) => ({
+        eventId: e.id,
+        title: e.title,
+        date: e.date,
+        caseId: e.caseId,
+        caseName: e.caseName,
+      }));
+  },
+
+  async getPerformanceMetrics(): Promise<PerformanceMetrics> {
+    await delay(300);
+    const totalCases = cases.length;
+    const activeCases = cases.filter((c) => c.status === 'active').length;
+    const closedCases = cases.filter((c) => c.status === 'closed' || c.status === 'archived').length;
+    const closureRate = totalCases > 0 ? (closedCases / totalCases) * 100 : 0;
+
+    // Average case duration (days) for closed/archived cases
+    let totalDuration = 0;
+    let closedCount = 0;
+    for (const c of cases) {
+      if (c.status === 'closed' || c.status === 'archived') {
+        const created = new Date(c.createdAt);
+        const updated = c.updatedAt ? new Date(c.updatedAt) : new Date();
+        const durationDays = Math.ceil((updated.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
+        totalDuration += durationDays;
+        closedCount += 1;
+      }
+    }
+    const averageCaseDuration = closedCount > 0 ? Math.round(totalDuration / closedCount) : 0;
+
+    // Cases by lawyer
+    const lawyerMap = new Map<string, { lawyerId: string; lawyerName: string; caseCount: number }>();
+    for (const c of cases) {
+      if (c.lawyerId && c.lawyerName) {
+        const existing = lawyerMap.get(c.lawyerId);
+        if (existing) {
+          existing.caseCount += 1;
+        } else {
+          lawyerMap.set(c.lawyerId, {
+            lawyerId: c.lawyerId,
+            lawyerName: c.lawyerName,
+            caseCount: 1,
+          });
+        }
+      }
+    }
+
+    return {
+      totalCases,
+      activeCases,
+      closedCases,
+      closureRate,
+      averageCaseDuration,
+      casesByLawyer: Array.from(lawyerMap.values()),
+    };
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
@@ -770,4 +969,5 @@ export const mockServices: ServiceRegistry = {
   clientDocuments: mockClientDocumentService,
   search: mockSearchService,
   billing: mockBillingService,
+  reports: mockReportService,
 };
