@@ -2,45 +2,37 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-14)
+See: .planning/PROJECT.md (updated 2026-04-11)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.1 Phase 9 COMPLETE — All Enhanced Features delivered
+**Current focus:** v1.2 Client Depth & Directory — roadmap created, ready to plan phase 10
 
 ## Current Position
 
-Milestone: v1.1 Enhanced Features
-Phase: 9 of 9 (Reporting and Analytics)
-Plan: 2/2 complete
-Status: Phase 9 COMPLETE -- all v1.1 phases done
-Last activity: 2026-03-15 — Completed 09-02 (case management + performance dashboards)
+Milestone: v1.2 Client Depth & Directory
+Phase: 10 of 11 (Client Detail Depth)
+Plan: 1 of 2 complete
+Status: Executing phase 10
+Last activity: 2026-04-11 — completed 10-01 (aggregation services, doc upload, i18n)
 
-Progress: [██████████] 100%
+Progress: [#####░░░░░] 50%
 
 ## Performance Metrics
 
-**Velocity:**
-- Total plans completed: 19
-- Average duration: 9min
+**Lifetime velocity:**
+- Total plans completed: 19 (v1.0: 9, v1.1: 10)
 - Total execution time: 2h 53min
+- Average duration: 9min/plan
 
-**By Phase:**
+**By milestone:**
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 01-foundation | 3 | 40min | 13min |
-| 02-client-case | 2 | 18min | 9min |
-| 03-documents-calendar | 2 | 21min | 10min |
-| 04-dashboard-search-and-notifications | 2 | 11min | 5.5min |
-| 05-enhanced-case-management-and-voice-notes | 2 | 18min | 9min |
-| 06-enhanced-documents-clients-calendar-and-mobile | 2 | 30min | 15min |
-| 07-advanced-search-and-notifications | 2 | 22min | 11min |
-| 08-billing-and-invoicing | 2 | 12min | 6min |
-| 09-reporting-and-analytics | 2 | 9min | 4.5min |
+| Milestone | Plans | Total Time | Avg/Plan |
+|-----------|-------|------------|----------|
+| v1.0 MVP | 9 | 1h 22min | 9.1min |
+| v1.1 Enhanced Features | 10 | 1h 31min | 9.1min |
+| v1.2 Client Depth & Directory | 1/3 | 5min | 5min |
 
-**Recent Trend:**
-- Last 5 plans: 07-02 (6min), 08-01 (8min), 08-02 (4min), 09-01 (6min), 09-02 (3min)
-- Trend: accelerating
+Detailed phase-by-phase metrics archived in `.planning/milestones/v1.1-ROADMAP.md`.
 
 *Updated after each plan completion*
 
@@ -48,63 +40,45 @@ Progress: [██████████] 100%
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+Decisions are logged in PROJECT.md Key Decisions table and archived per-milestone in `.planning/milestones/v[X.Y]-ROADMAP.md`.
 
-- [v1.1 Roadmap]: 5 phases at quick depth -- CaseManagement+Voice, Docs+Clients+Calendar+Mobile, Search+Notifications, Billing, Reporting
-- [v1.1 Roadmap]: Voice notes grouped with case management (VOICE relates to CASE-01 notes)
-- [v1.1 Roadmap]: Billing (Phase 8) depends on time/expense tracking from Phase 5 (CASE-06/CASE-07)
-- [v1.1 Roadmap]: Reporting (Phase 9) depends on billing data from Phase 8
+**Carried forward from prior milestones (still active):**
 - [v1.0]: Inline styles over NativeWind, absolute paths in expo-router v6, mutable mock arrays for CRUD
-- [05-01]: EditableInfoRow component for inline field editing (tap-to-edit with golden highlight)
-- [05-01]: Tree picker is read-only display; actual subtype changed via edit screen
-- [05-01]: SECTION_CARD style constant for white card sections with golden border
-- [05-02]: Combined billing list merges time entries and expenses sorted by date (newest first)
-- [05-02]: Dictation simulated with placeholder text (real STT needs native modules, not Expo Go compatible)
-- [05-02]: Waveform visualization with 25 static bars and animated playhead
-- [05-02]: expo-av added for voice recording/playback (Expo Go compatible)
-- [06-01]: Folder chip selector pattern for categorized document browsing
-- [06-01]: Document scanning confirmation uses Alert + setTimeout overlay (Expo Go compatible)
-- [06-01]: Version history generated inline from document version field and createdAt
-- [06-01]: Tag editing reuses PREDEFINED_TAGS from case management
-- [06-02]: Intake wizard uses step state (0-3) with inline rendering, not separate screens
-- [06-02]: Conflict detection uses debounced useEffect (300ms) for reactive overlap checking
-- [06-02]: Event edit mode reuses same screen with state toggle (editMode flag)
-- [06-02]: Quick-action bar loads client via case.clientId for phone/court data
-- [07-01]: Quick filter chips use toggle behavior (tap again to deactivate)
-- [07-01]: Filter modals use temp state pattern to allow cancel without applying
-- [07-01]: Search history auto-tracked on debounced query, deduplicated against last entry
-- [07-01]: MOCK_LAWYERS array inline in search screen (users service returns single user)
-- [07-02]: Long-press action menu for snooze/quick-actions (Expo Go compatible, no gesture handler)
-- [07-02]: Custom ToggleSwitch using Pressable+View instead of RN Switch (consistent golden styling)
-- [07-02]: Snoozed notifications hidden from list while snoozedUntil is in the future
-- [07-02]: Overdue urgency derived from today urgency + isRead on deadline notifications
-- [08-01]: formatRSD helper for Serbian number formatting (dot thousands, comma decimal) across billing screens
-- [08-01]: Payment recording deferred to Plan 02, placeholder Alert on detail screen
-- [08-01]: Invoice number format INV-YYYY-NNN generated on creation
-- [08-02]: Payment method badges use distinct colors (cash=green, bank-transfer=blue, card=purple)
-- [08-02]: Balances screen loads both client and case data upfront via Promise.all for instant tab switching
-- [08-02]: Invoice list shows total outstanding in golden-bordered card for quick balances access
-- [09-01]: Chart values in thousands with 'k' suffix for mobile readability
-- [09-01]: Pie chart colors: navy=tariff, golden=hourly, green=flat-fee (app color system)
-- [09-01]: formatRSD defined inline per screen (same pattern as billing screens)
-- [09-02]: Pie chart uses absolute count labels (not percentages) for status breakdown clarity
-- [09-02]: Horizontal progress bar for closure rate (reliable cross-platform vs circular arc)
-- [09-02]: Deadline dates DD.MM.YYYY (Serbian format) with red dot indicators
-- [09-02]: Lawyer names truncated to first name (max 8 chars) for bar chart readability
+- [v1.0]: ExpandableCalendar + AgendaList for weekly view (TimelineList unreliable)
+- [v1.1]: SECTION_CARD shared style constant (white card with golden border)
+- [v1.1]: EditableInfoRow pattern for inline tap-to-edit fields
+- [v1.1]: formatRSD helper defined inline per screen for Serbian number formatting
+- [v1.1]: expo-av for voice recording/playback (Expo Go compatible)
+- [v1.1]: Long-press action menu instead of swipe gestures (Expo Go compatible)
+- [v1.1]: Custom ToggleSwitch component (Pressable+View) for consistent golden styling
+- [v1.1]: Filter modals use temp state pattern to allow cancel without applying
+- [v1.1]: Modal pattern instead of gorhom bottom-sheet (SDK 54 stability)
+
+**v1.2 decisions:**
+- [10-01]: IClientAggregationService as separate service (not extending existing per-entity services)
+- [10-01]: File picker/camera capture as inline buttons within document section card
 
 ### Pending Todos
 
-None yet.
+0 pending — the 4 v1.1-era todos were absorbed into v1.2 milestone scope on 2026-04-11.
+
+Todo files moved: `.planning/todos/pending/` → `.planning/todos/done/` (client-page uploads, client-page activities timeline, client-page expenses, lawyers/judges/courts directory).
 
 ### Blockers/Concerns
 
-- [RESOLVED] NativeWind v4 + Expo SDK 54 -- inline styles preferred for reliability
-- [RESOLVED] expo-router v6 relative routing -- use absolute paths
-- [RESOLVED] gorhom bottom-sheet SDK 54 stability -- using Modal instead
+**Carried forward:**
+- [RESOLVED] NativeWind v4 + Expo SDK 54 — inline styles preferred for reliability
+- [RESOLVED] expo-router v6 relative routing — use absolute paths
+- [RESOLVED] gorhom bottom-sheet SDK 54 stability — using Modal instead
+
+**Technical debt carried into v1.2:**
+- `MOCK_LAWYERS` inline in search screen (07-01) — v1.2 directory feature (DIR-01) will address this as the source of truth
+- `formatRSD` duplicated inline per billing/reporting screen — optional extraction when v1.2 touches client-expenses aggregation
+
+**v1.2 blockers:** None known.
 
 ## Session Continuity
 
-Last session: 2026-03-15
-Stopped at: Completed 09-02-PLAN.md -- ALL v1.1 phases complete
+Last session: 2026-04-11
+Stopped at: Completed 10-01-PLAN.md — ready for 10-02 execution
 Resume file: None
