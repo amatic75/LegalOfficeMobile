@@ -5,6 +5,8 @@ import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
 import type { Client, CaseSummary, CommunicationEntry, ClientDocument } from "../../../src/services/types";
@@ -208,6 +210,57 @@ export default function ClientDetailScreen() {
         },
       ]
     );
+  };
+
+  const handleUploadFile = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ["application/pdf", "image/jpeg", "image/png"],
+      copyToCacheDirectory: true,
+    });
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const asset = result.assets[0];
+      await services.clientDocuments.create({
+        clientId: id!,
+        type: "other",
+        name: asset.name,
+        uri: asset.uri,
+      });
+      if (id) {
+        const refreshed = await services.clientDocuments.getByClientId(id);
+        setClientDocs(refreshed);
+      }
+    }
+  };
+
+  const handleCapturePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        t("documents.permissionRequired"),
+        t("documents.permissionDenied"),
+      );
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images"],
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const asset = result.assets[0];
+      const now = new Date();
+      const pad = (n: number) => String(n).padStart(2, "0");
+      const name = `Photo_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+      await services.clientDocuments.create({
+        clientId: id!,
+        type: "other",
+        name,
+        uri: asset.uri,
+      });
+      if (id) {
+        const refreshed = await services.clientDocuments.getByClientId(id);
+        setClientDocs(refreshed);
+      }
+    }
   };
 
   const handleAddContact = async () => {
@@ -492,7 +545,7 @@ export default function ClientDetailScreen() {
         <View style={SECTION_CARD}>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
             <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT }}>
-              {t("clientDocuments.clientDocuments")}
+              {t("documents.title")}
             </Text>
             <Pressable
               onPress={() => setShowDocModal(true)}
@@ -553,9 +606,48 @@ export default function ClientDetailScreen() {
           ) : (
             <View style={{ alignItems: "center", paddingVertical: 20 }}>
               <Ionicons name={"document-outline" as IoniconsName} size={24} color="#DDD" />
-              <Text style={{ fontSize: 13, color: "#AAA", marginTop: 6 }}>{t("clientDocuments.noClientDocuments")}</Text>
+              <Text style={{ fontSize: 13, color: "#AAA", marginTop: 6 }}>{t("documents.noDocuments")}</Text>
             </View>
           )}
+          {/* Upload File / Take Photo action bar */}
+          <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
+            <Pressable
+              onPress={handleUploadFile}
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                paddingVertical: 10,
+                borderRadius: 8,
+                backgroundColor: colors.golden[50],
+                borderWidth: 1,
+                borderColor: colors.golden.DEFAULT,
+              }}
+            >
+              <Ionicons name={"cloud-upload-outline" as IoniconsName} size={16} color={colors.golden.DEFAULT} />
+              <Text style={{ fontSize: 12, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("documents.uploadFile")}</Text>
+            </Pressable>
+            <Pressable
+              onPress={handleCapturePhoto}
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                paddingVertical: 10,
+                borderRadius: 8,
+                backgroundColor: colors.golden[50],
+                borderWidth: 1,
+                borderColor: colors.golden.DEFAULT,
+              }}
+            >
+              <Ionicons name={"camera-outline" as IoniconsName} size={16} color={colors.golden.DEFAULT} />
+              <Text style={{ fontSize: 12, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("documents.takePhoto")}</Text>
+            </Pressable>
+          </View>
         </View>
 
         {/* Linked Cases Section */}
