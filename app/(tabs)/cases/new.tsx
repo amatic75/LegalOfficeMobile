@@ -74,7 +74,7 @@ export default function NewCaseScreen() {
   useEffect(() => {
     Promise.all([
       services.clients.getClients(),
-      services.courts.getCourts(),
+      services.directory.getCourts(),
     ]).then(([clientsData, courtsData]) => {
       setClients(clientsData);
       setCourts(courtsData);

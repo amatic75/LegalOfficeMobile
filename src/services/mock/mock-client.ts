@@ -3,7 +3,7 @@ import type {
   IUserService,
   IClientService,
   ICaseService,
-  ICourtService,
+  IDirectoryService,
   IDocumentService,
   ICalendarEventService,
   INotificationService,
@@ -27,6 +27,8 @@ import type {
   CaseType,
   BillingMode,
   Court,
+  Lawyer,
+  Judge,
   Document,
   DocumentFolder,
   DocumentVersion,
@@ -61,6 +63,8 @@ import { mockUsers } from './data/users';
 import { mockClients } from './data/clients';
 import { mockCases } from './data/cases';
 import { mockCourts } from './data/courts';
+import { mockLawyers } from './data/lawyers';
+import { mockJudges } from './data/judges';
 import { mockDocuments } from './data/documents';
 import { mockCalendarEvents } from './data/calendar-events';
 import { mockNotifications } from './data/notifications';
@@ -89,6 +93,9 @@ let clientDocuments = [...mockClientDocuments];
 let savedSearches = [...mockSavedSearches];
 let searchHistory = [...mockSearchHistory];
 let invoices = mockInvoices.map(inv => ({ ...inv, payments: [...inv.payments], lineItems: [...inv.lineItems] }));
+let lawyers = [...mockLawyers];
+let judges = [...mockJudges];
+let courts = [...mockCourts];
 
 let notificationPreferences: NotificationPreferences = {
   quietHoursEnabled: false,
@@ -212,10 +219,105 @@ const mockCaseService: ICaseService = {
   },
 };
 
-const mockCourtService: ICourtService = {
+const mockDirectoryService: IDirectoryService = {
+  // Lawyers
+  async getLawyers(): Promise<Lawyer[]> {
+    await delay(300);
+    return [...lawyers].sort((a, b) => a.displayName.localeCompare(b.displayName));
+  },
+  async getLawyerById(id: string): Promise<Lawyer | null> {
+    await delay(200);
+    return lawyers.find((l) => l.id === id) ?? null;
+  },
+  async createLawyer(data: Omit<Lawyer, 'id' | 'createdAt'>): Promise<Lawyer> {
+    await delay(300);
+    const newLawyer: Lawyer = {
+      ...data,
+      id: 'law' + Date.now(),
+      createdAt: new Date().toISOString().split('T')[0],
+    };
+    lawyers.push(newLawyer);
+    return newLawyer;
+  },
+  async updateLawyer(id: string, data: Partial<Lawyer>): Promise<Lawyer | null> {
+    await delay(300);
+    const index = lawyers.findIndex((l) => l.id === id);
+    if (index === -1) return null;
+    lawyers[index] = { ...lawyers[index], ...data };
+    return lawyers[index];
+  },
+  async deleteLawyer(id: string): Promise<boolean> {
+    await delay(300);
+    const index = lawyers.findIndex((l) => l.id === id);
+    if (index === -1) return false;
+    lawyers.splice(index, 1);
+    return true;
+  },
+  // Judges
+  async getJudges(): Promise<Judge[]> {
+    await delay(300);
+    return [...judges].sort((a, b) => a.displayName.localeCompare(b.displayName));
+  },
+  async getJudgeById(id: string): Promise<Judge | null> {
+    await delay(200);
+    return judges.find((j) => j.id === id) ?? null;
+  },
+  async createJudge(data: Omit<Judge, 'id' | 'createdAt'>): Promise<Judge> {
+    await delay(300);
+    const newJudge: Judge = {
+      ...data,
+      id: 'jud' + Date.now(),
+      createdAt: new Date().toISOString().split('T')[0],
+    };
+    judges.push(newJudge);
+    return newJudge;
+  },
+  async updateJudge(id: string, data: Partial<Judge>): Promise<Judge | null> {
+    await delay(300);
+    const index = judges.findIndex((j) => j.id === id);
+    if (index === -1) return null;
+    judges[index] = { ...judges[index], ...data };
+    return judges[index];
+  },
+  async deleteJudge(id: string): Promise<boolean> {
+    await delay(300);
+    const index = judges.findIndex((j) => j.id === id);
+    if (index === -1) return false;
+    judges.splice(index, 1);
+    return true;
+  },
+  // Courts
   async getCourts(): Promise<Court[]> {
     await delay(200);
-    return mockCourts;
+    return [...courts].sort((a, b) => a.name.localeCompare(b.name));
+  },
+  async getCourtById(id: string): Promise<Court | null> {
+    await delay(200);
+    return courts.find((c) => c.id === id) ?? null;
+  },
+  async createCourt(data: Omit<Court, 'id' | 'createdAt'>): Promise<Court> {
+    await delay(300);
+    const newCourt: Court = {
+      ...data,
+      id: 'ct' + Date.now(),
+      createdAt: new Date().toISOString().split('T')[0],
+    };
+    courts.push(newCourt);
+    return newCourt;
+  },
+  async updateCourt(id: string, data: Partial<Court>): Promise<Court | null> {
+    await delay(300);
+    const index = courts.findIndex((c) => c.id === id);
+    if (index === -1) return null;
+    courts[index] = { ...courts[index], ...data };
+    return courts[index];
+  },
+  async deleteCourt(id: string): Promise<boolean> {
+    await delay(300);
+    const index = courts.findIndex((c) => c.id === id);
+    if (index === -1) return false;
+    courts.splice(index, 1);
+    return true;
   },
 };
 
@@ -1158,7 +1260,7 @@ export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
   cases: mockCaseService,
-  courts: mockCourtService,
+  directory: mockDirectoryService,
   documents: mockDocumentService,
   calendarEvents: mockCalendarEventService,
   notifications: mockNotificationService,

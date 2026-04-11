@@ -77,7 +77,7 @@ export default function EditCaseScreen() {
     Promise.all([
       services.cases.getCaseById(id),
       services.clients.getClients(),
-      services.courts.getCourts(),
+      services.directory.getCourts(),
     ]).then(([caseData, clientsData, courtsData]) => {
       setClients(clientsData);
       setCourts(courtsData);

@@ -96,6 +96,57 @@ export interface Court {
   name: string;
   address: string;
   city: string;
+  jurisdiction?: string;
+  phone?: string;
+  website?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+// Phase 11: Directory Management
+
+export interface Lawyer {
+  id: string;
+  displayName: string;
+  firm?: string;
+  barNumber?: string;
+  phone?: string;
+  email?: string;
+  specialty?: string;
+  notes?: string;
+  isInternal: boolean;
+  createdAt: string;
+}
+
+export interface Judge {
+  id: string;
+  displayName: string;
+  court?: string;
+  chamber?: string;
+  phone?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface IDirectoryService {
+  // Lawyers
+  getLawyers(): Promise<Lawyer[]>;
+  getLawyerById(id: string): Promise<Lawyer | null>;
+  createLawyer(data: Omit<Lawyer, 'id' | 'createdAt'>): Promise<Lawyer>;
+  updateLawyer(id: string, data: Partial<Lawyer>): Promise<Lawyer | null>;
+  deleteLawyer(id: string): Promise<boolean>;
+  // Judges
+  getJudges(): Promise<Judge[]>;
+  getJudgeById(id: string): Promise<Judge | null>;
+  createJudge(data: Omit<Judge, 'id' | 'createdAt'>): Promise<Judge>;
+  updateJudge(id: string, data: Partial<Judge>): Promise<Judge | null>;
+  deleteJudge(id: string): Promise<boolean>;
+  // Courts
+  getCourts(): Promise<Court[]>;
+  getCourtById(id: string): Promise<Court | null>;
+  createCourt(data: Omit<Court, 'id' | 'createdAt'>): Promise<Court>;
+  updateCourt(id: string, data: Partial<Court>): Promise<Court | null>;
+  deleteCourt(id: string): Promise<boolean>;
 }
 
 // Service Interfaces
@@ -124,9 +175,6 @@ export interface ICaseService {
   updateCaseStatus(id: string, status: CaseStatus): Promise<CaseSummary | null>;
 }
 
-export interface ICourtService {
-  getCourts(): Promise<Court[]>;
-}
 
 export interface Document {
   id: string;
@@ -788,7 +836,7 @@ export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
   cases: ICaseService;
-  courts: ICourtService;
+  directory: IDirectoryService;
   documents: IDocumentService;
   calendarEvents: ICalendarEventService;
   notifications: INotificationService;
