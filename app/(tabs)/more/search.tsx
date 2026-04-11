@@ -11,6 +11,7 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useServices } from "../../../src/hooks/useServices";
@@ -51,12 +52,6 @@ const SECTION_CARD = {
   padding: 14,
 };
 
-const MOCK_LAWYERS = [
-  { id: "1", name: "Marko Petrovic" },
-  { id: "2", name: "Jelena Jovanovic" },
-  { id: "3", name: "Stefan Nikolic" },
-  { id: "4", name: "Ana Djordjevic" },
-];
 
 function getRelativeTime(dateStr: string): string {
   const now = new Date();
@@ -73,7 +68,7 @@ function getRelativeTime(dateStr: string): string {
   return date.toLocaleDateString();
 }
 
-function getFilterSummary(filters: SearchFilter): string {
+function getFilterSummary(filters: SearchFilter, lawyers: Array<{ id: string; name: string }>): string {
   const parts: string[] = [];
   if (filters.types?.length) parts.push(filters.types.join(", "));
   if (filters.status?.length) parts.push(filters.status.join(", "));
@@ -83,7 +78,7 @@ function getFilterSummary(filters: SearchFilter): string {
     );
   }
   if (filters.lawyerId) {
-    const lawyer = MOCK_LAWYERS.find((l) => l.id === filters.lawyerId);
+    const lawyer = lawyers.find((l) => l.id === filters.lawyerId);
     if (lawyer) parts.push(lawyer.name);
   }
   return parts.join(" | ") || "No filters";
@@ -172,6 +167,21 @@ export default function SearchScreen() {
   const [saveModalVisible, setSaveModalVisible] = useState(false);
   const [saveSearchName, setSaveSearchName] = useState("");
   const [savedFeedback, setSavedFeedback] = useState(false);
+
+  // Directory lawyers (replaces MOCK_LAWYERS)
+  const [lawyers, setLawyers] = useState<Array<{ id: string; name: string }>>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      services.directory.getLawyers().then((data) => {
+        if (active) {
+          setLawyers(data.map((l) => ({ id: l.id, name: l.displayName })));
+        }
+      });
+      return () => { active = false; };
+    }, [services])
+  );
 
   // Temp filter state for modal editing
   const [tempFilterTypes, setTempFilterTypes] = useState<
@@ -832,8 +842,8 @@ export default function SearchScreen() {
                   numberOfLines={1}
                 >
                   {search.query
-                    ? `"${search.query}" - ${getFilterSummary(search.filters)}`
-                    : getFilterSummary(search.filters)}
+                    ? `"${search.query}" - ${getFilterSummary(search.filters, lawyers)}`
+                    : getFilterSummary(search.filters, lawyers)}
                 </Text>
               </View>
               <Pressable
@@ -1250,7 +1260,7 @@ export default function SearchScreen() {
                     {t("search:anyLawyer")}
                   </Text>
                 </Pressable>
-                {MOCK_LAWYERS.map((lawyer) => {
+                {lawyers.map((lawyer) => {
                   const selected = tempLawyerId === lawyer.id;
                   return (
                     <Pressable
