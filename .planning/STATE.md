@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-04-11)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.2 Client Depth & Directory — phase 11, plan 1 of 2 complete
+**Current focus:** v1.2 Client Depth & Directory -- COMPLETE
 
 ## Current Position
 
 Milestone: v1.2 Client Depth & Directory
 Phase: 11 of 11 (Directory Management)
-Plan: 1 of 2 complete
-Status: Executing phase 11
-Last activity: 2026-04-11 — completed 11-01 (directory data layer, browse UI with 3-tab navigator)
+Plan: 2 of 2 complete
+Status: v1.2 milestone complete
+Last activity: 2026-04-11 — completed 11-02 (directory CRUD forms, search integration)
 
 Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Lifetime velocity:**
-- Total plans completed: 21 (v1.0: 9, v1.1: 10, v1.2: 2)
-- Total execution time: 3h 3min
+- Total plans completed: 22 (v1.0: 9, v1.1: 10, v1.2: 3)
+- Total execution time: 3h 9min
 - Average duration: 9min/plan
 
 **By milestone:**
@@ -30,7 +30,7 @@ Progress: [##########] 100%
 |-----------|-------|------------|----------|
 | v1.0 MVP | 9 | 1h 22min | 9.1min |
 | v1.1 Enhanced Features | 10 | 1h 31min | 9.1min |
-| v1.2 Client Depth & Directory | 3/3 | 15min | 5min |
+| v1.2 Client Depth & Directory | 4/4 | 21min | 5min |
 
 Detailed phase-by-phase metrics archived in `.planning/milestones/v1.1-ROADMAP.md`.
 
@@ -61,6 +61,8 @@ Decisions are logged in PROJECT.md Key Decisions table and archived per-mileston
 - [10-02]: Outstanding drill-down uses Modal pattern (consistent with existing modals in the file)
 - [11-01]: In-screen Pressable tab bar for directory (not nested expo-router tabs)
 - [11-01]: Unified IDirectoryService replaces ICourtService for all 3 entity types
+- [11-02]: EditableInfoRow duplicated per detail screen (consistent with cases/[id].tsx pattern)
+- [11-02]: MOCK_LAWYERS replaced with useFocusEffect + directory.getLawyers() for live search filter data
 
 ### Pending Todos
 
@@ -76,7 +78,7 @@ Todo files moved: `.planning/todos/pending/` → `.planning/todos/done/` (client
 - [RESOLVED] gorhom bottom-sheet SDK 54 stability — using Modal instead
 
 **Technical debt carried into v1.2:**
-- `MOCK_LAWYERS` inline in search screen (07-01) — v1.2 directory feature (DIR-01) will address this as the source of truth
+- [RESOLVED] `MOCK_LAWYERS` inline in search screen (07-01) — replaced by directory service in 11-02
 - `formatRSD` duplicated inline per billing/reporting screen — optional extraction when v1.2 touches client-expenses aggregation
 
 **v1.2 blockers:** None known.
@@ -84,5 +86,5 @@ Todo files moved: `.planning/todos/pending/` → `.planning/todos/done/` (client
 ## Session Continuity
 
 Last session: 2026-04-11
-Stopped at: Completed 11-01-PLAN.md — directory data layer and browse UI complete, ready for 11-02 (CRUD forms)
+Stopped at: Completed 11-02-PLAN.md — directory CRUD forms and search integration complete, v1.2 milestone finished
 Resume file: None
