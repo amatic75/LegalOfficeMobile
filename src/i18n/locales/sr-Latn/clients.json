@@ -93,5 +93,42 @@
     "contacts": "Kontakti",
     "addContact": "Dodaj kontakt",
     "primaryContact": "Primarni kontakt"
+  },
+  "documents": {
+    "title": "Dokumenta",
+    "uploadFile": "Otpremi fajl",
+    "takePhoto": "Fotografisi",
+    "noDocuments": "Nema dokumenata",
+    "permissionRequired": "Potrebna dozvola",
+    "permissionDenied": "Dozvola za kameru je potrebna za fotografisanje"
+  },
+  "recentActivity": {
+    "title": "Nedavne aktivnosti",
+    "seeAll": "Vidi sve",
+    "noActivity": "Nema nedavnih aktivnosti"
+  },
+  "upcomingActivity": {
+    "title": "Predstojeće aktivnosti",
+    "seeAll": "Vidi sve",
+    "noActivity": "Nema predstojećih aktivnosti"
+  },
+  "expenses": {
+    "title": "Troškovi",
+    "total": "Ukupno",
+    "noExpenses": "Nema evidentiranih troškova",
+    "timeEntry": "Evidencija vremena",
+    "expense": "Trošak"
+  },
+  "outstanding": {
+    "title": "Neplaćeno / Dugovanja",
+    "grandTotal": "Ukupna dugovanja",
+    "noOutstanding": "Nema neplaćenog iznosa",
+    "viewDetails": "Pogledaj detalje",
+    "invoiceDetail": "Detalji fakture",
+    "invoice": "Faktura",
+    "issued": "Izdato",
+    "due": "Rok",
+    "paid": "Plaćeno",
+    "remaining": "Preostalo"
   }
 }

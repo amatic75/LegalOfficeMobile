@@ -16,6 +16,10 @@ import type {
   ISearchService,
   IBillingService,
   IReportService,
+  IClientAggregationService,
+  ClientActivity,
+  ClientExpenseItem,
+  ClientOutstandingSummary,
   User,
   Client,
   CaseSummary,
@@ -51,7 +55,7 @@ import type {
   UpcomingDeadline,
   PerformanceMetrics,
 } from '../types';
-import { DOCUMENT_FOLDER_CATEGORIES, FOLDER_ICONS } from '../types';
+import { DOCUMENT_FOLDER_CATEGORIES, FOLDER_ICONS, ACTIVITY_TYPE_ICONS } from '../types';
 import { delay } from '../../utils/delay';
 import { mockUsers } from './data/users';
 import { mockClients } from './data/clients';
@@ -953,6 +957,203 @@ const mockReportService: IReportService = {
   },
 };
 
+const mockClientAggregationService: IClientAggregationService = {
+  async getRecentActivity(clientId: string, limit: number = 20): Promise<ClientActivity[]> {
+    await delay(300);
+    const clientCases = cases.filter((c) => c.clientId === clientId);
+    const activities: ClientActivity[] = [];
+    const today = new Date().toISOString().split('T')[0];
+
+    for (const cs of clientCases) {
+      // Case notes
+      const notes = caseNotes.filter((n) => n.caseId === cs.id);
+      for (const note of notes) {
+        activities.push({
+          id: `act-note-${note.id}`,
+          type: 'note',
+          title: note.type === 'voice' ? 'Voice Note' : (note.content?.substring(0, 50) ?? 'Note'),
+          description: note.content?.substring(0, 100),
+          date: note.createdAt,
+          caseId: cs.id,
+          caseName: cs.title,
+          caseNumber: cs.caseNumber,
+          icon: ACTIVITY_TYPE_ICONS['note'],
+        });
+      }
+
+      // Past calendar events (date < today)
+      const pastEvents = calendarEvents.filter((e) => e.caseId === cs.id && e.date < today);
+      for (const evt of pastEvents) {
+        activities.push({
+          id: `act-event-${evt.id}`,
+          type: 'event',
+          title: evt.title,
+          description: evt.notes,
+          date: evt.date,
+          caseId: cs.id,
+          caseName: cs.title,
+          caseNumber: cs.caseNumber,
+          icon: ACTIVITY_TYPE_ICONS['event'],
+        });
+      }
+
+      // Documents
+      const docs = documents.filter((d) => d.caseId === cs.id);
+      for (const doc of docs) {
+        activities.push({
+          id: `act-doc-${doc.id}`,
+          type: 'document',
+          title: doc.name,
+          date: doc.createdAt,
+          caseId: cs.id,
+          caseName: cs.title,
+          caseNumber: cs.caseNumber,
+          icon: ACTIVITY_TYPE_ICONS['document'],
+        });
+      }
+
+      // Time entries
+      const entries = timeEntries.filter((t) => t.caseId === cs.id);
+      for (const te of entries) {
+        activities.push({
+          id: `act-te-${te.id}`,
+          type: 'time-entry',
+          title: te.description,
+          date: te.date,
+          caseId: cs.id,
+          caseName: cs.title,
+          caseNumber: cs.caseNumber,
+          icon: ACTIVITY_TYPE_ICONS['time-entry'],
+          metadata: { hours: te.hours },
+        });
+      }
+
+      // Payments from invoices
+      const caseInvoices = invoices.filter((inv) => inv.caseId === cs.id);
+      for (const inv of caseInvoices) {
+        for (const pay of inv.payments) {
+          activities.push({
+            id: `act-pay-${pay.id}`,
+            type: 'payment',
+            title: `Payment - ${inv.invoiceNumber}`,
+            date: pay.date,
+            caseId: cs.id,
+            caseName: cs.title,
+            caseNumber: cs.caseNumber,
+            icon: ACTIVITY_TYPE_ICONS['payment'],
+            metadata: { amount: pay.amount },
+          });
+        }
+      }
+    }
+
+    // Sort by date descending
+    activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return activities.slice(0, limit);
+  },
+
+  async getUpcomingActivity(clientId: string, limit: number = 20): Promise<ClientActivity[]> {
+    await delay(300);
+    const clientCases = cases.filter((c) => c.clientId === clientId);
+    const activities: ClientActivity[] = [];
+    const today = new Date().toISOString().split('T')[0];
+
+    for (const cs of clientCases) {
+      const upcomingEvents = calendarEvents.filter((e) => e.caseId === cs.id && e.date >= today);
+      for (const evt of upcomingEvents) {
+        activities.push({
+          id: `act-upcoming-${evt.id}`,
+          type: 'event',
+          title: evt.title,
+          description: evt.notes,
+          date: evt.date,
+          caseId: cs.id,
+          caseName: cs.title,
+          caseNumber: cs.caseNumber,
+          icon: ACTIVITY_TYPE_ICONS['event'],
+        });
+      }
+    }
+
+    // Sort by date ascending
+    activities.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return activities.slice(0, limit);
+  },
+
+  async getExpenses(clientId: string): Promise<ClientExpenseItem[]> {
+    await delay(300);
+    const clientCases = cases.filter((c) => c.clientId === clientId);
+    const items: ClientExpenseItem[] = [];
+
+    for (const cs of clientCases) {
+      // Time entries
+      const entries = timeEntries.filter((t) => t.caseId === cs.id);
+      for (const te of entries) {
+        items.push({
+          id: `cexp-te-${te.id}`,
+          type: 'time-entry',
+          description: te.description,
+          amount: te.hours * 100, // placeholder rate
+          date: te.date,
+          caseId: cs.id,
+          caseName: cs.title,
+          caseNumber: cs.caseNumber,
+          hours: te.hours,
+        });
+      }
+
+      // Expenses
+      const caseExpenses = expenses.filter((e) => e.caseId === cs.id);
+      for (const exp of caseExpenses) {
+        items.push({
+          id: `cexp-exp-${exp.id}`,
+          type: 'expense',
+          description: exp.description,
+          amount: exp.amount,
+          date: exp.date,
+          caseId: cs.id,
+          caseName: cs.title,
+          caseNumber: cs.caseNumber,
+          category: exp.category,
+        });
+      }
+    }
+
+    // Sort by date descending
+    items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return items;
+  },
+
+  async getOutstandingSummary(clientId: string): Promise<ClientOutstandingSummary> {
+    await delay(300);
+    const clientInvoices = invoices.filter((inv) => inv.clientId === clientId);
+    let totalOutstanding = 0;
+    const outstandingInvoices: ClientOutstandingSummary['invoices'] = [];
+
+    for (const inv of clientInvoices) {
+      const outstanding = inv.total - inv.paidAmount;
+      if (outstanding > 0 && inv.status !== 'draft') {
+        totalOutstanding += outstanding;
+        const cs = cases.find((c) => c.id === inv.caseId);
+        outstandingInvoices.push({
+          id: inv.id,
+          invoiceNumber: inv.invoiceNumber,
+          caseId: inv.caseId,
+          caseName: inv.caseName,
+          total: inv.total,
+          paidAmount: inv.paidAmount,
+          outstanding,
+          status: inv.status,
+          issuedDate: inv.issuedDate,
+          dueDate: inv.dueDate,
+        });
+      }
+    }
+
+    return { totalOutstanding, invoices: outstandingInvoices };
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
@@ -970,4 +1171,5 @@ export const mockServices: ServiceRegistry = {
   search: mockSearchService,
   billing: mockBillingService,
   reports: mockReportService,
+  clientAggregation: mockClientAggregationService,
 };

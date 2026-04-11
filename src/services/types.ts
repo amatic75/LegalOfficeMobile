@@ -722,6 +722,68 @@ export interface IReportService {
   getPerformanceMetrics(): Promise<PerformanceMetrics>;
 }
 
+// Phase 10: Client Detail Depth — Cross-case Aggregation
+
+export type ClientActivityType = 'note' | 'event' | 'document' | 'time-entry' | 'payment' | 'status-change';
+
+export interface ClientActivity {
+  id: string;
+  type: ClientActivityType;
+  title: string;
+  description?: string;
+  date: string;         // ISO date string for sorting
+  caseId: string;
+  caseName: string;
+  caseNumber: string;
+  icon: string;         // Ionicons name
+  metadata?: Record<string, string | number>;
+}
+
+export interface ClientExpenseItem {
+  id: string;
+  type: 'time-entry' | 'expense';
+  description: string;
+  amount: number;
+  date: string;
+  caseId: string;
+  caseName: string;
+  caseNumber: string;
+  category?: string;
+  hours?: number;
+}
+
+export interface ClientOutstandingSummary {
+  totalOutstanding: number;
+  invoices: Array<{
+    id: string;
+    invoiceNumber: string;
+    caseId: string;
+    caseName: string;
+    total: number;
+    paidAmount: number;
+    outstanding: number;
+    status: string;
+    issuedDate: string;
+    dueDate: string;
+  }>;
+}
+
+export const ACTIVITY_TYPE_ICONS: Record<ClientActivityType, string> = {
+  'note': 'document-text-outline',
+  'event': 'calendar-outline',
+  'document': 'attach-outline',
+  'time-entry': 'time-outline',
+  'payment': 'card-outline',
+  'status-change': 'swap-horizontal-outline',
+};
+
+export interface IClientAggregationService {
+  getRecentActivity(clientId: string, limit?: number): Promise<ClientActivity[]>;
+  getUpcomingActivity(clientId: string, limit?: number): Promise<ClientActivity[]>;
+  getExpenses(clientId: string): Promise<ClientExpenseItem[]>;
+  getOutstandingSummary(clientId: string): Promise<ClientOutstandingSummary>;
+}
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
@@ -739,4 +801,5 @@ export interface ServiceRegistry {
   search: ISearchService;
   billing: IBillingService;
   reports: IReportService;
+  clientAggregation: IClientAggregationService;
 }

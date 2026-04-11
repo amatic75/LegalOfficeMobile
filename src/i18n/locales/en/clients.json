@@ -93,5 +93,42 @@
     "contacts": "Contacts",
     "addContact": "Add Contact",
     "primaryContact": "Primary Contact"
+  },
+  "documents": {
+    "title": "Documents",
+    "uploadFile": "Upload File",
+    "takePhoto": "Take Photo",
+    "noDocuments": "No documents yet",
+    "permissionRequired": "Permission Required",
+    "permissionDenied": "Camera permission is required to take photos"
+  },
+  "recentActivity": {
+    "title": "Recent Activity",
+    "seeAll": "See all",
+    "noActivity": "No recent activity"
+  },
+  "upcomingActivity": {
+    "title": "Upcoming Activity",
+    "seeAll": "See all",
+    "noActivity": "No upcoming activity"
+  },
+  "expenses": {
+    "title": "Expenses",
+    "total": "Total",
+    "noExpenses": "No expenses recorded",
+    "timeEntry": "Time Entry",
+    "expense": "Expense"
+  },
+  "outstanding": {
+    "title": "Unpaid / Outstanding",
+    "grandTotal": "Total Outstanding",
+    "noOutstanding": "No outstanding balance",
+    "viewDetails": "View Details",
+    "invoiceDetail": "Invoice Details",
+    "invoice": "Invoice",
+    "issued": "Issued",
+    "due": "Due",
+    "paid": "Paid",
+    "remaining": "Remaining"
   }
 }
