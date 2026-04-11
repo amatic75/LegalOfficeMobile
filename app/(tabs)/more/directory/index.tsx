@@ -6,9 +6,14 @@ import {
   TextInput,
   FlatList,
   ActivityIndicator,
+  Modal,
+  Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ScreenContainer } from "../../../../src/components/ui";
 import { useServices } from "../../../../src/hooks/useServices";
@@ -21,6 +26,7 @@ type TabKey = "lawyers" | "judges" | "courts";
 export default function DirectoryScreen() {
   const { t } = useTranslation("directory");
   const services = useServices();
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<TabKey>("lawyers");
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,20 +35,45 @@ export default function DirectoryScreen() {
   const [judgesList, setJudgesList] = useState<Judge[]>([]);
   const [courtsList, setCourtsList] = useState<Court[]>([]);
 
+  // Add modal state
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  // Lawyer form fields
+  const [formDisplayName, setFormDisplayName] = useState("");
+  const [formFirm, setFormFirm] = useState("");
+  const [formBarNumber, setFormBarNumber] = useState("");
+  const [formPhone, setFormPhone] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formSpecialty, setFormSpecialty] = useState("");
+  const [formNotes, setFormNotes] = useState("");
+  const [formIsInternal, setFormIsInternal] = useState(false);
+  // Judge form fields
+  const [formCourt, setFormCourt] = useState("");
+  const [formChamber, setFormChamber] = useState("");
+  // Court form fields
+  const [formName, setFormName] = useState("");
+  const [formAddress, setFormAddress] = useState("");
+  const [formCity, setFormCity] = useState("");
+  const [formJurisdiction, setFormJurisdiction] = useState("");
+  const [formWebsite, setFormWebsite] = useState("");
+
+  const refreshData = useCallback(() => {
+    setLoading(true);
+    Promise.all([
+      services.directory.getLawyers(),
+      services.directory.getJudges(),
+      services.directory.getCourts(),
+    ]).then(([l, j, c]) => {
+      setLawyersList(l);
+      setJudgesList(j);
+      setCourtsList(c);
+      setLoading(false);
+    });
+  }, [services]);
+
   useFocusEffect(
     useCallback(() => {
-      setLoading(true);
-      Promise.all([
-        services.directory.getLawyers(),
-        services.directory.getJudges(),
-        services.directory.getCourts(),
-      ]).then(([l, j, c]) => {
-        setLawyersList(l);
-        setJudgesList(j);
-        setCourtsList(c);
-        setLoading(false);
-      });
-    }, [services])
+      refreshData();
+    }, [refreshData])
   );
 
   const q = searchQuery.toLowerCase();
@@ -80,8 +111,117 @@ export default function DirectoryScreen() {
     setSearchQuery("");
   };
 
+  const resetForm = () => {
+    setFormDisplayName("");
+    setFormFirm("");
+    setFormBarNumber("");
+    setFormPhone("");
+    setFormEmail("");
+    setFormSpecialty("");
+    setFormNotes("");
+    setFormIsInternal(false);
+    setFormCourt("");
+    setFormChamber("");
+    setFormName("");
+    setFormAddress("");
+    setFormCity("");
+    setFormJurisdiction("");
+    setFormWebsite("");
+  };
+
+  const openAddModal = () => {
+    resetForm();
+    setAddModalVisible(true);
+  };
+
+  const handleSave = async () => {
+    if (activeTab === "lawyers") {
+      await services.directory.createLawyer({
+        displayName: formDisplayName.trim(),
+        firm: formFirm.trim() || undefined,
+        barNumber: formBarNumber.trim() || undefined,
+        phone: formPhone.trim() || undefined,
+        email: formEmail.trim() || undefined,
+        specialty: formSpecialty.trim() || undefined,
+        notes: formNotes.trim() || undefined,
+        isInternal: formIsInternal,
+      });
+    } else if (activeTab === "judges") {
+      await services.directory.createJudge({
+        displayName: formDisplayName.trim(),
+        court: formCourt.trim() || undefined,
+        chamber: formChamber.trim() || undefined,
+        phone: formPhone.trim() || undefined,
+        notes: formNotes.trim() || undefined,
+      });
+    } else {
+      await services.directory.createCourt({
+        name: formName.trim(),
+        address: formAddress.trim(),
+        city: formCity.trim(),
+        jurisdiction: formJurisdiction.trim() || undefined,
+        phone: formPhone.trim() || undefined,
+        website: formWebsite.trim() || undefined,
+        notes: formNotes.trim() || undefined,
+      });
+    }
+    setAddModalVisible(false);
+    refreshData();
+  };
+
+  const isSaveDisabled = () => {
+    if (activeTab === "courts") return !formName.trim();
+    return !formDisplayName.trim();
+  };
+
+  const handleDeleteItem = (entity: TabKey, id: string, name: string) => {
+    const deleteKey =
+      entity === "lawyers"
+        ? "lawyers.deleteLawyer"
+        : entity === "judges"
+          ? "judges.deleteJudge"
+          : "courts.deleteCourt";
+    const confirmKey =
+      entity === "lawyers"
+        ? "lawyers.confirmDelete"
+        : entity === "judges"
+          ? "judges.confirmDelete"
+          : "courts.confirmDelete";
+
+    Alert.alert(t(deleteKey), t(confirmKey), [
+      { text: t("actions.no"), style: "cancel" },
+      {
+        text: t("actions.yes"),
+        style: "destructive",
+        onPress: async () => {
+          if (entity === "lawyers")
+            await services.directory.deleteLawyer(id);
+          else if (entity === "judges")
+            await services.directory.deleteJudge(id);
+          else await services.directory.deleteCourt(id);
+          refreshData();
+        },
+      },
+    ]);
+  };
+
+  const getAddTitle = () => {
+    if (activeTab === "lawyers") return t("lawyers.addLawyer");
+    if (activeTab === "judges") return t("judges.addJudge");
+    return t("courts.addCourt");
+  };
+
   const renderLawyerItem = ({ item }: { item: Lawyer }) => (
-    <View
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: "/(tabs)/more/directory/lawyers",
+          params: { id: item.id },
+        })
+      }
+      onLongPress={() =>
+        handleDeleteItem("lawyers", item.id, item.displayName)
+      }
       style={{
         backgroundColor: "#FFFFFF",
         borderRadius: 12,
@@ -173,11 +313,20 @@ export default function DirectoryScreen() {
         color="#CCCCCC"
         style={{ marginLeft: 8 }}
       />
-    </View>
+    </Pressable>
   );
 
   const renderJudgeItem = ({ item }: { item: Judge }) => (
-    <View
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: "/(tabs)/more/directory/judges",
+          params: { id: item.id },
+        })
+      }
+      onLongPress={() =>
+        handleDeleteItem("judges", item.id, item.displayName)
+      }
       style={{
         backgroundColor: "#FFFFFF",
         borderRadius: 12,
@@ -239,11 +388,18 @@ export default function DirectoryScreen() {
         color="#CCCCCC"
         style={{ marginLeft: 8 }}
       />
-    </View>
+    </Pressable>
   );
 
   const renderCourtItem = ({ item }: { item: Court }) => (
-    <View
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: "/(tabs)/more/directory/courts",
+          params: { id: item.id },
+        })
+      }
+      onLongPress={() => handleDeleteItem("courts", item.id, item.name)}
       style={{
         backgroundColor: "#FFFFFF",
         borderRadius: 12,
@@ -305,7 +461,7 @@ export default function DirectoryScreen() {
         color="#CCCCCC"
         style={{ marginLeft: 8 }}
       />
-    </View>
+    </Pressable>
   );
 
   const getEmptyMessage = () => {
@@ -347,6 +503,50 @@ export default function DirectoryScreen() {
       return renderJudgeItem as (info: { item: any }) => React.JSX.Element;
     return renderCourtItem as (info: { item: any }) => React.JSX.Element;
   };
+
+  const renderFormField = (
+    label: string,
+    value: string,
+    onChange: (v: string) => void,
+    options?: {
+      required?: boolean;
+      keyboardType?: "default" | "phone-pad" | "email-address";
+      multiline?: boolean;
+    }
+  ) => (
+    <View style={{ marginBottom: 14 }}>
+      <Text
+        style={{
+          fontSize: 13,
+          fontWeight: "600",
+          color: colors.navy.DEFAULT,
+          marginBottom: 4,
+        }}
+      >
+        {label}
+        {options?.required ? " *" : ""}
+      </Text>
+      <TextInput
+        style={{
+          backgroundColor: "#F8F7F4",
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: "#E0E0E0",
+          paddingHorizontal: 12,
+          paddingVertical: 10,
+          fontSize: 14,
+          color: colors.navy.DEFAULT,
+          minHeight: options?.multiline ? 70 : undefined,
+          textAlignVertical: options?.multiline ? "top" : undefined,
+        }}
+        value={value}
+        onChangeText={onChange}
+        keyboardType={options?.keyboardType}
+        multiline={options?.multiline}
+        placeholderTextColor="#BBBBBB"
+      />
+    </View>
+  );
 
   return (
     <ScreenContainer>
@@ -443,9 +643,272 @@ export default function DirectoryScreen() {
           renderItem={getRenderItem()}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingBottom: 80 }}
         />
       )}
+
+      {/* Floating Action Button */}
+      <Pressable
+        onPress={openAddModal}
+        style={{
+          position: "absolute",
+          bottom: 24,
+          right: 20,
+          width: 56,
+          height: 56,
+          borderRadius: 28,
+          backgroundColor: colors.golden.DEFAULT,
+          alignItems: "center",
+          justifyContent: "center",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          elevation: 4,
+        }}
+      >
+        <Ionicons name={"add" as IoniconsName} size={28} color="#FFFFFF" />
+      </Pressable>
+
+      {/* Add Modal */}
+      <Modal
+        visible={addModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setAddModalVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.4)",
+            justifyContent: "flex-end",
+          }}
+        >
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+          >
+            <View
+              style={{
+                backgroundColor: "#FFFFFF",
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                maxHeight: "85%",
+              }}
+            >
+              {/* Modal Header */}
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingHorizontal: 20,
+                  paddingVertical: 16,
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#F0F0F0",
+                }}
+              >
+                <Pressable onPress={() => setAddModalVisible(false)}>
+                  <Text style={{ fontSize: 15, color: "#8E8E93" }}>
+                    {t("actions.cancel")}
+                  </Text>
+                </Pressable>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: "700",
+                    color: colors.navy.DEFAULT,
+                  }}
+                >
+                  {getAddTitle()}
+                </Text>
+                <Pressable
+                  onPress={handleSave}
+                  disabled={isSaveDisabled()}
+                >
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "600",
+                      color: isSaveDisabled()
+                        ? "#CCCCCC"
+                        : colors.golden.DEFAULT,
+                    }}
+                  >
+                    {t("actions.save")}
+                  </Text>
+                </Pressable>
+              </View>
+
+              {/* Modal Form */}
+              <ScrollView
+                style={{ paddingHorizontal: 20, paddingTop: 16 }}
+                contentContainerStyle={{ paddingBottom: 40 }}
+                keyboardShouldPersistTaps="handled"
+              >
+                {activeTab === "lawyers" && (
+                  <>
+                    {renderFormField(
+                      t("lawyers.displayName"),
+                      formDisplayName,
+                      setFormDisplayName,
+                      { required: true }
+                    )}
+                    {renderFormField(t("lawyers.firm"), formFirm, setFormFirm)}
+                    {renderFormField(
+                      t("lawyers.barNumber"),
+                      formBarNumber,
+                      setFormBarNumber
+                    )}
+                    {renderFormField(
+                      t("lawyers.phone"),
+                      formPhone,
+                      setFormPhone,
+                      { keyboardType: "phone-pad" }
+                    )}
+                    {renderFormField(
+                      t("lawyers.email"),
+                      formEmail,
+                      setFormEmail,
+                      { keyboardType: "email-address" }
+                    )}
+                    {renderFormField(
+                      t("lawyers.specialty"),
+                      formSpecialty,
+                      setFormSpecialty
+                    )}
+                    {renderFormField(
+                      t("lawyers.notes"),
+                      formNotes,
+                      setFormNotes,
+                      { multiline: true }
+                    )}
+                    {/* Internal toggle */}
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: 14,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          flex: 1,
+                          fontSize: 13,
+                          fontWeight: "600",
+                          color: colors.navy.DEFAULT,
+                        }}
+                      >
+                        {t("lawyers.isInternal")}
+                      </Text>
+                      <Pressable
+                        onPress={() => setFormIsInternal(!formIsInternal)}
+                        style={{
+                          width: 48,
+                          height: 28,
+                          borderRadius: 14,
+                          backgroundColor: formIsInternal
+                            ? colors.golden.DEFAULT
+                            : "#E0E0E0",
+                          justifyContent: "center",
+                          paddingHorizontal: 2,
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: 24,
+                            height: 24,
+                            borderRadius: 12,
+                            backgroundColor: "#FFFFFF",
+                            alignSelf: formIsInternal
+                              ? "flex-end"
+                              : "flex-start",
+                          }}
+                        />
+                      </Pressable>
+                    </View>
+                  </>
+                )}
+
+                {activeTab === "judges" && (
+                  <>
+                    {renderFormField(
+                      t("judges.displayName"),
+                      formDisplayName,
+                      setFormDisplayName,
+                      { required: true }
+                    )}
+                    {renderFormField(
+                      t("judges.court"),
+                      formCourt,
+                      setFormCourt
+                    )}
+                    {renderFormField(
+                      t("judges.chamber"),
+                      formChamber,
+                      setFormChamber
+                    )}
+                    {renderFormField(
+                      t("judges.phone"),
+                      formPhone,
+                      setFormPhone,
+                      { keyboardType: "phone-pad" }
+                    )}
+                    {renderFormField(
+                      t("judges.notes"),
+                      formNotes,
+                      setFormNotes,
+                      { multiline: true }
+                    )}
+                  </>
+                )}
+
+                {activeTab === "courts" && (
+                  <>
+                    {renderFormField(
+                      t("courts.name"),
+                      formName,
+                      setFormName,
+                      { required: true }
+                    )}
+                    {renderFormField(
+                      t("courts.address"),
+                      formAddress,
+                      setFormAddress
+                    )}
+                    {renderFormField(
+                      t("courts.city"),
+                      formCity,
+                      setFormCity
+                    )}
+                    {renderFormField(
+                      t("courts.jurisdiction"),
+                      formJurisdiction,
+                      setFormJurisdiction
+                    )}
+                    {renderFormField(
+                      t("courts.phone"),
+                      formPhone,
+                      setFormPhone,
+                      { keyboardType: "phone-pad" }
+                    )}
+                    {renderFormField(
+                      t("courts.website"),
+                      formWebsite,
+                      setFormWebsite
+                    )}
+                    {renderFormField(
+                      t("courts.notes"),
+                      formNotes,
+                      setFormNotes,
+                      { multiline: true }
+                    )}
+                  </>
+                )}
+              </ScrollView>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
     </ScreenContainer>
   );
 }

@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-04-11)
 
 **Core value:** Lawyers can instantly look up case details, client info, and upcoming deadlines from their phone
-**Current focus:** v1.2 Client Depth & Directory — roadmap created, ready to plan phase 10
+**Current focus:** v1.2 Client Depth & Directory — phase 11, plan 1 of 2 complete
 
 ## Current Position
 
 Milestone: v1.2 Client Depth & Directory
-Phase: 10 of 11 (Client Detail Depth)
-Plan: 2 of 2 complete
-Status: Phase 10 complete
-Last activity: 2026-04-11 — completed 10-02 (cross-case activity, expenses, outstanding sections)
+Phase: 11 of 11 (Directory Management)
+Plan: 1 of 2 complete
+Status: Executing phase 11
+Last activity: 2026-04-11 — completed 11-01 (directory data layer, browse UI with 3-tab navigator)
 
 Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Lifetime velocity:**
-- Total plans completed: 20 (v1.0: 9, v1.1: 10, v1.2: 1)
-- Total execution time: 2h 57min
+- Total plans completed: 21 (v1.0: 9, v1.1: 10, v1.2: 2)
+- Total execution time: 3h 3min
 - Average duration: 9min/plan
 
 **By milestone:**
@@ -30,7 +30,7 @@ Progress: [##########] 100%
 |-----------|-------|------------|----------|
 | v1.0 MVP | 9 | 1h 22min | 9.1min |
 | v1.1 Enhanced Features | 10 | 1h 31min | 9.1min |
-| v1.2 Client Depth & Directory | 2/3 | 9min | 4.5min |
+| v1.2 Client Depth & Directory | 3/3 | 15min | 5min |
 
 Detailed phase-by-phase metrics archived in `.planning/milestones/v1.1-ROADMAP.md`.
 
@@ -59,6 +59,8 @@ Decisions are logged in PROJECT.md Key Decisions table and archived per-mileston
 - [10-01]: File picker/camera capture as inline buttons within document section card
 - [10-02]: formatRSD defined inline per component (consistent with v1.1 pattern)
 - [10-02]: Outstanding drill-down uses Modal pattern (consistent with existing modals in the file)
+- [11-01]: In-screen Pressable tab bar for directory (not nested expo-router tabs)
+- [11-01]: Unified IDirectoryService replaces ICourtService for all 3 entity types
 
 ### Pending Todos
 
@@ -82,5 +84,5 @@ Todo files moved: `.planning/todos/pending/` → `.planning/todos/done/` (client
 ## Session Continuity
 
 Last session: 2026-04-11
-Stopped at: Completed 10-02-PLAN.md — phase 10 complete, ready for phase 11
+Stopped at: Completed 11-01-PLAN.md — directory data layer and browse UI complete, ready for 11-02 (CRUD forms)
 Resume file: None

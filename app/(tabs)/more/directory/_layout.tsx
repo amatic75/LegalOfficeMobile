@@ -13,6 +13,9 @@ export default function DirectoryLayout() {
       }}
     >
       <Stack.Screen name="index" options={{ headerTitle: t("title") }} />
+      <Stack.Screen name="lawyers" options={{ headerTitle: t("lawyers.title") }} />
+      <Stack.Screen name="judges" options={{ headerTitle: t("judges.title") }} />
+      <Stack.Screen name="courts" options={{ headerTitle: t("courts.title") }} />
     </Stack>
   );
 }
