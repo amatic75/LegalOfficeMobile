@@ -9,7 +9,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
-import type { Client, CaseSummary, CommunicationEntry, ClientDocument, ClientActivity } from "../../../src/services/types";
+import type { Client, CaseSummary, CommunicationEntry, ClientDocument, ClientActivity, ClientExpenseItem, ClientOutstandingSummary } from "../../../src/services/types";
 import { STATUS_COLORS, CLIENT_DOC_TYPES, ACTIVITY_TYPE_ICONS } from "../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
@@ -159,6 +159,9 @@ export default function ClientDetailScreen() {
   const [clientDocs, setClientDocs] = useState<ClientDocument[]>([]);
   const [recentActivity, setRecentActivity] = useState<ClientActivity[]>([]);
   const [upcomingActivity, setUpcomingActivity] = useState<ClientActivity[]>([]);
+  const [expenses, setExpenses] = useState<ClientExpenseItem[]>([]);
+  const [outstandingSummary, setOutstandingSummary] = useState<ClientOutstandingSummary | null>(null);
+  const [showOutstandingModal, setShowOutstandingModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Communication modal state
@@ -181,13 +184,15 @@ export default function ClientDetailScreen() {
 
   const loadData = useCallback(async () => {
     if (!id) return;
-    const [clientData, casesData, commsData, docsData, recentAct, upcomingAct] = await Promise.all([
+    const [clientData, casesData, commsData, docsData, recentAct, upcomingAct, expensesData, outstandingData] = await Promise.all([
       services.clients.getClientById(id),
       services.cases.getCasesByClientId(id),
       services.communications.getByClientId(id),
       services.clientDocuments.getByClientId(id),
       services.clientAggregation.getRecentActivity(id, 3),
       services.clientAggregation.getUpcomingActivity(id, 3),
+      services.clientAggregation.getExpenses(id),
+      services.clientAggregation.getOutstandingSummary(id),
     ]);
     setClient(clientData);
     setCases(casesData);
@@ -195,6 +200,8 @@ export default function ClientDetailScreen() {
     setClientDocs(docsData);
     setRecentActivity(recentAct);
     setUpcomingActivity(upcomingAct);
+    setExpenses(expensesData);
+    setOutstandingSummary(outstandingData);
     setLoading(false);
   }, [id, services]);
 
@@ -340,6 +347,76 @@ export default function ClientDetailScreen() {
 
   const displayName = getClientDisplayName(client);
   const isIndividual = client.type === 'individual';
+
+  function formatRSD(amount: number): string {
+    const parts = amount.toFixed(2).split(".");
+    const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return `${intPart},${parts[1]} RSD`;
+  }
+
+  function groupExpensesByCase(items: ClientExpenseItem[]) {
+    const groups: Record<string, { caseName: string; caseNumber: string; items: ClientExpenseItem[] }> = {};
+    for (const item of items) {
+      if (!groups[item.caseId]) {
+        groups[item.caseId] = { caseName: item.caseName, caseNumber: item.caseNumber, items: [] };
+      }
+      groups[item.caseId].items.push(item);
+    }
+    return Object.entries(groups).map(([caseId, group]) => (
+      <View key={caseId} style={{ marginBottom: 8 }}>
+        <Text style={{ fontSize: 12, fontWeight: "700", color: colors.navy.DEFAULT, marginBottom: 6 }}>
+          {group.caseName} ({group.caseNumber})
+        </Text>
+        {group.items.map((exp, idx) => (
+          <View
+            key={exp.id}
+            style={{
+              flexDirection: "row",
+              alignItems: "flex-start",
+              paddingVertical: 8,
+              paddingLeft: 8,
+              borderLeftWidth: 3,
+              borderLeftColor: exp.type === "time-entry" ? colors.golden.DEFAULT : "#43A047",
+              marginBottom: idx < group.items.length - 1 ? 6 : 0,
+              backgroundColor: "#FAFAFA",
+              borderRadius: 6,
+              paddingHorizontal: 10,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                <View style={{
+                  backgroundColor: exp.type === "time-entry" ? colors.golden[50] : "#E8F5E9",
+                  borderRadius: 4,
+                  paddingHorizontal: 6,
+                  paddingVertical: 2,
+                }}>
+                  <Text style={{
+                    fontSize: 9,
+                    fontWeight: "700",
+                    color: exp.type === "time-entry" ? colors.golden.DEFAULT : "#2E7D32",
+                  }}>
+                    {t(exp.type === "time-entry" ? "expenses.timeEntry" : "expenses.expense")}
+                  </Text>
+                </View>
+                {exp.hours != null && (
+                  <Text style={{ fontSize: 10, color: "#888" }}>{exp.hours}h</Text>
+                )}
+                {exp.category && (
+                  <Text style={{ fontSize: 10, color: "#888" }}>{exp.category}</Text>
+                )}
+              </View>
+              <Text style={{ fontSize: 12, color: colors.navy.DEFAULT }}>{exp.description}</Text>
+              <Text style={{ fontSize: 10, color: "#AAA", marginTop: 2 }}>{formatDateDisplay(exp.date)}</Text>
+            </View>
+            <Text style={{ fontSize: 13, fontWeight: "700", color: colors.navy.DEFAULT, marginLeft: 8, marginTop: 4 }}>
+              {formatRSD(exp.amount)}
+            </Text>
+          </View>
+        ))}
+      </View>
+    ));
+  }
 
   return (
     <>
@@ -733,6 +810,66 @@ export default function ClientDetailScreen() {
           )}
         </View>
 
+        {/* Expenses Section */}
+        <View style={SECTION_CARD}>
+          <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT, marginBottom: 4 }}>
+            {t("expenses.title")}
+          </Text>
+          {expenses.length > 0 ? (
+            <>
+              {/* Total sum at top */}
+              <View style={{ backgroundColor: colors.golden[50], borderRadius: 8, padding: 10, marginBottom: 12, alignItems: "center" }}>
+                <Text style={{ fontSize: 12, color: "#888" }}>{t("expenses.total")}</Text>
+                <Text style={{ fontSize: 18, fontWeight: "700", color: colors.navy.DEFAULT }}>
+                  {formatRSD(expenses.reduce((sum, e) => sum + e.amount, 0))}
+                </Text>
+              </View>
+              {/* Group by case */}
+              {groupExpensesByCase(expenses)}
+            </>
+          ) : (
+            <EmptyState icon={"receipt-outline" as IoniconsName} text={t("expenses.noExpenses")} />
+          )}
+        </View>
+
+        {/* Outstanding Section */}
+        <View style={SECTION_CARD}>
+          <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT, marginBottom: 8 }}>
+            {t("outstanding.title")}
+          </Text>
+          {outstandingSummary && outstandingSummary.totalOutstanding > 0 ? (
+            <>
+              <View style={{ backgroundColor: "#FFF8E1", borderRadius: 10, padding: 16, alignItems: "center", marginBottom: 8 }}>
+                <Text style={{ fontSize: 12, color: "#888", marginBottom: 4 }}>{t("outstanding.grandTotal")}</Text>
+                <Text style={{ fontSize: 24, fontWeight: "700", color: "#E53935" }}>
+                  {formatRSD(outstandingSummary.totalOutstanding)}
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => setShowOutstandingModal(true)}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingVertical: 10,
+                  borderRadius: 8,
+                  backgroundColor: colors.golden[50],
+                  borderWidth: 1,
+                  borderColor: colors.golden.DEFAULT,
+                  gap: 6,
+                }}
+              >
+                <Ionicons name={"list-outline" as IoniconsName} size={16} color={colors.golden.DEFAULT} />
+                <Text style={{ fontSize: 13, fontWeight: "600", color: colors.golden.DEFAULT }}>
+                  {t("outstanding.viewDetails")}
+                </Text>
+              </Pressable>
+            </>
+          ) : (
+            <EmptyState icon={"checkmark-circle-outline" as IoniconsName} text={t("outstanding.noOutstanding")} />
+          )}
+        </View>
+
         {/* Linked Cases Section */}
         <View style={SECTION_CARD}>
           <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT, marginBottom: 4 }}>
@@ -965,6 +1102,41 @@ export default function ClientDetailScreen() {
             >
               <Text style={{ fontSize: 16, fontWeight: "700", color: "#FFFFFF" }}>{t("form.save")}</Text>
             </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Outstanding Drill-down Modal */}
+      <Modal visible={showOutstandingModal} animationType="slide" transparent>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "flex-end" }}>
+          <View style={{ backgroundColor: "#FFFFFF", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, paddingBottom: 40 + insets.bottom, maxHeight: "70%" }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <Text style={{ fontSize: 18, fontWeight: "700", color: colors.navy.DEFAULT }}>
+                {t("outstanding.invoiceDetail")}
+              </Text>
+              <Pressable onPress={() => setShowOutstandingModal(false)}>
+                <Ionicons name={"close" as IoniconsName} size={24} color="#AAA" />
+              </Pressable>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {outstandingSummary?.invoices.map((inv) => (
+                <View key={inv.id} style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: "#F5F0E8" }}>
+                  <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
+                    <Text style={{ fontSize: 14, fontWeight: "600", color: colors.navy.DEFAULT }}>{inv.invoiceNumber}</Text>
+                    <Text style={{ fontSize: 14, fontWeight: "700", color: "#E53935" }}>{formatRSD(inv.outstanding)}</Text>
+                  </View>
+                  <Text style={{ fontSize: 12, color: "#888", marginBottom: 2 }}>{inv.caseName}</Text>
+                  <View style={{ flexDirection: "row", gap: 12 }}>
+                    <Text style={{ fontSize: 11, color: "#AAA" }}>{t("outstanding.issued")}: {formatDateDisplay(inv.issuedDate)}</Text>
+                    <Text style={{ fontSize: 11, color: "#AAA" }}>{t("outstanding.due")}: {formatDateDisplay(inv.dueDate)}</Text>
+                  </View>
+                  <View style={{ flexDirection: "row", gap: 12, marginTop: 4 }}>
+                    <Text style={{ fontSize: 11, color: "#888" }}>{t("outstanding.paid")}: {formatRSD(inv.paidAmount)}</Text>
+                    <Text style={{ fontSize: 11, color: "#E53935" }}>{t("outstanding.remaining")}: {formatRSD(inv.outstanding)}</Text>
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
           </View>
         </View>
       </Modal>
