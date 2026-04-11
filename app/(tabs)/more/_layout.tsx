@@ -38,6 +38,10 @@ export default function MoreLayout() {
         name="reports"
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="directory"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }

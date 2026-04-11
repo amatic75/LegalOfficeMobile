@@ -17,12 +17,13 @@ interface MenuItem {
     | "/(tabs)/more/search"
     | "/(tabs)/more/notifications"
     | "/(tabs)/more/billing"
-    | "/(tabs)/more/reports";
+    | "/(tabs)/more/reports"
+    | "/(tabs)/more/directory";
   badge?: number;
 }
 
 export default function MoreScreen() {
-  const { t } = useTranslation(["common", "search", "notifications", "billing", "reports"]);
+  const { t } = useTranslation(["common", "search", "notifications", "billing", "reports", "directory"]);
   const router = useRouter();
   const unreadCount = useNotificationStore(
     (s) => s.notifications.filter((n) => !n.isRead).length
@@ -49,6 +50,11 @@ export default function MoreScreen() {
       icon: "bar-chart-outline" as IoniconsName,
       label: t("reports:title"),
       route: "/(tabs)/more/reports",
+    },
+    {
+      icon: "people-outline" as IoniconsName,
+      label: t("directory:title"),
+      route: "/(tabs)/more/directory",
     },
     {
       icon: "settings-outline" as IoniconsName,
