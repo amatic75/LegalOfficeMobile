@@ -24,6 +24,10 @@ export default function ClientsLayout() {
         options={{ headerTitle: "" }}
       />
       <Stack.Screen
+        name="activity"
+        options={{ headerTitle: "" }}
+      />
+      <Stack.Screen
         name="new"
         options={{ headerTitle: tc("form.createTitle") }}
       />

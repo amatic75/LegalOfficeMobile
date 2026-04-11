@@ -9,8 +9,8 @@ import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
-import type { Client, CaseSummary, CommunicationEntry, ClientDocument } from "../../../src/services/types";
-import { STATUS_COLORS, CLIENT_DOC_TYPES } from "../../../src/services/types";
+import type { Client, CaseSummary, CommunicationEntry, ClientDocument, ClientActivity } from "../../../src/services/types";
+import { STATUS_COLORS, CLIENT_DOC_TYPES, ACTIVITY_TYPE_ICONS } from "../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -107,6 +107,45 @@ function formatDateDisplay(dateStr: string): string {
   return `${day}.${month}.${year}`;
 }
 
+function EmptyState({ icon, text }: { icon: IoniconsName; text: string }) {
+  return (
+    <View style={{ alignItems: "center", paddingVertical: 20 }}>
+      <Ionicons name={icon} size={24} color="#DDD" />
+      <Text style={{ fontSize: 13, color: "#AAA", marginTop: 6 }}>{text}</Text>
+    </View>
+  );
+}
+
+function ActivityItem({ item, isLast }: { item: ClientActivity; isLast: boolean }) {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "flex-start",
+        paddingVertical: 10,
+        borderBottomWidth: isLast ? 0 : 1,
+        borderBottomColor: "#F5F0E8",
+      }}
+    >
+      <View style={{ width: 32, alignItems: "center", marginTop: 2 }}>
+        <Ionicons name={item.icon as IoniconsName} size={16} color={colors.golden.DEFAULT} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontSize: 13, fontWeight: "600", color: colors.navy.DEFAULT }}>
+          {item.title}
+        </Text>
+        <Text style={{ fontSize: 11, color: "#888", marginTop: 2 }}>
+          {item.caseName} ({item.caseNumber})
+        </Text>
+        <Text style={{ fontSize: 11, color: "#AAA", marginTop: 2 }}>
+          {formatDateDisplay(item.date)}
+        </Text>
+      </View>
+      <Ionicons name={"chevron-forward" as IoniconsName} size={14} color="#DDD" style={{ marginTop: 8 }} />
+    </View>
+  );
+}
+
 export default function ClientDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useTranslation("clients");
@@ -118,6 +157,8 @@ export default function ClientDetailScreen() {
   const [cases, setCases] = useState<CaseSummary[]>([]);
   const [communications, setCommunications] = useState<CommunicationEntry[]>([]);
   const [clientDocs, setClientDocs] = useState<ClientDocument[]>([]);
+  const [recentActivity, setRecentActivity] = useState<ClientActivity[]>([]);
+  const [upcomingActivity, setUpcomingActivity] = useState<ClientActivity[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Communication modal state
@@ -140,16 +181,20 @@ export default function ClientDetailScreen() {
 
   const loadData = useCallback(async () => {
     if (!id) return;
-    const [clientData, casesData, commsData, docsData] = await Promise.all([
+    const [clientData, casesData, commsData, docsData, recentAct, upcomingAct] = await Promise.all([
       services.clients.getClientById(id),
       services.cases.getCasesByClientId(id),
       services.communications.getByClientId(id),
       services.clientDocuments.getByClientId(id),
+      services.clientAggregation.getRecentActivity(id, 3),
+      services.clientAggregation.getUpcomingActivity(id, 3),
     ]);
     setClient(clientData);
     setCases(casesData);
     setCommunications(commsData);
     setClientDocs(docsData);
+    setRecentActivity(recentAct);
+    setUpcomingActivity(upcomingAct);
     setLoading(false);
   }, [id, services]);
 
@@ -648,6 +693,44 @@ export default function ClientDetailScreen() {
               <Text style={{ fontSize: 12, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("documents.takePhoto")}</Text>
             </Pressable>
           </View>
+        </View>
+
+        {/* Recent Activity Section */}
+        <View style={SECTION_CARD}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT }}>
+              {t("recentActivity.title")}
+            </Text>
+            {recentActivity.length > 0 && (
+              <Pressable onPress={() => router.push({ pathname: "/(tabs)/clients/activity", params: { clientId: id, mode: "recent", clientName: displayName } })}>
+                <Text style={{ fontSize: 12, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("recentActivity.seeAll")}</Text>
+              </Pressable>
+            )}
+          </View>
+          {recentActivity.length > 0 ? (
+            recentActivity.map((item, idx) => <ActivityItem key={item.id} item={item} isLast={idx === recentActivity.length - 1} />)
+          ) : (
+            <EmptyState icon={"time-outline" as IoniconsName} text={t("recentActivity.noActivity")} />
+          )}
+        </View>
+
+        {/* Upcoming Activity Section */}
+        <View style={SECTION_CARD}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <Text style={{ fontSize: 14, fontWeight: "700", color: colors.navy.DEFAULT }}>
+              {t("upcomingActivity.title")}
+            </Text>
+            {upcomingActivity.length > 0 && (
+              <Pressable onPress={() => router.push({ pathname: "/(tabs)/clients/activity", params: { clientId: id, mode: "upcoming", clientName: displayName } })}>
+                <Text style={{ fontSize: 12, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("upcomingActivity.seeAll")}</Text>
+              </Pressable>
+            )}
+          </View>
+          {upcomingActivity.length > 0 ? (
+            upcomingActivity.map((item, idx) => <ActivityItem key={item.id} item={item} isLast={idx === upcomingActivity.length - 1} />)
+          ) : (
+            <EmptyState icon={"calendar-outline" as IoniconsName} text={t("upcomingActivity.noActivity")} />
+          )}
         </View>
 
         {/* Linked Cases Section */}
