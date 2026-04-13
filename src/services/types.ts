@@ -378,6 +378,7 @@ export interface Expense {
   category: ExpenseCategory;
   description: string;
   date: string;
+  paid?: boolean;
   createdAt: string;
 }
 
@@ -508,6 +509,7 @@ export interface ITimeEntryService {
 export interface IExpenseService {
   getExpensesByCaseId(caseId: string): Promise<Expense[]>;
   createExpense(data: Omit<Expense, 'id' | 'createdAt'>): Promise<Expense>;
+  updateExpense(id: string, data: Partial<Pick<Expense, 'amount' | 'category' | 'description' | 'date' | 'paid'>>): Promise<Expense | null>;
   deleteExpense(id: string): Promise<boolean>;
 }
 
@@ -798,6 +800,7 @@ export interface ClientExpenseItem {
   caseNumber: string;
   category?: string;
   hours?: number;
+  paid?: boolean;
 }
 
 export interface ClientOutstandingSummary {

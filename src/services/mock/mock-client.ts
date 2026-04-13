@@ -621,6 +621,14 @@ const mockExpenseService: IExpenseService = {
     return newExpense;
   },
 
+  async updateExpense(id: string, data: Partial<Pick<Expense, 'amount' | 'category' | 'description' | 'date' | 'paid'>>): Promise<Expense | null> {
+    await delay(200);
+    const index = expenses.findIndex((e) => e.id === id);
+    if (index === -1) return null;
+    expenses[index] = { ...expenses[index], ...data };
+    return expenses[index];
+  },
+
   async deleteExpense(id: string): Promise<boolean> {
     await delay(300);
     const index = expenses.findIndex((e) => e.id === id);
@@ -1201,6 +1209,7 @@ const mockClientAggregationService: IClientAggregationService = {
           caseName: cs.title,
           caseNumber: cs.caseNumber,
           hours: te.hours,
+          paid: false,
         });
       }
 
@@ -1217,6 +1226,7 @@ const mockClientAggregationService: IClientAggregationService = {
           caseName: cs.title,
           caseNumber: cs.caseNumber,
           category: exp.category,
+          paid: exp.paid ?? false,
         });
       }
     }

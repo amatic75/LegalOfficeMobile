@@ -1414,6 +1414,7 @@ export default function CaseDetailScreen() {
                 );
               } else {
                 const ex = item.data as Expense;
+                const isPaid = ex.paid === true;
                 return (
                   <View
                     key={ex.id}
@@ -1423,7 +1424,7 @@ export default function CaseDetailScreen() {
                       padding: 12,
                       marginBottom: 8,
                       borderLeftWidth: 3,
-                      borderLeftColor: '#43A047',
+                      borderLeftColor: isPaid ? '#CCC' : '#43A047',
                       shadowColor: "#000",
                       shadowOffset: { width: 0, height: 1 },
                       shadowOpacity: 0.03,
@@ -1432,8 +1433,22 @@ export default function CaseDetailScreen() {
                     }}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                      <Ionicons name={"wallet-outline" as IoniconsName} size={18} color="#43A047" />
-                      <Text style={{ fontSize: 15, fontWeight: "700", color: colors.navy.DEFAULT }}>{ex.amount.toLocaleString('sr-Latn-RS')} RSD</Text>
+                      <Pressable
+                        onPress={async () => {
+                          await services.expenses.updateExpense(ex.id, { paid: !isPaid });
+                          const refreshed = await services.expenses.getExpensesByCaseId(id);
+                          setExpenses(refreshed);
+                        }}
+                        hitSlop={8}
+                      >
+                        <Ionicons
+                          name={(isPaid ? "checkmark-circle" : "ellipse-outline") as IoniconsName}
+                          size={20}
+                          color={isPaid ? "#2E7D32" : "#CCC"}
+                        />
+                      </Pressable>
+                      <Ionicons name={"wallet-outline" as IoniconsName} size={18} color={isPaid ? "#AAA" : "#43A047"} />
+                      <Text style={{ fontSize: 15, fontWeight: "700", color: isPaid ? "#AAA" : colors.navy.DEFAULT }}>{ex.amount.toLocaleString('sr-Latn-RS')} RSD</Text>
                       <View style={{
                         paddingHorizontal: 8,
                         paddingVertical: 2,
@@ -1444,12 +1459,29 @@ export default function CaseDetailScreen() {
                           {t(`billing.categories.${ex.category}`)}
                         </Text>
                       </View>
+                      {isPaid && (
+                        <View style={{
+                          paddingHorizontal: 6,
+                          paddingVertical: 2,
+                          borderRadius: 8,
+                          backgroundColor: "#E8F5E9",
+                        }}>
+                          <Text style={{ fontSize: 9, fontWeight: "700", color: "#2E7D32" }}>
+                            {t("billing.paid")}
+                          </Text>
+                        </View>
+                      )}
                       <View style={{ flex: 1 }} />
                       <Pressable onPress={() => handleDeleteExpense(ex.id)}>
                         <Ionicons name={"trash-outline" as IoniconsName} size={16} color="#E57373" />
                       </Pressable>
                     </View>
-                    <Text style={{ fontSize: 13, color: colors.navy.DEFAULT, marginTop: 4 }}>{ex.description}</Text>
+                    <Text style={{
+                      fontSize: 13,
+                      color: isPaid ? "#AAA" : colors.navy.DEFAULT,
+                      marginTop: 4,
+                      textDecorationLine: isPaid ? "line-through" : "none",
+                    }}>{ex.description}</Text>
                     <Text style={{ fontSize: 11, color: "#BBB", marginTop: 4 }}>
                       {ex.date.split("-").reverse().join(".")}
                     </Text>
