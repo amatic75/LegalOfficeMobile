@@ -114,10 +114,13 @@
   },
   "expenses": {
     "title": "Expenses",
+    "expensesAndBilling": "Expenses & Billing",
     "total": "Total",
     "noExpenses": "No expenses recorded",
     "timeEntry": "Time Entry",
-    "expense": "Expense"
+    "expense": "Expense",
+    "viewInvoices": "View invoices",
+    "paid": "PAID"
   },
   "outstanding": {
     "title": "Unpaid / Outstanding",

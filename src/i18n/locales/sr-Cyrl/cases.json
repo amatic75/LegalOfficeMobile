@@ -31,7 +31,8 @@
     "selectSubtypeDetails": "Детаљи подтипа",
     "tapToEdit": "Додирните за измену",
     "save": "Сачувај",
-    "cancel": "Откажи"
+    "cancel": "Откажи",
+    "viewInDirectory": "Погледај у именику"
   },
   "form": {
     "createTitle": "Нови предмет",

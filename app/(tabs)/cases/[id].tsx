@@ -212,6 +212,10 @@ export default function CaseDetailScreen() {
   const [selectedLinkCase, setSelectedLinkCase] = useState<CaseSummary | null>(null);
   const [selectedLinkType, setSelectedLinkType] = useState<CaseLinkType>("related");
 
+  // Directory navigation state
+  const [matchedJudgeId, setMatchedJudgeId] = useState<string | null>(null);
+  const [matchedOpposingLawyerId, setMatchedOpposingLawyerId] = useState<string | null>(null);
+
   const loadCase = useCallback(async () => {
     if (!id) return;
     const [data, docs, events, caseNotes, caseTimeEntries, caseExpenses, caseLinksList] = await Promise.all([
@@ -234,6 +238,25 @@ export default function CaseDetailScreen() {
     if (data?.clientId) {
       const client = await services.clients.getClientById(data.clientId);
       setClientData(client);
+    }
+    // Resolve directory links for judge and opposing counsel
+    if (data) {
+      const [dirJudges, dirLawyers] = await Promise.all([
+        data.judge ? services.directory.getJudges() : Promise.resolve([]),
+        (data.opposingPartyRepresentative) ? services.directory.getLawyers() : Promise.resolve([]),
+      ]);
+      if (data.judge) {
+        const matched = dirJudges.find((j) => j.displayName === data.judge);
+        setMatchedJudgeId(matched?.id ?? null);
+      } else {
+        setMatchedJudgeId(null);
+      }
+      if (data.opposingPartyRepresentative) {
+        const matched = dirLawyers.find((l) => l.displayName === data.opposingPartyRepresentative);
+        setMatchedOpposingLawyerId(matched?.id ?? null);
+      } else {
+        setMatchedOpposingLawyerId(null);
+      }
     }
     setLoading(false);
   }, [id, services]);
@@ -780,6 +803,15 @@ export default function CaseDetailScreen() {
             placeholder={t("detail.tapToEdit")}
             onSave={(v) => handleInlineFieldSave("opposingPartyRepresentative", v)}
           />
+          {matchedOpposingLawyerId && (
+            <Pressable
+              onPress={() => router.push({ pathname: "/(tabs)/more/directory/lawyers", params: { id: matchedOpposingLawyerId } })}
+              style={{ flexDirection: "row", alignItems: "center", paddingLeft: 32, paddingBottom: 6, gap: 4 }}
+            >
+              <Ionicons name={"open-outline" as IoniconsName} size={12} color={colors.golden.DEFAULT} />
+              <Text style={{ fontSize: 11, color: colors.golden.DEFAULT, fontWeight: "500" }}>{t("detail.viewInDirectory")}</Text>
+            </Pressable>
+          )}
 
           {caseData.court && (
             <InfoRow
@@ -787,6 +819,15 @@ export default function CaseDetailScreen() {
               label={t("detail.court")}
               value={caseData.court}
             />
+          )}
+          {caseData.courtId && (
+            <Pressable
+              onPress={() => router.push({ pathname: "/(tabs)/more/directory/courts", params: { id: caseData.courtId! } })}
+              style={{ flexDirection: "row", alignItems: "center", paddingLeft: 32, paddingBottom: 6, gap: 4 }}
+            >
+              <Ionicons name={"open-outline" as IoniconsName} size={12} color={colors.golden.DEFAULT} />
+              <Text style={{ fontSize: 11, color: colors.golden.DEFAULT, fontWeight: "500" }}>{t("detail.viewInDirectory")}</Text>
+            </Pressable>
           )}
 
           {/* Inline Editable: Court Case Number */}
@@ -806,6 +847,15 @@ export default function CaseDetailScreen() {
             placeholder={t("detail.tapToEdit")}
             onSave={(v) => handleInlineFieldSave("judge", v)}
           />
+          {matchedJudgeId && (
+            <Pressable
+              onPress={() => router.push({ pathname: "/(tabs)/more/directory/judges", params: { id: matchedJudgeId } })}
+              style={{ flexDirection: "row", alignItems: "center", paddingLeft: 32, paddingBottom: 6, gap: 4 }}
+            >
+              <Ionicons name={"open-outline" as IoniconsName} size={12} color={colors.golden.DEFAULT} />
+              <Text style={{ fontSize: 11, color: colors.golden.DEFAULT, fontWeight: "500" }}>{t("detail.viewInDirectory")}</Text>
+            </Pressable>
+          )}
 
           {caseData.lawyerName && (
             <InfoRow
@@ -813,6 +863,15 @@ export default function CaseDetailScreen() {
               label={t("detail.lawyer")}
               value={caseData.lawyerName}
             />
+          )}
+          {caseData.lawyerId && (
+            <Pressable
+              onPress={() => router.push({ pathname: "/(tabs)/more/directory/lawyers", params: { id: caseData.lawyerId! } })}
+              style={{ flexDirection: "row", alignItems: "center", paddingLeft: 32, paddingBottom: 6, gap: 4 }}
+            >
+              <Ionicons name={"open-outline" as IoniconsName} size={12} color={colors.golden.DEFAULT} />
+              <Text style={{ fontSize: 11, color: colors.golden.DEFAULT, fontWeight: "500" }}>{t("detail.viewInDirectory")}</Text>
+            </Pressable>
           )}
           {caseData.description && (
             <InfoRow

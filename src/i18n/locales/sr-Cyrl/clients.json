@@ -114,10 +114,13 @@
   },
   "expenses": {
     "title": "Трошкови",
+    "expensesAndBilling": "Трошкови и наплата",
     "total": "Укупно",
     "noExpenses": "Нема евидентираних трошкова",
     "timeEntry": "Евиденција времена",
-    "expense": "Трошак"
+    "expense": "Трошак",
+    "viewInvoices": "Прегледај фактуре",
+    "paid": "ПЛАЋЕНО"
   },
   "outstanding": {
     "title": "Неплаћено / Дуговања",

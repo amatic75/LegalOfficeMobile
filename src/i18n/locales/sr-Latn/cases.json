@@ -31,7 +31,8 @@
     "selectSubtypeDetails": "Detalji podtipa",
     "tapToEdit": "Dodirnite za izmenu",
     "save": "Sacuvaj",
-    "cancel": "Otkazi"
+    "cancel": "Otkazi",
+    "viewInDirectory": "Pogledaj u imeniku"
   },
   "form": {
     "createTitle": "Novi predmet",

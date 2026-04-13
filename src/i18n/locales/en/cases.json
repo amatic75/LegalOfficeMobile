@@ -31,7 +31,8 @@
     "selectSubtypeDetails": "Subtype details",
     "tapToEdit": "Tap to edit",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "viewInDirectory": "View in directory"
   },
   "form": {
     "createTitle": "New case",
