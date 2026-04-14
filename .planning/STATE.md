@@ -85,6 +85,6 @@ Todo files moved: `.planning/todos/pending/` → `.planning/todos/done/` (client
 
 ## Session Continuity
 
-Last session: 2026-04-11
-Stopped at: Completed 11-02-PLAN.md — directory CRUD forms and search integration complete, v1.2 milestone finished
+Last session: 2026-04-13
+Stopped at: Completed quick task 1 — expense paid/unpaid toggle, merged expenses section, directory navigation links
 Resume file: None

@@ -10,7 +10,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { useServices } from "../../../src/hooks/useServices";
 import { colors } from "../../../src/theme/tokens";
 import type { Client, CaseSummary, CommunicationEntry, ClientDocument, ClientActivity, ClientExpenseItem, ClientOutstandingSummary } from "../../../src/services/types";
-import { STATUS_COLORS, CLIENT_DOC_TYPES, ACTIVITY_TYPE_ICONS } from "../../../src/services/types";
+import { STATUS_COLORS, ACTIVITY_TYPE_ICONS } from "../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -170,10 +170,8 @@ export default function ClientDetailScreen() {
   const [commSubject, setCommSubject] = useState("");
   const [commContent, setCommContent] = useState("");
 
-  // Client document modal state
-  const [showDocModal, setShowDocModal] = useState(false);
-  const [docType, setDocType] = useState<ClientDocument['type']>("id-card");
-  const [docName, setDocName] = useState("");
+  // Client document add-options state
+  const [showAddDocOptions, setShowAddDocOptions] = useState(false);
 
   // Add contact modal state (corporate)
   const [showContactModal, setShowContactModal] = useState(false);
@@ -228,19 +226,21 @@ export default function ClientDetailScreen() {
     setCommType("call");
   };
 
-  const handleAddClientDoc = async () => {
-    if (!id || !docName.trim()) return;
-    await services.clientDocuments.create({
-      clientId: id,
-      type: docType,
-      name: docName.trim(),
-      uri: `file://mock/${docName.trim().replace(/\s/g, '-').toLowerCase()}.pdf`,
-    });
-    const refreshed = await services.clientDocuments.getByClientId(id);
-    setClientDocs(refreshed);
-    setShowDocModal(false);
-    setDocName("");
-    setDocType("id-card");
+  const handleOpenDoc = async (doc: ClientDocument) => {
+    if (!doc.uri || doc.uri.startsWith("file://mock/")) {
+      Alert.alert(t("documents.cannotOpenTitle"), t("documents.cannotOpenMessage"));
+      return;
+    }
+    try {
+      const supported = await Linking.canOpenURL(doc.uri);
+      if (supported) {
+        await Linking.openURL(doc.uri);
+      } else {
+        Alert.alert(t("documents.cannotOpenTitle"), t("documents.cannotOpenMessage"));
+      }
+    } catch {
+      Alert.alert(t("documents.cannotOpenTitle"), t("documents.cannotOpenMessage"));
+    }
   };
 
   const handleDeleteClientDoc = (docId: string, docNameStr: string) => {
@@ -281,6 +281,7 @@ export default function ClientDetailScreen() {
         const refreshed = await services.clientDocuments.getByClientId(id);
         setClientDocs(refreshed);
       }
+      setShowAddDocOptions(false);
     }
   };
 
@@ -312,6 +313,7 @@ export default function ClientDetailScreen() {
         const refreshed = await services.clientDocuments.getByClientId(id);
         setClientDocs(refreshed);
       }
+      setShowAddDocOptions(false);
     }
   };
 
@@ -712,7 +714,7 @@ export default function ClientDetailScreen() {
               {t("documents.title")}
             </Text>
             <Pressable
-              onPress={() => setShowDocModal(true)}
+              onPress={() => setShowAddDocOptions((v) => !v)}
               style={{
                 backgroundColor: colors.golden.DEFAULT,
                 borderRadius: 6,
@@ -723,14 +725,15 @@ export default function ClientDetailScreen() {
                 gap: 4,
               }}
             >
-              <Ionicons name={"add" as IoniconsName} size={14} color="#FFFFFF" />
+              <Ionicons name={(showAddDocOptions ? "close" : "add") as IoniconsName} size={14} color="#FFFFFF" />
               <Text style={{ fontSize: 11, fontWeight: "600", color: "#FFFFFF" }}>{t("clientDocuments.addDocument")}</Text>
             </Pressable>
           </View>
           {clientDocs.length > 0 ? (
             clientDocs.map((doc, index) => (
-              <View
+              <Pressable
                 key={doc.id}
+                onPress={() => handleOpenDoc(doc)}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -765,7 +768,7 @@ export default function ClientDetailScreen() {
                 >
                   <Ionicons name={"trash-outline" as IoniconsName} size={16} color="#E53935" />
                 </Pressable>
-              </View>
+              </Pressable>
             ))
           ) : (
             <View style={{ alignItems: "center", paddingVertical: 20 }}>
@@ -773,45 +776,47 @@ export default function ClientDetailScreen() {
               <Text style={{ fontSize: 13, color: "#AAA", marginTop: 6 }}>{t("documents.noDocuments")}</Text>
             </View>
           )}
-          {/* Upload File / Take Photo action bar */}
-          <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
-            <Pressable
-              onPress={handleUploadFile}
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-                paddingVertical: 10,
-                borderRadius: 8,
-                backgroundColor: colors.golden[50],
-                borderWidth: 1,
-                borderColor: colors.golden.DEFAULT,
-              }}
-            >
-              <Ionicons name={"cloud-upload-outline" as IoniconsName} size={16} color={colors.golden.DEFAULT} />
-              <Text style={{ fontSize: 12, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("documents.uploadFile")}</Text>
-            </Pressable>
-            <Pressable
-              onPress={handleCapturePhoto}
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 6,
-                paddingVertical: 10,
-                borderRadius: 8,
-                backgroundColor: colors.golden[50],
-                borderWidth: 1,
-                borderColor: colors.golden.DEFAULT,
-              }}
-            >
-              <Ionicons name={"camera-outline" as IoniconsName} size={16} color={colors.golden.DEFAULT} />
-              <Text style={{ fontSize: 12, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("documents.takePhoto")}</Text>
-            </Pressable>
-          </View>
+          {/* Upload File / Take Photo action bar (gated behind Add Document toggle) */}
+          {showAddDocOptions && (
+            <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
+              <Pressable
+                onPress={handleUploadFile}
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  paddingVertical: 10,
+                  borderRadius: 8,
+                  backgroundColor: colors.golden[50],
+                  borderWidth: 1,
+                  borderColor: colors.golden.DEFAULT,
+                }}
+              >
+                <Ionicons name={"cloud-upload-outline" as IoniconsName} size={16} color={colors.golden.DEFAULT} />
+                <Text style={{ fontSize: 12, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("documents.uploadFile")}</Text>
+              </Pressable>
+              <Pressable
+                onPress={handleCapturePhoto}
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  paddingVertical: 10,
+                  borderRadius: 8,
+                  backgroundColor: colors.golden[50],
+                  borderWidth: 1,
+                  borderColor: colors.golden.DEFAULT,
+                }}
+              >
+                <Ionicons name={"camera-outline" as IoniconsName} size={16} color={colors.golden.DEFAULT} />
+                <Text style={{ fontSize: 12, fontWeight: "600", color: colors.golden.DEFAULT }}>{t("documents.takePhoto")}</Text>
+              </Pressable>
+            </View>
+          )}
         </View>
 
         {/* Recent Activity Section */}
@@ -1049,84 +1054,6 @@ export default function ClientDetailScreen() {
 
             <Pressable
               onPress={handleAddCommunication}
-              style={{
-                backgroundColor: colors.golden.DEFAULT,
-                borderRadius: 12,
-                paddingVertical: 14,
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 16, fontWeight: "700", color: "#FFFFFF" }}>{t("form.save")}</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Client Document Modal */}
-      <Modal visible={showDocModal} animationType="slide" transparent>
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "flex-end" }}>
-          <View style={{ backgroundColor: "#FFFFFF", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, paddingBottom: 40 + insets.bottom }}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-              <Text style={{ fontSize: 18, fontWeight: "700", color: colors.navy.DEFAULT }}>
-                {t("clientDocuments.addDocument")}
-              </Text>
-              <Pressable onPress={() => setShowDocModal(false)}>
-                <Ionicons name={"close" as IoniconsName} size={24} color="#AAA" />
-              </Pressable>
-            </View>
-
-            {/* Type selector */}
-            <Text style={{ fontSize: 13, fontWeight: "600", color: colors.navy.DEFAULT, marginBottom: 8 }}>
-              Document Type
-            </Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-              {CLIENT_DOC_TYPES.map((dt) => {
-                const isActive = docType === dt;
-                const labelKey = dt === "id-card" ? "idCard" : dt === "power-of-attorney" ? "powerOfAttorney" : dt === "engagement-letter" ? "engagementLetter" : dt;
-                return (
-                  <Pressable
-                    key={dt}
-                    onPress={() => setDocType(dt)}
-                    style={{
-                      paddingHorizontal: 12,
-                      paddingVertical: 8,
-                      borderRadius: 8,
-                      backgroundColor: isActive ? colors.golden[50] : "#F5F5F5",
-                      borderWidth: 1,
-                      borderColor: isActive ? colors.golden.DEFAULT : "#E5E5E5",
-                    }}
-                  >
-                    <Text style={{ fontSize: 12, fontWeight: "600", color: isActive ? colors.golden.DEFAULT : "#888" }}>
-                      {t("clientDocuments." + labelKey)}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-
-            <Text style={{ fontSize: 13, fontWeight: "600", color: colors.navy.DEFAULT, marginBottom: 6 }}>
-              Document Name
-            </Text>
-            <TextInput
-              value={docName}
-              onChangeText={setDocName}
-              placeholder="Enter document name"
-              placeholderTextColor="#CCC"
-              style={{
-                backgroundColor: "#F9F9F9",
-                borderRadius: 10,
-                paddingHorizontal: 14,
-                paddingVertical: 12,
-                fontSize: 14,
-                color: colors.navy.DEFAULT,
-                borderWidth: 1,
-                borderColor: "#E5E5E5",
-                marginBottom: 16,
-              }}
-            />
-
-            <Pressable
-              onPress={handleAddClientDoc}
               style={{
                 backgroundColor: colors.golden.DEFAULT,
                 borderRadius: 12,
