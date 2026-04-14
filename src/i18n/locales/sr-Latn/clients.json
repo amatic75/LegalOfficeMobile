@@ -100,7 +100,9 @@
     "takePhoto": "Fotografisi",
     "noDocuments": "Nema dokumenata",
     "permissionRequired": "Potrebna dozvola",
-    "permissionDenied": "Dozvola za kameru je potrebna za fotografisanje"
+    "permissionDenied": "Dozvola za kameru je potrebna za fotografisanje",
+    "cannotOpenTitle": "Fajl se ne moze otvoriti",
+    "cannotOpenMessage": "Ovaj fajl se ne moze otvoriti. Mozda nedostaje, ili uredjaj nema aplikaciju za ovu vrstu fajla."
   },
   "recentActivity": {
     "title": "Nedavne aktivnosti",

@@ -100,7 +100,9 @@
     "takePhoto": "Take Photo",
     "noDocuments": "No documents yet",
     "permissionRequired": "Permission Required",
-    "permissionDenied": "Camera permission is required to take photos"
+    "permissionDenied": "Camera permission is required to take photos",
+    "cannotOpenTitle": "Cannot Open File",
+    "cannotOpenMessage": "This file cannot be opened. It may be missing or the device has no app to handle this file type."
   },
   "recentActivity": {
     "title": "Recent Activity",
