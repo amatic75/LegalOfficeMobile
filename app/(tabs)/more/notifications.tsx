@@ -8,10 +8,11 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNotificationStore } from "../../../src/stores/notification-store";
+import { useReturnBack } from "../../../src/hooks/useReturnBack";
 import type {
   AppNotification,
   NotificationPreferences,
@@ -848,6 +849,7 @@ function PreferencesModal({
 export default function NotificationsScreen() {
   const { t } = useTranslation(["notifications", "common"]);
   const router = useRouter();
+  const { goBack, returnTo } = useReturnBack();
 
   // Store state
   const notifications = useNotificationStore((s) => s.notifications);
@@ -903,11 +905,15 @@ export default function NotificationsScreen() {
     (notification: AppNotification) => {
       markAsRead(notification.id);
       if (notification.relatedEventId) {
-        router.push(
-          ("/(tabs)/calendar/event/" + notification.relatedEventId) as any
-        );
+        router.push({
+          pathname: "/(tabs)/calendar/event/[id]",
+          params: { id: notification.relatedEventId, returnTo: "/(tabs)/more/notifications" },
+        });
       } else if (notification.relatedCaseId) {
-        router.push(("/(tabs)/cases/" + notification.relatedCaseId) as any);
+        router.push({
+          pathname: "/(tabs)/cases/[id]",
+          params: { id: notification.relatedCaseId, returnTo: "/(tabs)/more/notifications" },
+        });
       }
     },
     [markAsRead, router]
@@ -936,10 +942,10 @@ export default function NotificationsScreen() {
 
   const handleReschedule = useCallback(() => {
     if (selectedNotification?.relatedEventId) {
-      router.push(
-        ("/(tabs)/calendar/event/" +
-          selectedNotification.relatedEventId) as any
-      );
+      router.push({
+        pathname: "/(tabs)/calendar/event/[id]",
+        params: { id: selectedNotification.relatedEventId, returnTo: "/(tabs)/more/notifications" },
+      });
     }
   }, [selectedNotification, router]);
 
@@ -958,6 +964,17 @@ export default function NotificationsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.cream.DEFAULT }}>
+      {returnTo && (
+        <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+              </Pressable>
+            ),
+          }}
+        />
+      )}
       {/* Header toolbar */}
       <View
         style={{

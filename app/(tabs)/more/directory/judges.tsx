@@ -9,11 +9,12 @@ import {
   ActivityIndicator,
   Linking,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useServices } from "../../../../src/hooks/useServices";
+import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
 import type { Judge } from "../../../../src/services/types";
 
@@ -217,6 +218,7 @@ export default function JudgeDetailScreen() {
   const { t } = useTranslation("directory");
   const services = useServices();
   const router = useRouter();
+  const { goBack, returnTo } = useReturnBack();
 
   const [judge, setJudge] = useState<Judge | null>(null);
   const [loading, setLoading] = useState(true);
@@ -295,6 +297,17 @@ export default function JudgeDetailScreen() {
       style={{ flex: 1, backgroundColor: "#FAF9F6" }}
       contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
     >
+      {returnTo && (
+        <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+              </Pressable>
+            ),
+          }}
+        />
+      )}
       {/* Header Card */}
       <View style={SECTION_CARD}>
         <View style={{ alignItems: "center", paddingVertical: 8 }}>

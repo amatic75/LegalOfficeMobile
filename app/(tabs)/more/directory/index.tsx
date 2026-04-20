@@ -216,7 +216,7 @@ export default function DirectoryScreen() {
       onPress={() =>
         router.push({
           pathname: "/(tabs)/more/directory/lawyers",
-          params: { id: item.id },
+          params: { id: item.id, returnTo: "/(tabs)/more/directory" },
         })
       }
       onLongPress={() =>
@@ -321,7 +321,7 @@ export default function DirectoryScreen() {
       onPress={() =>
         router.push({
           pathname: "/(tabs)/more/directory/judges",
-          params: { id: item.id },
+          params: { id: item.id, returnTo: "/(tabs)/more/directory" },
         })
       }
       onLongPress={() =>
@@ -396,7 +396,7 @@ export default function DirectoryScreen() {
       onPress={() =>
         router.push({
           pathname: "/(tabs)/more/directory/courts",
-          params: { id: item.id },
+          params: { id: item.id, returnTo: "/(tabs)/more/directory" },
         })
       }
       onLongPress={() => handleDeleteItem("courts", item.id, item.name)}

@@ -346,7 +346,7 @@ export default function HomeScreen() {
                 const statusColor = STATUS_COLORS[item.status] ?? STATUS_COLORS.active;
                 return (
                   <Pressable
-                    onPress={() => router.push(("/(tabs)/cases/" + item.id) as any)}
+                    onPress={() => router.push({ pathname: "/(tabs)/cases/[id]", params: { id: item.id, returnTo: "/(tabs)" } })}
                     style={{
                       width: 180,
                       backgroundColor: "#FFFFFF",
@@ -437,7 +437,7 @@ export default function HomeScreen() {
               return (
                 <Pressable
                   key={item.id}
-                  onPress={() => router.push(("/(tabs)/calendar/event/" + item.id) as any)}
+                  onPress={() => router.push({ pathname: "/(tabs)/calendar/event/[id]", params: { id: item.id, returnTo: "/(tabs)" } })}
                   style={{
                     backgroundColor: "#FFFFFF",
                     borderRadius: 14,

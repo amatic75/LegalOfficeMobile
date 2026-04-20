@@ -2,6 +2,7 @@ import { View, Text, ScrollView, Pressable, ActivityIndicator, Alert, TextInput,
 import { useTranslation } from "react-i18next";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from "expo-router";
+import { useReturnBack } from "../../../src/hooks/useReturnBack";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Audio } from "expo-av";
@@ -70,12 +71,14 @@ function InfoRow({ icon, label, value, onPress, linkColor }: {
   return content;
 }
 
-function EditableInfoRow({ icon, label, value, placeholder, onSave }: {
+function EditableInfoRow({ icon, label, value, placeholder, onSave, linkColor, onLinkPress }: {
   icon: IoniconsName;
   label: string;
   value?: string;
   placeholder: string;
   onSave: (newValue: string) => void;
+  linkColor?: string;
+  onLinkPress?: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(value ?? "");
@@ -121,6 +124,33 @@ function EditableInfoRow({ icon, label, value, placeholder, onSave }: {
     );
   }
 
+  const hasLink = Boolean(value && linkColor && onLinkPress);
+
+  if (hasLink) {
+    return (
+      <View style={{ flexDirection: "row", alignItems: "flex-start", paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: "#F5F0E8" }}>
+        <View style={{ width: 32, alignItems: "center", marginTop: 2 }}>
+          <Ionicons name={icon} size={16} color={linkColor} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 12, color: "#AAA", marginBottom: 2 }}>{label}</Text>
+          <Pressable onPress={onLinkPress}>
+            <Text style={{ fontSize: 14, color: linkColor, fontWeight: "600", textDecorationLine: "underline" }}>
+              {value}
+            </Text>
+          </Pressable>
+        </View>
+        <Pressable
+          onPress={() => { setEditValue(value ?? ""); setEditing(true); }}
+          hitSlop={8}
+          style={{ padding: 4, marginTop: 4 }}
+        >
+          <Ionicons name={"pencil-outline" as IoniconsName} size={14} color="#AAA" />
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
     <Pressable onPress={() => { setEditValue(value ?? ""); setEditing(true); }}>
       <View style={{ flexDirection: "row", alignItems: "flex-start", paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: "#F5F0E8" }}>
@@ -149,6 +179,7 @@ export default function CaseDetailScreen() {
   const services = useServices();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { goBack, returnTo } = useReturnBack();
 
   const { t: td } = useTranslation("documents");
   const { t: tc } = useTranslation("calendar");
@@ -664,6 +695,13 @@ export default function CaseDetailScreen() {
       <Stack.Screen
         options={{
           headerTitle: caseData.caseNumber,
+          headerLeft: returnTo
+            ? () => (
+                <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                  <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+                </Pressable>
+              )
+            : undefined,
           headerRight: () => (
             <Pressable
               onPress={() => router.push('/(tabs)/cases/edit/' + id)}
@@ -784,7 +822,7 @@ export default function CaseDetailScreen() {
             icon={"person-outline" as IoniconsName}
             label={t("detail.client")}
             value={caseData.clientName}
-            onPress={() => router.push('/(tabs)/clients/' + caseData.clientId)}
+            onPress={() => router.push({ pathname: '/(tabs)/clients/[id]', params: { id: caseData.clientId!, returnTo: `/(tabs)/cases/${id}` } })}
             linkColor={colors.golden.DEFAULT}
           />
           {caseData.opposingParty && (
@@ -802,32 +840,18 @@ export default function CaseDetailScreen() {
             value={caseData.opposingPartyRepresentative}
             placeholder={t("detail.tapToEdit")}
             onSave={(v) => handleInlineFieldSave("opposingPartyRepresentative", v)}
+            linkColor={matchedOpposingLawyerId ? colors.golden.DEFAULT : undefined}
+            onLinkPress={matchedOpposingLawyerId ? () => router.push({ pathname: "/(tabs)/more/directory/lawyers", params: { id: matchedOpposingLawyerId, returnTo: `/(tabs)/cases/${id}` } }) : undefined}
           />
-          {matchedOpposingLawyerId && (
-            <Pressable
-              onPress={() => router.push({ pathname: "/(tabs)/more/directory/lawyers", params: { id: matchedOpposingLawyerId } })}
-              style={{ flexDirection: "row", alignItems: "center", paddingLeft: 32, paddingBottom: 6, gap: 4 }}
-            >
-              <Ionicons name={"open-outline" as IoniconsName} size={12} color={colors.golden.DEFAULT} />
-              <Text style={{ fontSize: 11, color: colors.golden.DEFAULT, fontWeight: "500" }}>{t("detail.viewInDirectory")}</Text>
-            </Pressable>
-          )}
 
           {caseData.court && (
             <InfoRow
               icon={"business-outline" as IoniconsName}
               label={t("detail.court")}
               value={caseData.court}
+              onPress={caseData.courtId ? () => router.push({ pathname: "/(tabs)/more/directory/courts", params: { id: caseData.courtId!, returnTo: `/(tabs)/cases/${id}` } }) : undefined}
+              linkColor={caseData.courtId ? colors.golden.DEFAULT : undefined}
             />
-          )}
-          {caseData.courtId && (
-            <Pressable
-              onPress={() => router.push({ pathname: "/(tabs)/more/directory/courts", params: { id: caseData.courtId! } })}
-              style={{ flexDirection: "row", alignItems: "center", paddingLeft: 32, paddingBottom: 6, gap: 4 }}
-            >
-              <Ionicons name={"open-outline" as IoniconsName} size={12} color={colors.golden.DEFAULT} />
-              <Text style={{ fontSize: 11, color: colors.golden.DEFAULT, fontWeight: "500" }}>{t("detail.viewInDirectory")}</Text>
-            </Pressable>
           )}
 
           {/* Inline Editable: Court Case Number */}
@@ -846,33 +870,10 @@ export default function CaseDetailScreen() {
             value={caseData.judge}
             placeholder={t("detail.tapToEdit")}
             onSave={(v) => handleInlineFieldSave("judge", v)}
+            linkColor={matchedJudgeId ? colors.golden.DEFAULT : undefined}
+            onLinkPress={matchedJudgeId ? () => router.push({ pathname: "/(tabs)/more/directory/judges", params: { id: matchedJudgeId, returnTo: `/(tabs)/cases/${id}` } }) : undefined}
           />
-          {matchedJudgeId && (
-            <Pressable
-              onPress={() => router.push({ pathname: "/(tabs)/more/directory/judges", params: { id: matchedJudgeId } })}
-              style={{ flexDirection: "row", alignItems: "center", paddingLeft: 32, paddingBottom: 6, gap: 4 }}
-            >
-              <Ionicons name={"open-outline" as IoniconsName} size={12} color={colors.golden.DEFAULT} />
-              <Text style={{ fontSize: 11, color: colors.golden.DEFAULT, fontWeight: "500" }}>{t("detail.viewInDirectory")}</Text>
-            </Pressable>
-          )}
 
-          {caseData.lawyerName && (
-            <InfoRow
-              icon={"shield-outline" as IoniconsName}
-              label={t("detail.lawyer")}
-              value={caseData.lawyerName}
-            />
-          )}
-          {caseData.lawyerId && (
-            <Pressable
-              onPress={() => router.push({ pathname: "/(tabs)/more/directory/lawyers", params: { id: caseData.lawyerId! } })}
-              style={{ flexDirection: "row", alignItems: "center", paddingLeft: 32, paddingBottom: 6, gap: 4 }}
-            >
-              <Ionicons name={"open-outline" as IoniconsName} size={12} color={colors.golden.DEFAULT} />
-              <Text style={{ fontSize: 11, color: colors.golden.DEFAULT, fontWeight: "500" }}>{t("detail.viewInDirectory")}</Text>
-            </Pressable>
-          )}
           {caseData.description && (
             <InfoRow
               icon={"reader-outline" as IoniconsName}
@@ -1664,7 +1665,7 @@ export default function CaseDetailScreen() {
             caseLinksData.map((link) => (
               <Pressable
                 key={link.id}
-                onPress={() => router.push(`/(tabs)/cases/${link.linkedCase.id}` as any)}
+                onPress={() => router.push({ pathname: '/(tabs)/cases/[id]', params: { id: link.linkedCase.id, returnTo: `/(tabs)/cases/${id}` } })}
               >
                 <View
                   style={{

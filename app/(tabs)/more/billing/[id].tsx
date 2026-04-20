@@ -11,12 +11,15 @@ import {
   Platform,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useServices } from "../../../../src/hooks/useServices";
+import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
 import type { Invoice } from "../../../../src/services/types";
 import { INVOICE_STATUS_COLORS } from "../../../../src/services/types";
+
+type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
 function formatRSD(amount: number): string {
   const parts = amount.toFixed(2).split(".");
@@ -60,6 +63,7 @@ export default function InvoiceDetailScreen() {
   const { t } = useTranslation("billing");
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { goBack, returnTo } = useReturnBack();
   const services = useServices();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
@@ -172,6 +176,17 @@ export default function InvoiceDetailScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF9F0" }}>
+      {returnTo && (
+        <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+              </Pressable>
+            ),
+          }}
+        />
+      )}
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: 16 }}
@@ -244,7 +259,10 @@ export default function InvoiceDetailScreen() {
             </Text>
             <Pressable
               onPress={() =>
-                router.push(`/(tabs)/cases/${invoice.caseId}` as any)
+                router.push({
+                  pathname: "/(tabs)/cases/[id]",
+                  params: { id: invoice.caseId, returnTo: `/(tabs)/more/billing/${invoice.id}` },
+                })
               }
             >
               <Text

@@ -1,21 +1,41 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useEffect } from "react";
+import { BackHandler } from "react-native";
 import { colors } from "../../src/theme/tokens";
 import { useNotificationStore } from "../../src/stores/notification-store";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
+function resetToTab(navigation: any, tabName: string, hasStack: boolean) {
+  const targetRoute = hasStack
+    ? { name: tabName, state: { index: 0, routes: [{ name: "index" }] } }
+    : { name: tabName };
+  navigation.reset({ index: 0, routes: [targetRoute] });
+}
+
 export default function TabsLayout() {
   const { t } = useTranslation("navigation");
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const unreadCount = useNotificationStore(
     (s) => s.notifications.filter((n) => !n.isRead).length
   );
 
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (router.canGoBack()) return false;
+      return true;
+    });
+    return () => sub.remove();
+  }, [router]);
+
   return (
     <Tabs
+      backBehavior="none"
+      sceneContainerStyle={{ backgroundColor: "transparent" }}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.golden.DEFAULT,
@@ -47,6 +67,12 @@ export default function TabsLayout() {
             <Ionicons name={"home-outline" as IoniconsName} size={size} color={color} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            resetToTab(navigation, "index", false);
+          },
+        })}
       />
       <Tabs.Screen
         name="clients"
@@ -56,6 +82,12 @@ export default function TabsLayout() {
             <Ionicons name={"people-outline" as IoniconsName} size={size} color={color} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            resetToTab(navigation, "clients", true);
+          },
+        })}
       />
       <Tabs.Screen
         name="cases"
@@ -65,6 +97,12 @@ export default function TabsLayout() {
             <Ionicons name={"briefcase-outline" as IoniconsName} size={size} color={color} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            resetToTab(navigation, "cases", true);
+          },
+        })}
       />
       <Tabs.Screen
         name="calendar"
@@ -74,6 +112,12 @@ export default function TabsLayout() {
             <Ionicons name={"calendar-outline" as IoniconsName} size={size} color={color} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            resetToTab(navigation, "calendar", true);
+          },
+        })}
       />
       <Tabs.Screen
         name="more"
@@ -92,6 +136,12 @@ export default function TabsLayout() {
             lineHeight: 16,
           },
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            resetToTab(navigation, "more", true);
+          },
+        })}
       />
     </Tabs>
   );

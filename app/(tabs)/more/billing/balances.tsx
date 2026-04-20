@@ -7,11 +7,14 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "expo-router";
+import { useRouter, Stack } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useServices } from "../../../../src/hooks/useServices";
+import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
+
+type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
 function formatRSD(amount: number): string {
   const parts = amount.toFixed(2).split(".");
@@ -54,6 +57,7 @@ interface CaseBalance {
 export default function BalancesScreen() {
   const { t } = useTranslation("billing");
   const router = useRouter();
+  const { goBack, returnTo } = useReturnBack();
   const services = useServices();
   const [activeTab, setActiveTab] = useState<TabType>("client");
   const [clientBalances, setClientBalances] = useState<ClientBalance[]>([]);
@@ -87,7 +91,7 @@ export default function BalancesScreen() {
 
   const renderClientItem = ({ item }: { item: ClientBalance }) => (
     <Pressable
-      onPress={() => router.push(`/(tabs)/clients/${item.clientId}` as any)}
+      onPress={() => router.push({ pathname: "/(tabs)/clients/[id]", params: { id: item.clientId, returnTo: "/(tabs)/more/billing/balances" } })}
       style={SECTION_CARD}
     >
       <View
@@ -143,7 +147,7 @@ export default function BalancesScreen() {
 
   const renderCaseItem = ({ item }: { item: CaseBalance }) => (
     <Pressable
-      onPress={() => router.push(`/(tabs)/cases/${item.caseId}` as any)}
+      onPress={() => router.push({ pathname: "/(tabs)/cases/[id]", params: { id: item.caseId, returnTo: "/(tabs)/more/billing/balances" } })}
       style={SECTION_CARD}
     >
       <View
@@ -254,6 +258,17 @@ export default function BalancesScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF9F0" }}>
+      {returnTo && (
+        <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+              </Pressable>
+            ),
+          }}
+        />
+      )}
       {/* Summary header */}
       <View
         style={{

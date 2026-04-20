@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { useServices } from "../../../src/hooks/useServices";
+import { useReturnBack } from "../../../src/hooks/useReturnBack";
 import { colors } from "../../../src/theme/tokens";
 import type { Client, CaseSummary, CommunicationEntry, ClientDocument, ClientActivity, ClientExpenseItem, ClientOutstandingSummary } from "../../../src/services/types";
 import { STATUS_COLORS, ACTIVITY_TYPE_ICONS } from "../../../src/services/types";
@@ -152,6 +153,7 @@ export default function ClientDetailScreen() {
   const services = useServices();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { goBack, returnTo } = useReturnBack();
 
   const [client, setClient] = useState<Client | null>(null);
   const [cases, setCases] = useState<CaseSummary[]>([]);
@@ -467,6 +469,13 @@ export default function ClientDetailScreen() {
       <Stack.Screen
         options={{
           headerTitle: displayName,
+          headerLeft: returnTo
+            ? () => (
+                <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                  <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+                </Pressable>
+              )
+            : undefined,
           headerRight: () => (
             <Pressable
               onPress={() => router.push('/(tabs)/clients/edit/' + id)}
@@ -925,7 +934,7 @@ export default function ClientDetailScreen() {
               return (
                 <Pressable
                   key={caseItem.id}
-                  onPress={() => router.push('/(tabs)/cases/' + caseItem.id)}
+                  onPress={() => router.push({ pathname: '/(tabs)/cases/[id]', params: { id: caseItem.id, returnTo: `/(tabs)/clients/${id}` } })}
                   style={{
                     flexDirection: "row",
                     alignItems: "center",

@@ -8,12 +8,15 @@ import {
   Dimensions,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useRouter, Stack } from "expo-router";
 import { BarChart, PieChart } from "react-native-chart-kit";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ScreenContainer } from "../../../../src/components/ui";
 import { useServices } from "../../../../src/hooks/useServices";
+import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
+
+type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 import type {
   CaseStatusBreakdown,
   CaseTypeBreakdown,
@@ -64,6 +67,7 @@ export default function CaseManagementDashboard() {
   const { t } = useTranslation("reports");
   const services = useServices();
   const router = useRouter();
+  const { goBack, returnTo } = useReturnBack();
   const [loading, setLoading] = useState(true);
   const [statusBreakdown, setStatusBreakdown] = useState<
     CaseStatusBreakdown[]
@@ -143,6 +147,17 @@ export default function CaseManagementDashboard() {
 
   return (
     <ScreenContainer>
+      {returnTo && (
+        <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+              </Pressable>
+            ),
+          }}
+        />
+      )}
       <ScrollView
         contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
@@ -339,7 +354,10 @@ export default function CaseManagementDashboard() {
                 key={item.eventId}
                 onPress={() => {
                   if (item.caseId) {
-                    router.push(`/(tabs)/cases/${item.caseId}` as any);
+                    router.push({
+                      pathname: "/(tabs)/cases/[id]",
+                      params: { id: item.caseId, returnTo: "/(tabs)/more/reports/cases" },
+                    });
                   }
                 }}
                 style={{

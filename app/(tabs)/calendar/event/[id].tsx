@@ -6,6 +6,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DateTimePicker, { type DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { useServices } from "../../../../src/hooks/useServices";
+import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
 import type { CalendarEvent, EventType, CaseSummary, RecurrencePattern } from "../../../../src/services/types";
 import { EVENT_TYPE_COLORS } from "../../../../src/services/types";
@@ -39,6 +40,7 @@ export default function EventDetailScreen() {
   const services = useServices();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { goBack, returnTo } = useReturnBack();
 
   const [event, setEvent] = useState<CalendarEvent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -777,6 +779,13 @@ export default function EventDetailScreen() {
       <Stack.Screen
         options={{
           headerTitle: t("event.title"),
+          headerLeft: returnTo
+            ? () => (
+                <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                  <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+                </Pressable>
+              )
+            : undefined,
           headerRight: () => (
             <Pressable onPress={enterEditMode} style={{ marginRight: 4 }}>
               <Ionicons name={"create-outline" as IoniconsName} size={22} color="#FFFFFF" />
@@ -938,7 +947,7 @@ export default function EventDetailScreen() {
               </Text>
             </View>
             <Pressable
-              onPress={() => router.push(("/(tabs)/cases/" + event.caseId) as any)}
+              onPress={() => router.push({ pathname: "/(tabs)/cases/[id]", params: { id: event.caseId, returnTo: `/(tabs)/calendar/event/${id}` } })}
               style={{
                 flexDirection: "row",
                 alignItems: "center",

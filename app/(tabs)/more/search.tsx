@@ -10,11 +10,12 @@ import {
   Modal,
   Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, Stack } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useServices } from "../../../src/hooks/useServices";
+import { useReturnBack } from "../../../src/hooks/useReturnBack";
 import { useDebounce } from "../../../src/hooks/useDebounce";
 import { colors } from "../../../src/theme/tokens";
 import type {
@@ -143,6 +144,7 @@ const QUICK_FILTERS: Array<{
 export default function SearchScreen() {
   const { t } = useTranslation(["search", "common"]);
   const router = useRouter();
+  const { goBack, returnTo } = useReturnBack();
   const services = useServices();
   const inputRef = useRef<TextInput>(null);
 
@@ -599,7 +601,7 @@ export default function SearchScreen() {
 
   const renderItem = ({ item }: { item: SearchResult }) => (
     <Pressable
-      onPress={() => router.push(item.route as any)}
+      onPress={() => router.push({ pathname: item.route as any, params: { returnTo: "/(tabs)/more/search" } })}
       style={{
         flexDirection: "row",
         alignItems: "center",
@@ -1474,6 +1476,17 @@ export default function SearchScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.cream.DEFAULT }}>
+      {returnTo && (
+        <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+              </Pressable>
+            ),
+          }}
+        />
+      )}
       {/* Search Bar */}
       <View
         style={{
