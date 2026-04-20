@@ -320,7 +320,7 @@ function MetricCard({
     <View
       style={{
         ...SECTION_CARD,
-        width: (screenWidth - 44) / 2,
+        width: "48%",
         alignItems: "center",
       }}
     >
