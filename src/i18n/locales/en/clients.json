@@ -1,0 +1,171 @@
+{
+  "list": {
+    "title": "Clients",
+    "searchPlaceholder": "Search clients...",
+    "emptyState": "No clients",
+    "noResults": "No search results"
+  },
+  "filter": {
+    "all": "All",
+    "individual": "Individuals",
+    "corporate": "Companies"
+  },
+  "detail": {
+    "profile": "Profile",
+    "linkedCases": "Linked Cases",
+    "noCases": "No linked cases",
+    "newCaseForClient": "New Case",
+    "contact": "Contact",
+    "representatives": "Representatives"
+  },
+  "form": {
+    "createTitle": "New Client",
+    "editTitle": "Edit Client",
+    "selectType": "Select type",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "companyName": "Company Name",
+    "jmbg": "JMBG",
+    "pib": "PIB",
+    "mb": "Registration Number",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "city": "City",
+    "representatives": "Representatives",
+    "addRepresentative": "Add representative",
+    "representativeName": "Representative name",
+    "representativeRole": "Role",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "type": {
+    "individual": "Individual",
+    "corporate": "Company"
+  },
+  "validation": {
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "companyNameRequired": "Company name is required",
+    "jmbgInvalid": "JMBG is not valid",
+    "pibInvalid": "PIB is not valid",
+    "mbInvalid": "Registration number is not valid",
+    "emailInvalid": "Email address is not valid",
+    "phoneInvalid": "Phone number is not valid"
+  },
+  "actions": {
+    "call": "Call",
+    "sendEmail": "Send email",
+    "edit": "Edit",
+    "newClient": "New Client"
+  },
+  "intake": {
+    "contact": "Contact",
+    "conflictCheck": "Conflict Check",
+    "consultation": "Consultation",
+    "onboarding": "Onboarding",
+    "nextStep": "Next Step",
+    "previousStep": "Previous Step",
+    "startIntake": "Start Intake",
+    "completeIntake": "Complete Intake"
+  },
+  "communication": {
+    "communicationHistory": "Communication History",
+    "noCommunications": "No communication history",
+    "addCommunication": "Add Communication",
+    "call": "Call",
+    "meeting": "Meeting",
+    "email": "Email",
+    "note": "Note",
+    "subject": "Subject",
+    "content": "Content"
+  },
+  "clientDocuments": {
+    "clientDocuments": "Client Documents",
+    "title": "Client Documents",
+    "noClientDocuments": "No client documents",
+    "noDocsYet": "No documents yet",
+    "addDocument": "Add Document",
+    "documentCount": "Documents ({{count}})",
+    "viewAll": "View All",
+    "selectType": "Select document type",
+    "filterAll": "All",
+    "tabClient": "Client",
+    "tabCase": "Cases",
+    "allCases": "All cases",
+    "selectCase": "Select case",
+    "noCases": "Client has no cases",
+    "noCaseDocs": "No documents for the selected case",
+    "pickCaseHint": "First pick the case the document should be added to.",
+    "idCard": "ID Card",
+    "passport": "Passport",
+    "powerOfAttorney": "Power of Attorney",
+    "engagementLetter": "Engagement Letter",
+    "other": "Other",
+    "expiresAt": "Expires"
+  },
+  "contacts": {
+    "contacts": "Contacts",
+    "addContact": "Add Contact",
+    "primaryContact": "Primary Contact"
+  },
+  "documents": {
+    "title": "Documents",
+    "uploadFile": "Upload File",
+    "takePhoto": "Take Photo",
+    "noDocuments": "No documents yet",
+    "permissionRequired": "Permission Required",
+    "permissionDenied": "Camera permission is required to take photos",
+    "cannotOpenTitle": "Cannot Open File",
+    "cannotOpenMessage": "This file cannot be opened. It may be missing or the device has no app to handle this file type.",
+    "deleteDocument": "Delete document",
+    "deleteConfirm": "Are you sure you want to delete \"{{name}}\"?"
+  },
+  "recentActivity": {
+    "title": "Recent Activity",
+    "seeAll": "See all",
+    "noActivity": "No recent activity"
+  },
+  "upcomingActivity": {
+    "title": "Upcoming Activity",
+    "seeAll": "See all",
+    "noActivity": "No upcoming activity"
+  },
+  "expenses": {
+    "title": "Expenses",
+    "expensesAndBilling": "Expenses & Billing",
+    "total": "Total",
+    "unpaid": "Unpaid",
+    "unpaidPerCase": "Unpaid per case",
+    "clientUnpaid": "Total unpaid for client",
+    "noExpenses": "No expenses recorded",
+    "timeEntry": "Time Entry",
+    "expense": "Expense",
+    "viewInvoices": "View invoices",
+    "paid": "PAID",
+    "addTime": "Log time",
+    "addExpense": "Add expense",
+    "totalHours": "Total hours",
+    "selectCase": "Select case",
+    "selectCaseHint": "Which case does this entry belong to?",
+    "noCases": "Client has no cases. Create a case first.",
+    "confirmMarkPaidTitle": "Mark as paid?",
+    "confirmMarkPaidBody": "This expense will be marked as paid.",
+    "confirmMarkUnpaidTitle": "Mark as unpaid?",
+    "confirmMarkUnpaidBody": "This expense will be marked as unpaid.",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "outstanding": {
+    "title": "Unpaid / Outstanding",
+    "grandTotal": "Total Outstanding",
+    "noOutstanding": "No outstanding balance",
+    "viewDetails": "View Details",
+    "invoiceDetail": "Invoice Details",
+    "invoice": "Invoice",
+    "issued": "Issued",
+    "due": "Due",
+    "paid": "Paid",
+    "remaining": "Remaining"
+  }
+}

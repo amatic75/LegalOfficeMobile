@@ -1,0 +1,55 @@
+import type { ClientDocument } from '../../types';
+
+export const mockClientDocuments: ClientDocument[] = [
+  {
+    id: 'cdoc1',
+    clientId: 'c1',
+    type: 'id-card',
+    name: 'Licna karta - Nikola Stankovic',
+    uri: 'file:///mock/client-docs/cdoc1.jpg',
+    createdAt: '2024-06-15T10:35:00Z',
+    expiresAt: '2029-06-15',
+  },
+  {
+    id: 'cdoc2',
+    clientId: 'c1',
+    type: 'engagement-letter',
+    name: 'Punomocje - predmet P 123/2025',
+    uri: 'file:///mock/client-docs/cdoc2.pdf',
+    createdAt: '2025-01-15T10:00:00Z',
+  },
+  {
+    id: 'cdoc3',
+    clientId: 'c3',
+    type: 'power-of-attorney',
+    name: 'Generalno punomocje - Zivkovic d.o.o.',
+    uri: 'file:///mock/client-docs/cdoc3.pdf',
+    createdAt: '2024-03-10T09:30:00Z',
+  },
+  {
+    id: 'cdoc4',
+    clientId: 'c3',
+    type: 'other',
+    name: 'Izvod iz APR-a - Zivkovic d.o.o.',
+    uri: 'file:///mock/client-docs/cdoc4.pdf',
+    createdAt: '2024-03-10T09:45:00Z',
+    expiresAt: '2025-03-10',
+  },
+  {
+    id: 'cdoc5',
+    clientId: 'c5',
+    type: 'power-of-attorney',
+    name: 'Punomocje za zastupanje - IT Solutions',
+    uri: 'file:///mock/client-docs/cdoc5.pdf',
+    createdAt: '2024-05-22T09:00:00Z',
+  },
+  {
+    id: 'cdoc6',
+    clientId: 'c1',
+    type: 'passport',
+    name: 'Pasos - Nikola Stankovic',
+    uri: 'file:///mock/client-docs/cdoc6.jpg',
+    createdAt: '2024-06-15T10:40:00Z',
+    expiresAt: '2030-01-20',
+  },
+];

@@ -1,0 +1,91 @@
+{
+  "title": "Billing",
+  "list": {
+    "title": "Invoices",
+    "searchPlaceholder": "Search invoices...",
+    "emptyState": "No invoices",
+    "noResults": "No invoices match the selected filter"
+  },
+  "filter": {
+    "allStatuses": "All statuses",
+    "allPayments": "All payments",
+    "paymentPaid": "Paid",
+    "paymentPartial": "Partially paid",
+    "paymentUnpaid": "Unpaid"
+  },
+  "status": {
+    "draft": "Draft",
+    "sent": "Sent",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "partially-paid": "Partially Paid"
+  },
+  "mode": {
+    "tariff": "Tariff",
+    "hourly": "Hourly",
+    "flat-fee": "Flat Fee"
+  },
+  "detail": {
+    "invoiceNumber": "Invoice number",
+    "case": "Case",
+    "client": "Client",
+    "billingMode": "Billing mode",
+    "status": "Status",
+    "issuedDate": "Issued date",
+    "dueDate": "Due date",
+    "lineItems": "Line items",
+    "subtotal": "Subtotal",
+    "tax": "PDV (20%)",
+    "total": "Total",
+    "paidAmount": "Paid amount",
+    "remainingBalance": "Remaining balance",
+    "payments": "Payments",
+    "noPayments": "No payments recorded",
+    "notes": "Notes"
+  },
+  "create": {
+    "title": "New Invoice",
+    "selectCase": "Select case",
+    "selectMode": "Select billing mode",
+    "hourlyRate": "Hourly rate (RSD)",
+    "flatFeeAmount": "Flat fee amount (RSD)",
+    "tariffAmount": "Tariff amount (RSD)",
+    "notes": "Notes",
+    "generate": "Generate Invoice",
+    "lineItemsPreview": "Line items preview",
+    "noTimeEntries": "No billable time entries for this case",
+    "noExpenses": "No expenses for this case",
+    "calculatedTotal": "Calculated total",
+    "removeItem": "Remove",
+    "restoreItem": "Restore",
+    "removedItems": "Removed items",
+    "exchangeRates": "Exchange rates",
+    "exchangeRateFor": "Rate for 1 {{currency}}",
+    "missingRate": "Enter an exchange rate for {{currency}} so the conversion is accurate.",
+    "subtotalIn": "Subtotal ({{currency}})",
+    "convertedTotal": "Total (converted to RSD)"
+  },
+  "payment": {
+    "record": "Record Payment",
+    "amount": "Amount",
+    "method": "Method",
+    "cash": "Cash",
+    "bankTransfer": "Bank transfer",
+    "card": "Card",
+    "note": "Note",
+    "save": "Save payment",
+    "cancel": "Cancel"
+  },
+  "balance": {
+    "title": "Outstanding Balance",
+    "byClient": "By client",
+    "byCase": "By case",
+    "outstanding": "Outstanding",
+    "invoices": "invoices",
+    "noOutstanding": "No outstanding balance"
+  },
+  "actions": {
+    "markSent": "Mark as Sent",
+    "markOverdue": "Mark as Overdue"
+  }
+}

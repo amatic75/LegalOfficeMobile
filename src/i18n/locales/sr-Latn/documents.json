@@ -1,0 +1,69 @@
+{
+  "title": "Dokumenta",
+  "noDocuments": "Nema dokumenata za ovaj predmet",
+  "capturePhoto": "Fotografisi",
+  "uploadFile": "Dodaj fajl",
+  "preview": "Pregled",
+  "permissionRequired": "Potrebna je dozvola za kameru",
+  "permissionDenied": "Dozvola za kameru je odbijena. Molimo omogucite pristup kameri u podesavanjima.",
+  "fileTypes": {
+    "pdf": "PDF dokument",
+    "image": "Slika",
+    "word": "Word dokument",
+    "text": "Tekstualni fajl",
+    "other": "Fajl"
+  },
+  "filter": {
+    "all": "Sve",
+    "pdf": "PDF",
+    "image": "Slike",
+    "word": "Word",
+    "text": "Tekst"
+  },
+  "cannotOpenTitle": "Nije moguce otvoriti fajl",
+  "cannotOpenMessage": "Sistem ne moze da otvori ovaj tip fajla. Instalirajte odgovarajucu aplikaciju.",
+  "metadata": {
+    "size": "Velicina",
+    "date": "Datum",
+    "type": "Tip",
+    "tags": "Oznake",
+    "description": "Opis",
+    "version": "Verzija",
+    "versionHistory": "Istorija verzija",
+    "noVersions": "Nema istorije verzija",
+    "addedBy": "Dodao",
+    "changes": "Izmene"
+  },
+  "folders": {
+    "all": "Sve",
+    "pleadings": "Podnesci",
+    "evidence": "Dokazi",
+    "correspondence": "Prepiska",
+    "contracts": "Ugovori",
+    "court-decisions": "Sudske odluke",
+    "other": "Ostalo"
+  },
+  "scanning": {
+    "enhancing": "Poboljsavanje...",
+    "usePhoto": "Koristi fotografiju",
+    "retake": "Ponovi",
+    "scanConfirmTitle": "Dokument snimljen",
+    "scanConfirmMessage": "Da li zelite da koristite ovu fotografiju ili da ponovite snimanje?"
+  },
+  "selectFolder": "Izaberite fasciklu",
+  "createFromTemplate": "Iz sablona",
+  "pickTemplate": "Izaberite sablon",
+  "noTemplates": "Nema sablona. Dodajte sablon u Vise → Dokumenta → Sabloni.",
+  "addedOn": "Dodato {{date}}",
+  "viewAll": "Pogledaj sve",
+  "addDocument": "Dodaj dokument",
+  "documentCount": "Dokumenta ({{count}})",
+  "noDocsYet": "Nema dokumenata",
+  "mockPreview": "Pregled ce biti dostupan sa pravim dokumentima",
+  "previewNotAvailable": "Pregled nije dostupan za probne podatke",
+  "deleteDocument": "Obrisi dokument",
+  "deleteConfirmTitle": "Brisanje dokumenta",
+  "deleteConfirmMessage": "Da li ste sigurni da zelite da obrisete \"{{name}}\"?",
+  "cancel": "Otkazi",
+  "deleted": "Dokument obrisan"
+}

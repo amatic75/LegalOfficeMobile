@@ -1,0 +1,171 @@
+{
+  "list": {
+    "title": "Клијенти",
+    "searchPlaceholder": "Претражите клијенте...",
+    "emptyState": "Нема клијената",
+    "noResults": "Нема резултата претраге"
+  },
+  "filter": {
+    "all": "Сви",
+    "individual": "Физичка лица",
+    "corporate": "Правна лица"
+  },
+  "detail": {
+    "profile": "Профил",
+    "linkedCases": "Повезани предмети",
+    "noCases": "Нема повезаних предмета",
+    "newCaseForClient": "Нови предмет",
+    "contact": "Контакт",
+    "representatives": "Заступници"
+  },
+  "form": {
+    "createTitle": "Нови клијент",
+    "editTitle": "Измена клијента",
+    "selectType": "Изаберите тип",
+    "firstName": "Име",
+    "lastName": "Презиме",
+    "companyName": "Назив фирме",
+    "jmbg": "ЈМБГ",
+    "pib": "ПИБ",
+    "mb": "Матични број",
+    "phone": "Телефон",
+    "email": "Емаил",
+    "address": "Адреса",
+    "city": "Град",
+    "representatives": "Заступници",
+    "addRepresentative": "Додај заступника",
+    "representativeName": "Име заступника",
+    "representativeRole": "Функција",
+    "save": "Сачувај",
+    "cancel": "Откажи"
+  },
+  "type": {
+    "individual": "Физичко лице",
+    "corporate": "Правно лице"
+  },
+  "validation": {
+    "firstNameRequired": "Име је обавезно поље",
+    "lastNameRequired": "Презиме је обавезно поље",
+    "companyNameRequired": "Назив фирме је обавезно поље",
+    "jmbgInvalid": "ЈМБГ није валидан",
+    "pibInvalid": "ПИБ није валидан",
+    "mbInvalid": "Матични број није валидан",
+    "emailInvalid": "Емаил адреса није валидна",
+    "phoneInvalid": "Број телефона није валидан"
+  },
+  "actions": {
+    "call": "Позови",
+    "sendEmail": "Пошаљи емаил",
+    "edit": "Измени",
+    "newClient": "Нови клијент"
+  },
+  "intake": {
+    "contact": "Контакт",
+    "conflictCheck": "Провера конфликта",
+    "consultation": "Консултација",
+    "onboarding": "Пријем",
+    "nextStep": "Следећи корак",
+    "previousStep": "Претходни корак",
+    "startIntake": "Започни пријем",
+    "completeIntake": "Заврши пријем"
+  },
+  "communication": {
+    "communicationHistory": "Историја комуникације",
+    "noCommunications": "Нема историје комуникације",
+    "addCommunication": "Додај комуникацију",
+    "call": "Позив",
+    "meeting": "Састанак",
+    "email": "Емаил",
+    "note": "Белешка",
+    "subject": "Предмет",
+    "content": "Садржај"
+  },
+  "clientDocuments": {
+    "clientDocuments": "Документа клијента",
+    "title": "Документа клијента",
+    "noClientDocuments": "Нема докумената клијента",
+    "noDocsYet": "Нема докумената",
+    "addDocument": "Додај документ",
+    "documentCount": "Документа ({{count}})",
+    "viewAll": "Погледај све",
+    "selectType": "Изаберите тип документа",
+    "filterAll": "Све",
+    "tabClient": "Клијент",
+    "tabCase": "Предмети",
+    "allCases": "Сви предмети",
+    "selectCase": "Изаберите предмет",
+    "noCases": "Клијент нема предмете",
+    "noCaseDocs": "Нема докумената за изабрани предмет",
+    "pickCaseHint": "Прво изаберите предмет у који ће документ бити додат.",
+    "idCard": "Лична карта",
+    "passport": "Пасош",
+    "powerOfAttorney": "Пуномоћје",
+    "engagementLetter": "Уговор о заступању",
+    "other": "Остало",
+    "expiresAt": "Истиче"
+  },
+  "contacts": {
+    "contacts": "Контакти",
+    "addContact": "Додај контакт",
+    "primaryContact": "Примарни контакт"
+  },
+  "documents": {
+    "title": "Документа",
+    "uploadFile": "Отпреми фајл",
+    "takePhoto": "Фотографиши",
+    "noDocuments": "Нема докумената",
+    "permissionRequired": "Потребна дозвола",
+    "permissionDenied": "Дозвола за камеру је потребна за фотографисање",
+    "cannotOpenTitle": "Фајл се не може отворити",
+    "cannotOpenMessage": "Овај фајл се не може отворити. Можда недостаје, или уређај нема апликацију за ову врсту фајла.",
+    "deleteDocument": "Обриши документ",
+    "deleteConfirm": "Да ли сте сигурни да желите да обришете \"{{name}}\"?"
+  },
+  "recentActivity": {
+    "title": "Недавне активности",
+    "seeAll": "Види све",
+    "noActivity": "Нема недавних активности"
+  },
+  "upcomingActivity": {
+    "title": "Предстојеће активности",
+    "seeAll": "Види све",
+    "noActivity": "Нема предстојећих активности"
+  },
+  "expenses": {
+    "title": "Трошкови",
+    "expensesAndBilling": "Трошкови и наплата",
+    "total": "Укупно",
+    "unpaid": "Неплаћено",
+    "unpaidPerCase": "Неплаћено по предмету",
+    "clientUnpaid": "Укупно неплаћено за клијента",
+    "noExpenses": "Нема евидентираних трошкова",
+    "timeEntry": "Евиденција времена",
+    "expense": "Трошак",
+    "viewInvoices": "Прегледај фактуре",
+    "paid": "ПЛАЋЕНО",
+    "addTime": "Евидентирај време",
+    "addExpense": "Додај трошак",
+    "totalHours": "Укупно сати",
+    "selectCase": "Изаберите предмет",
+    "selectCaseHint": "На који предмет се односи овај унос?",
+    "noCases": "Клијент нема предмете. Прво креирајте предмет.",
+    "confirmMarkPaidTitle": "Означити као плаћено?",
+    "confirmMarkPaidBody": "Овај трошак ће бити означен као плаћен.",
+    "confirmMarkUnpaidTitle": "Означити као неплаћено?",
+    "confirmMarkUnpaidBody": "Овај трошак ће бити означен као неплаћен.",
+    "cancel": "Откажи",
+    "confirm": "Потврди"
+  },
+  "outstanding": {
+    "title": "Неплаћено / Дуговања",
+    "grandTotal": "Укупна дуговања",
+    "noOutstanding": "Нема неплаћеног износа",
+    "viewDetails": "Погледај детаље",
+    "invoiceDetail": "Детаљи фактуре",
+    "invoice": "Фактура",
+    "issued": "Издато",
+    "due": "Рок",
+    "paid": "Плаћено",
+    "remaining": "Преостало"
+  }
+}

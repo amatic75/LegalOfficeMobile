@@ -1,0 +1,91 @@
+{
+  "title": "Fakturisanje",
+  "list": {
+    "title": "Fakture",
+    "searchPlaceholder": "Pretrazi fakture...",
+    "emptyState": "Nema faktura",
+    "noResults": "Nema faktura za izabrani filter"
+  },
+  "filter": {
+    "allStatuses": "Svi statusi",
+    "allPayments": "Sve uplate",
+    "paymentPaid": "Placene",
+    "paymentPartial": "Delimicno placene",
+    "paymentUnpaid": "Neplacene"
+  },
+  "status": {
+    "draft": "Nacrt",
+    "sent": "Poslata",
+    "paid": "Placena",
+    "overdue": "Dospela",
+    "partially-paid": "Delimicno placena"
+  },
+  "mode": {
+    "tariff": "Tarifni obracun",
+    "hourly": "Casovni obracun",
+    "flat-fee": "Pausalni iznos"
+  },
+  "detail": {
+    "invoiceNumber": "Broj fakture",
+    "case": "Predmet",
+    "client": "Klijent",
+    "billingMode": "Nacin obracuna",
+    "status": "Status",
+    "issuedDate": "Datum izdavanja",
+    "dueDate": "Rok placanja",
+    "lineItems": "Stavke",
+    "subtotal": "Medjuzbir",
+    "tax": "PDV (20%)",
+    "total": "Ukupno",
+    "paidAmount": "Uplaceni iznos",
+    "remainingBalance": "Preostali saldo",
+    "payments": "Uplate",
+    "noPayments": "Nema evidentiranih uplata",
+    "notes": "Napomene"
+  },
+  "create": {
+    "title": "Nova faktura",
+    "selectCase": "Izaberite predmet",
+    "selectMode": "Izaberite nacin obracuna",
+    "hourlyRate": "Casovna tarifa (RSD)",
+    "flatFeeAmount": "Pausalni iznos (RSD)",
+    "tariffAmount": "Tarifni iznos (RSD)",
+    "notes": "Napomene",
+    "generate": "Kreiraj fakturu",
+    "lineItemsPreview": "Pregled stavki",
+    "noTimeEntries": "Nema naplativih vremenskih unosa za ovaj predmet",
+    "noExpenses": "Nema troskova za ovaj predmet",
+    "calculatedTotal": "Izracunati ukupan iznos",
+    "removeItem": "Ukloni",
+    "restoreItem": "Vrati",
+    "removedItems": "Uklonjene stavke",
+    "exchangeRates": "Kursevi konverzije",
+    "exchangeRateFor": "Kurs za 1 {{currency}}",
+    "missingRate": "Unesite kurs za {{currency}} da bi konverzija bila tacna.",
+    "subtotalIn": "Medjuzbir ({{currency}})",
+    "convertedTotal": "Ukupno (preracunato u RSD)"
+  },
+  "payment": {
+    "record": "Evidentiraj uplatu",
+    "amount": "Iznos",
+    "method": "Nacin placanja",
+    "cash": "Gotovina",
+    "bankTransfer": "Bankarski prenos",
+    "card": "Kartica",
+    "note": "Napomena",
+    "save": "Sacuvaj uplatu",
+    "cancel": "Otkazi"
+  },
+  "balance": {
+    "title": "Dugovanja",
+    "byClient": "Po klijentu",
+    "byCase": "Po predmetu",
+    "outstanding": "Dugovanje",
+    "invoices": "faktura",
+    "noOutstanding": "Nema dugovanja"
+  },
+  "actions": {
+    "markSent": "Oznaci kao poslatu",
+    "markOverdue": "Oznaci kao dospelu"
+  }
+}

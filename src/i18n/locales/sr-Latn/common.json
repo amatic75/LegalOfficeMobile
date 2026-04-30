@@ -1,0 +1,66 @@
+{
+  "app": {
+    "name": "Pravna kancelarija",
+    "version": "Verzija {{version}}"
+  },
+  "greeting": "Dobrodosli, {{name}}",
+  "clients": "Klijenti",
+  "cases": "Predmeti",
+  "calendar": "Kalendar",
+  "documents": "Dokumenta",
+  "clientCount": "Broj klijenata",
+  "caseCount": "Broj predmeta",
+  "upcomingDeadlines": "Predstojechi rokovi",
+  "home": {
+    "recentCases": "Nedavni predmeti",
+    "deadlinesThisWeek": "Rokovi ove nedelje"
+  },
+  "placeholder": {
+    "clients": "Lista klijenata dolazi u Fazi 2",
+    "cases": "Lista predmeta dolazi u Fazi 2",
+    "calendar": "Kalendar dolazi u Fazi 3"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "lawyer": "Advokat",
+    "trainee": "Pripravnik",
+    "paralegal": "Pravni saradnik",
+    "accountant": "Racunovodja",
+    "staff": "Osoblje"
+  },
+  "profile": {
+    "role": "Uloga",
+    "email": "Email",
+    "noUser": "Nema podataka o korisniku"
+  },
+  "more": {
+    "settings": "Podesavanja",
+    "profile": "Profil",
+    "search": "Pretraga",
+    "notifications": "Obavestenja"
+  },
+  "status": {
+    "new": "Novi",
+    "active": "Aktivan",
+    "pending": "Na chekanju",
+    "closed": "Zatvoren",
+    "archived": "Arhiviran"
+  },
+  "actions": {
+    "save": "Sacuvaj",
+    "cancel": "Otkazi",
+    "delete": "Obrisi",
+    "edit": "Izmeni",
+    "create": "Kreiraj",
+    "search": "Pretrazi",
+    "filter": "Filtriraj"
+  },
+  "errors": {
+    "generic": "Doslo je do greske. Pokusajte ponovo.",
+    "network": "Greska u mrezi. Proverite konekciju.",
+    "notFound": "Trazeni sadrzaj nije pronadjen."
+  },
+  "loading": "Ucitavanje...",
+  "noData": "Nema podataka.",
+  "retry": "Pokusaj ponovo"
+}

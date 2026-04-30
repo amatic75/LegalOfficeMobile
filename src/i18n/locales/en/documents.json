@@ -1,0 +1,69 @@
+{
+  "title": "Documents",
+  "noDocuments": "No documents for this case",
+  "capturePhoto": "Capture Photo",
+  "uploadFile": "Upload File",
+  "preview": "Preview",
+  "permissionRequired": "Camera permission required",
+  "permissionDenied": "Camera permission was denied. Please enable camera access in settings.",
+  "fileTypes": {
+    "pdf": "PDF Document",
+    "image": "Image",
+    "word": "Word Document",
+    "text": "Text File",
+    "other": "File"
+  },
+  "filter": {
+    "all": "All",
+    "pdf": "PDF",
+    "image": "Images",
+    "word": "Word",
+    "text": "Text"
+  },
+  "cannotOpenTitle": "Cannot Open File",
+  "cannotOpenMessage": "The system can't open this file type. Install an app that handles it.",
+  "metadata": {
+    "size": "Size",
+    "date": "Date",
+    "type": "Type",
+    "tags": "Tags",
+    "description": "Description",
+    "version": "Version",
+    "versionHistory": "Version History",
+    "noVersions": "No version history available",
+    "addedBy": "Added by",
+    "changes": "Changes"
+  },
+  "folders": {
+    "all": "All",
+    "pleadings": "Pleadings",
+    "evidence": "Evidence",
+    "correspondence": "Correspondence",
+    "contracts": "Contracts",
+    "court-decisions": "Court Decisions",
+    "other": "Other"
+  },
+  "scanning": {
+    "enhancing": "Enhancing...",
+    "usePhoto": "Use Photo",
+    "retake": "Retake",
+    "scanConfirmTitle": "Document Captured",
+    "scanConfirmMessage": "Would you like to use this photo or retake it?"
+  },
+  "selectFolder": "Select Folder",
+  "createFromTemplate": "From template",
+  "pickTemplate": "Pick a template",
+  "noTemplates": "No templates yet. Add one in More → Documents → Templates.",
+  "addedOn": "Added {{date}}",
+  "viewAll": "View All",
+  "addDocument": "Add Document",
+  "documentCount": "Documents ({{count}})",
+  "noDocsYet": "No documents yet",
+  "mockPreview": "Preview will be available with real documents",
+  "previewNotAvailable": "Preview not available for mock data",
+  "deleteDocument": "Delete Document",
+  "deleteConfirmTitle": "Delete Document",
+  "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"?",
+  "cancel": "Cancel",
+  "deleted": "Document deleted"
+}

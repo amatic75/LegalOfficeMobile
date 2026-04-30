@@ -1,0 +1,19 @@
+{
+  "title": "Settings",
+  "language": {
+    "title": "Language",
+    "description": "Choose the application language"
+  },
+  "profile": {
+    "title": "Profile"
+  },
+  "about": {
+    "title": "About",
+    "version": "Version",
+    "description": "Legal Office - mobile application for law office management."
+  },
+  "theme": {
+    "title": "Theme",
+    "description": "Choose the application theme"
+  }
+}

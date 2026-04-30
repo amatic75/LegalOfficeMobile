@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "LegalOffice",
+    "slug": "legal-office-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "legaloffice",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B2B4B"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/splash-icon.png",
+        "backgroundColor": "#1B2B4B"
+      },
+      "package": "com.greenbranch.legaloffice"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "backgroundColor": "#1B2B4B"
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "842ecaec-1e53-4d02-bb86-1d7d53bdc0a9"
+      }
+    }
+  }
+}

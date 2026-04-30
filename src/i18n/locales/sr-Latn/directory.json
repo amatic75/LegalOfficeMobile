@@ -1,0 +1,71 @@
+{
+  "title": "Imenik",
+  "tabs": {
+    "lawyers": "Advokati",
+    "judges": "Sudije",
+    "courts": "Sudovi"
+  },
+  "search": {
+    "placeholder": "Pretrazi...",
+    "noResults": "Nema rezultata"
+  },
+  "lawyers": {
+    "title": "Advokati",
+    "internal": "Interni",
+    "external": "Eksterni",
+    "firm": "Firma",
+    "barNumber": "Broj licence",
+    "phone": "Telefon",
+    "email": "Email",
+    "specialty": "Specijalizacija",
+    "notes": "Beleske",
+    "displayName": "Ime i prezime",
+    "isInternal": "Interni advokat",
+    "noLawyers": "Nema advokata u imeniku",
+    "addLawyer": "Dodaj advokata",
+    "editLawyer": "Izmeni advokata",
+    "deleteLawyer": "Obrisi advokata",
+    "confirmDelete": "Da li ste sigurni da zelite da obrisete ovog advokata?"
+  },
+  "judges": {
+    "title": "Sudije",
+    "court": "Sud",
+    "chamber": "Odeljenje",
+    "phone": "Telefon",
+    "notes": "Beleske",
+    "displayName": "Ime i prezime",
+    "noJudges": "Nema sudija u imeniku",
+    "addJudge": "Dodaj sudiju",
+    "editJudge": "Izmeni sudiju",
+    "deleteJudge": "Obrisi sudiju",
+    "confirmDelete": "Da li ste sigurni da zelite da obrisete ovu sudiju?"
+  },
+  "courts": {
+    "title": "Sudovi",
+    "name": "Naziv",
+    "address": "Adresa",
+    "city": "Grad",
+    "jurisdiction": "Nadleznost",
+    "phone": "Telefon",
+    "website": "Sajt",
+    "notes": "Beleske",
+    "noCourts": "Nema sudova u imeniku",
+    "addCourt": "Dodaj sud",
+    "editCourt": "Izmeni sud",
+    "deleteCourt": "Obrisi sud",
+    "confirmDelete": "Da li ste sigurni da zelite da obrisete ovaj sud?"
+  },
+  "actions": {
+    "save": "Sacuvaj",
+    "cancel": "Otkazi",
+    "delete": "Obrisi",
+    "add": "Dodaj",
+    "edit": "Izmeni",
+    "confirm": "Potvrdi",
+    "yes": "Da",
+    "no": "Ne"
+  },
+  "picker": {
+    "clear": "Obrisi izbor"
+  }
+}

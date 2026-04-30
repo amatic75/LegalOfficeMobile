@@ -1,0 +1,66 @@
+{
+  "app": {
+    "name": "Legal Office",
+    "version": "Version {{version}}"
+  },
+  "greeting": "Welcome, {{name}}",
+  "clients": "Clients",
+  "cases": "Cases",
+  "calendar": "Calendar",
+  "documents": "Documents",
+  "clientCount": "Client count",
+  "caseCount": "Case count",
+  "upcomingDeadlines": "Upcoming deadlines",
+  "home": {
+    "recentCases": "Recent Cases",
+    "deadlinesThisWeek": "Deadlines This Week"
+  },
+  "placeholder": {
+    "clients": "Clients list coming in Phase 2",
+    "cases": "Cases list coming in Phase 2",
+    "calendar": "Calendar coming in Phase 3"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "lawyer": "Lawyer",
+    "trainee": "Trainee",
+    "paralegal": "Paralegal",
+    "accountant": "Accountant",
+    "staff": "Staff"
+  },
+  "profile": {
+    "role": "Role",
+    "email": "Email",
+    "noUser": "No user data available"
+  },
+  "more": {
+    "settings": "Settings",
+    "profile": "Profile",
+    "search": "Search",
+    "notifications": "Notifications"
+  },
+  "status": {
+    "new": "New",
+    "active": "Active",
+    "pending": "Pending",
+    "closed": "Closed",
+    "archived": "Archived"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "network": "Network error. Check your connection.",
+    "notFound": "The requested content was not found."
+  },
+  "loading": "Loading...",
+  "noData": "No data available.",
+  "retry": "Try again"
+}

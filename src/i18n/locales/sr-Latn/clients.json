@@ -1,0 +1,171 @@
+{
+  "list": {
+    "title": "Klijenti",
+    "searchPlaceholder": "Pretrazite klijente...",
+    "emptyState": "Nema klijenata",
+    "noResults": "Nema rezultata pretrage"
+  },
+  "filter": {
+    "all": "Svi",
+    "individual": "Fizicka lica",
+    "corporate": "Pravna lica"
+  },
+  "detail": {
+    "profile": "Profil",
+    "linkedCases": "Povezani predmeti",
+    "noCases": "Nema povezanih predmeta",
+    "newCaseForClient": "Novi predmet",
+    "contact": "Kontakt",
+    "representatives": "Zastupnici"
+  },
+  "form": {
+    "createTitle": "Novi klijent",
+    "editTitle": "Izmena klijenta",
+    "selectType": "Izaberite tip",
+    "firstName": "Ime",
+    "lastName": "Prezime",
+    "companyName": "Naziv firme",
+    "jmbg": "JMBG",
+    "pib": "PIB",
+    "mb": "Maticni broj",
+    "phone": "Telefon",
+    "email": "Email",
+    "address": "Adresa",
+    "city": "Grad",
+    "representatives": "Zastupnici",
+    "addRepresentative": "Dodaj zastupnika",
+    "representativeName": "Ime zastupnika",
+    "representativeRole": "Funkcija",
+    "save": "Sacuvaj",
+    "cancel": "Otkazi"
+  },
+  "type": {
+    "individual": "Fizicko lice",
+    "corporate": "Pravno lice"
+  },
+  "validation": {
+    "firstNameRequired": "Ime je obavezno polje",
+    "lastNameRequired": "Prezime je obavezno polje",
+    "companyNameRequired": "Naziv firme je obavezno polje",
+    "jmbgInvalid": "JMBG nije validan",
+    "pibInvalid": "PIB nije validan",
+    "mbInvalid": "Maticni broj nije validan",
+    "emailInvalid": "Email adresa nije validna",
+    "phoneInvalid": "Broj telefona nije validan"
+  },
+  "actions": {
+    "call": "Pozovi",
+    "sendEmail": "Posalji email",
+    "edit": "Izmeni",
+    "newClient": "Novi klijent"
+  },
+  "intake": {
+    "contact": "Kontakt",
+    "conflictCheck": "Provera konflikta",
+    "consultation": "Konsultacija",
+    "onboarding": "Prijem",
+    "nextStep": "Sledeci korak",
+    "previousStep": "Prethodni korak",
+    "startIntake": "Zapocni prijem",
+    "completeIntake": "Zavrsi prijem"
+  },
+  "communication": {
+    "communicationHistory": "Istorija komunikacije",
+    "noCommunications": "Nema istorije komunikacije",
+    "addCommunication": "Dodaj komunikaciju",
+    "call": "Poziv",
+    "meeting": "Sastanak",
+    "email": "Email",
+    "note": "Beleska",
+    "subject": "Predmet",
+    "content": "Sadrzaj"
+  },
+  "clientDocuments": {
+    "clientDocuments": "Dokumenta klijenta",
+    "title": "Dokumenta klijenta",
+    "noClientDocuments": "Nema dokumenata klijenta",
+    "noDocsYet": "Nema dokumenata",
+    "addDocument": "Dodaj dokument",
+    "documentCount": "Dokumenta ({{count}})",
+    "viewAll": "Pogledaj sve",
+    "selectType": "Izaberite tip dokumenta",
+    "filterAll": "Sve",
+    "tabClient": "Klijent",
+    "tabCase": "Predmeti",
+    "allCases": "Svi predmeti",
+    "selectCase": "Izaberite predmet",
+    "noCases": "Klijent nema predmete",
+    "noCaseDocs": "Nema dokumenata za izabrani predmet",
+    "pickCaseHint": "Najpre izaberite predmet u koji ce dokument biti dodat.",
+    "idCard": "Licna karta",
+    "passport": "Pasos",
+    "powerOfAttorney": "Punomocje",
+    "engagementLetter": "Ugovor o zastupanju",
+    "other": "Ostalo",
+    "expiresAt": "Istice"
+  },
+  "contacts": {
+    "contacts": "Kontakti",
+    "addContact": "Dodaj kontakt",
+    "primaryContact": "Primarni kontakt"
+  },
+  "documents": {
+    "title": "Dokumenta",
+    "uploadFile": "Otpremi fajl",
+    "takePhoto": "Fotografisi",
+    "noDocuments": "Nema dokumenata",
+    "permissionRequired": "Potrebna dozvola",
+    "permissionDenied": "Dozvola za kameru je potrebna za fotografisanje",
+    "cannotOpenTitle": "Fajl se ne moze otvoriti",
+    "cannotOpenMessage": "Ovaj fajl se ne moze otvoriti. Mozda nedostaje, ili uredjaj nema aplikaciju za ovu vrstu fajla.",
+    "deleteDocument": "Obrisi dokument",
+    "deleteConfirm": "Da li ste sigurni da zelite da obrisete \"{{name}}\"?"
+  },
+  "recentActivity": {
+    "title": "Nedavne aktivnosti",
+    "seeAll": "Vidi sve",
+    "noActivity": "Nema nedavnih aktivnosti"
+  },
+  "upcomingActivity": {
+    "title": "Predstojeće aktivnosti",
+    "seeAll": "Vidi sve",
+    "noActivity": "Nema predstojećih aktivnosti"
+  },
+  "expenses": {
+    "title": "Troškovi",
+    "expensesAndBilling": "Troskovi i naplata",
+    "total": "Ukupno",
+    "unpaid": "Neplaceno",
+    "unpaidPerCase": "Neplaceno po predmetu",
+    "clientUnpaid": "Ukupno neplaceno za klijenta",
+    "noExpenses": "Nema evidentiranih troškova",
+    "timeEntry": "Evidencija vremena",
+    "expense": "Trošak",
+    "viewInvoices": "Pregledaj fakture",
+    "paid": "PLACENO",
+    "addTime": "Evidentiraj vreme",
+    "addExpense": "Dodaj trosak",
+    "totalHours": "Ukupno sati",
+    "selectCase": "Izaberite predmet",
+    "selectCaseHint": "Na koji predmet se odnosi ovaj unos?",
+    "noCases": "Klijent nema predmete. Najpre kreirajte predmet.",
+    "confirmMarkPaidTitle": "Oznaciti kao placeno?",
+    "confirmMarkPaidBody": "Ovaj trosak ce biti oznacen kao placen.",
+    "confirmMarkUnpaidTitle": "Oznaciti kao neplaceno?",
+    "confirmMarkUnpaidBody": "Ovaj trosak ce biti oznacen kao neplacen.",
+    "cancel": "Otkazi",
+    "confirm": "Potvrdi"
+  },
+  "outstanding": {
+    "title": "Neplaćeno / Dugovanja",
+    "grandTotal": "Ukupna dugovanja",
+    "noOutstanding": "Nema neplaćenog iznosa",
+    "viewDetails": "Pogledaj detalje",
+    "invoiceDetail": "Detalji fakture",
+    "invoice": "Faktura",
+    "issued": "Izdato",
+    "due": "Rok",
+    "paid": "Plaćeno",
+    "remaining": "Preostalo"
+  }
+}

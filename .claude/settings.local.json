@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node C:/Users/user/.claude/get-shit-done/bin/gsd-tools.js init new-milestone)",
+      "Bash(node C:/Users/user/.claude/get-shit-done/bin/gsd-tools.js init progress)",
+      "Bash(npx tsc *)",
+      "Bash(grep -i \"cases\\\\\\\\\\\\\\\\\\\\[id\\\\]\\\\|cases/\\\\[id\\\\]\")",
+      "Bash(grep -E \"\\(cases\\\\\\\\\\\\\\\\\\\\[id|clients\\\\\\\\\\\\\\\\\\\\[id|courts|judges|lawyers|useReturnBack\\)\")",
+      "Bash(npx expo *)",
+      "Bash(node C:/Users/user/.claude/get-shit-done/bin/gsd-tools.js list-todos)",
+      "Skill(gsd:quick)",
+      "Bash(node *)",
+      "Bash(cp \"app/\\(tabs\\)/index.tsx\" \"/tmp/index-working.tsx\")",
+      "Bash(git show *)",
+      "Read(//tmp/**)",
+      "Bash(git checkout *)",
+      "Bash(awk '/^@@/{hdr=$0; print \"\"; print hdr; next} {print}')",
+      "Bash(git add *)",
+      "Bash(cp app/\\\\\\(tabs\\\\\\)/cases/\\\\[id\\\\].tsx app/\\\\\\(tabs\\\\\\)/cases/\\\\[id\\\\].tsx.preorder-backup)",
+      "Bash(mv app/\\\\\\(tabs\\\\\\)/cases/\\\\[id\\\\].tsx.reordered app/\\\\\\(tabs\\\\\\)/cases/\\\\[id\\\\].tsx)",
+      "Bash(grep -E \"\\(types\\\\.ts|cases.\\\\\\\\[id\\\\\\\\]\\\\.tsx|clients.\\\\\\\\[id\\\\\\\\]\\\\.tsx|mock-client\\\\.ts\\)\")",
+      "Bash(grep -E \"cases.\\\\\\\\[id\\\\\\\\]|clients.\\\\\\\\[id\\\\\\\\]|cases\\\\.json|clients\\\\.json\")"
+    ]
+  }
+}
