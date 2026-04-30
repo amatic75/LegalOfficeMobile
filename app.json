@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/splash-icon.png",
         "backgroundColor": "#1B2B4B"
-      }
+      },
+      "package": "com.greenbranch.legaloffice"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,6 +37,12 @@
         }
       ],
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "842ecaec-1e53-4d02-bb86-1d7d53bdc0a9"
+      }
+    }
   }
 }
