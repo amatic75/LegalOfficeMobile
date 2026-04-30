@@ -276,30 +276,30 @@ export default function NewClientScreen() {
   const handleCreate = async () => {
     setSaving(true);
     try {
-      if (isIndividual) {
-        await services.clients.createClient({
-          type: "individual",
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          jmbg: jmbg || undefined,
-          phone: phone || undefined,
-          email: email || undefined,
-          address: address || undefined,
-          city: city || undefined,
-        });
-      } else {
-        await services.clients.createClient({
-          type: "corporate",
-          companyName: companyName.trim(),
-          pib: pib || undefined,
-          mb: mb || undefined,
-          phone: phone || undefined,
-          email: email || undefined,
-          address: address || undefined,
-          city: city || undefined,
-        });
-      }
-      router.back();
+      const created = isIndividual
+        ? await services.clients.createClient({
+            type: "individual",
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+            jmbg: jmbg || undefined,
+            phone: phone || undefined,
+            email: email || undefined,
+            address: address || undefined,
+            city: city || undefined,
+          })
+        : await services.clients.createClient({
+            type: "corporate",
+            companyName: companyName.trim(),
+            pib: pib || undefined,
+            mb: mb || undefined,
+            phone: phone || undefined,
+            email: email || undefined,
+            address: address || undefined,
+            city: city || undefined,
+          });
+      // Land on the new client's overview. `replace` so the back gesture doesn't
+      // return the user to the empty form.
+      router.replace({ pathname: "/(tabs)/clients/[id]", params: { id: created.id } });
     } catch {
       Alert.alert("Error", "Failed to create client");
     } finally {

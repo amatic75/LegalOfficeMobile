@@ -7,7 +7,11 @@
     "noResults": "Нема фактура за изабрани филтер"
   },
   "filter": {
-    "allStatuses": "Сви статуси"
+    "allStatuses": "Сви статуси",
+    "allPayments": "Све уплате",
+    "paymentPaid": "Плаћене",
+    "paymentPartial": "Делимично плаћене",
+    "paymentUnpaid": "Неплаћене"
   },
   "status": {
     "draft": "Нацрт",
@@ -51,7 +55,15 @@
     "lineItemsPreview": "Преглед ставки",
     "noTimeEntries": "Нема наплативих временских уноса за овај предмет",
     "noExpenses": "Нема трошкова за овај предмет",
-    "calculatedTotal": "Израчунати укупан износ"
+    "calculatedTotal": "Израчунати укупан износ",
+    "removeItem": "Уклони",
+    "restoreItem": "Врати",
+    "removedItems": "Уклоњене ставке",
+    "exchangeRates": "Курсеви конверзије",
+    "exchangeRateFor": "Курс за 1 {{currency}}",
+    "missingRate": "Унесите курс за {{currency}} да би конверзија била тачна.",
+    "subtotalIn": "Међузбир ({{currency}})",
+    "convertedTotal": "Укупно (прерачунато у РСД)"
   },
   "payment": {
     "record": "Евидентирај уплату",

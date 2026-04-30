@@ -1,0 +1,61 @@
+import type { DocumentTemplate } from '../../types';
+
+// Mock document templates. URIs use the `file:///mock/...` placeholder; the
+// asset materializer swaps them for real openable files at read time.
+export const mockDocumentTemplates: DocumentTemplate[] = [
+  {
+    id: 'tpl1',
+    name: 'Ugovor o zastupanju (sablon)',
+    type: 'word',
+    mimeType: 'application/rtf',
+    size: 4_096,
+    uri: 'file:///mock/templates/tpl1.rtf',
+    category: 'ugovor',
+    description: 'Standardni ugovor izmedju advokata i klijenta.',
+    createdAt: '2024-09-01T10:00:00Z',
+  },
+  {
+    id: 'tpl2',
+    name: 'Punomocje (sablon)',
+    type: 'word',
+    mimeType: 'application/rtf',
+    size: 2_560,
+    uri: 'file:///mock/templates/tpl2.rtf',
+    category: 'punomocje',
+    description: 'Sablon punomocja za zastupanje pred sudom.',
+    createdAt: '2024-09-15T11:30:00Z',
+  },
+  {
+    id: 'tpl3',
+    name: 'Tuzba — naknada stete (sablon)',
+    type: 'word',
+    mimeType: 'application/rtf',
+    size: 6_144,
+    uri: 'file:///mock/templates/tpl3.rtf',
+    category: 'tuzba',
+    description: 'Sablon tuzbe za naknadu materijalne i nematerijalne stete.',
+    createdAt: '2024-10-02T09:15:00Z',
+  },
+  {
+    id: 'tpl4',
+    name: 'Zalba na presudu (sablon)',
+    type: 'word',
+    mimeType: 'application/rtf',
+    size: 5_120,
+    uri: 'file:///mock/templates/tpl4.rtf',
+    category: 'zalba',
+    description: 'Sablon zalbe na prvostepenu presudu.',
+    createdAt: '2024-10-20T14:00:00Z',
+  },
+  {
+    id: 'tpl5',
+    name: 'Beleske za pripremu rocista',
+    type: 'text',
+    mimeType: 'text/plain',
+    size: 1_024,
+    uri: 'file:///mock/templates/tpl5.txt',
+    category: 'other',
+    description: 'Kratak template za pripremu pitanja i argumentacije.',
+    createdAt: '2025-01-10T08:30:00Z',
+  },
+];

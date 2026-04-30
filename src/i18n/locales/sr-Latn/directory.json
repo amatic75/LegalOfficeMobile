@@ -64,5 +64,8 @@
     "confirm": "Potvrdi",
     "yes": "Da",
     "no": "Ne"
+  },
+  "picker": {
+    "clear": "Obrisi izbor"
   }
 }

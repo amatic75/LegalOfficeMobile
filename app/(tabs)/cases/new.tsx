@@ -11,10 +11,11 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams, Stack } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useServices } from "../../../src/hooks/useServices";
+import { useReturnBack } from "../../../src/hooks/useReturnBack";
 import { colors } from "../../../src/theme/tokens";
 import type { CaseType, CaseSubtype, Client, Court } from "../../../src/services/types";
 import { CASE_TYPE_SUBTYPES } from "../../../src/services/types";
@@ -47,6 +48,11 @@ export default function NewCaseScreen() {
   const services = useServices();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  // Optional pre-selected client from the client overview's "+ new case" button.
+  const { clientId: preselectedClientId } = useLocalSearchParams<{ clientId?: string }>();
+  // Honors `?returnTo=...` so a back tap lands on the originating screen
+  // (e.g. the client overview) even when the cases stack is otherwise empty.
+  const { goBack, returnTo } = useReturnBack();
 
   const [saving, setSaving] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
@@ -54,7 +60,7 @@ export default function NewCaseScreen() {
   // Selections
   const [selectedType, setSelectedType] = useState<CaseType | null>(null);
   const [selectedSubtype, setSelectedSubtype] = useState<CaseSubtype | null>(null);
-  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(preselectedClientId ?? null);
   const [selectedCourtId, setSelectedCourtId] = useState<string | null>(null);
 
   // Text fields
@@ -111,7 +117,7 @@ export default function NewCaseScreen() {
     setSaving(true);
     try {
       const clientName = selectedClient ? getClientDisplayName(selectedClient) : '';
-      await services.cases.createCase({
+      const created = await services.cases.createCase({
         caseNumber: caseNumber.trim(),
         title: title.trim(),
         clientName,
@@ -126,7 +132,9 @@ export default function NewCaseScreen() {
         lawyerId: 'u1',
         lawyerName: 'Marko Petrovic',
       });
-      router.back();
+      // Land on the new case's overview. `replace` so the user doesn't
+      // back-swipe into the empty form.
+      router.replace({ pathname: "/(tabs)/cases/[id]", params: { id: created.id } });
     } catch {
       Alert.alert('Error', 'Failed to create case');
     } finally {
@@ -149,6 +157,17 @@ export default function NewCaseScreen() {
       style={{ flex: 1, backgroundColor: colors.cream.DEFAULT }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
+      {returnTo && (
+        <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+              </Pressable>
+            ),
+          }}
+        />
+      )}
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: 16, paddingBottom: 40 + insets.bottom }}

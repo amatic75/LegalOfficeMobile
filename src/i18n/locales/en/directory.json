@@ -64,5 +64,8 @@
     "confirm": "Confirm",
     "yes": "Yes",
     "no": "No"
+  },
+  "picker": {
+    "clear": "Clear selection"
   }
 }

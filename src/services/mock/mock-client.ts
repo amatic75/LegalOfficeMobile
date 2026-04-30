@@ -17,6 +17,8 @@ import type {
   IBillingService,
   IReportService,
   IClientAggregationService,
+  IDocumentTemplateService,
+  DocumentTemplate,
   ClientActivity,
   ClientExpenseItem,
   ClientOutstandingSummary,
@@ -57,8 +59,10 @@ import type {
   UpcomingDeadline,
   PerformanceMetrics,
 } from '../types';
-import { DOCUMENT_FOLDER_CATEGORIES, FOLDER_ICONS, ACTIVITY_TYPE_ICONS } from '../types';
+import { DOCUMENT_FOLDER_CATEGORIES, FOLDER_ICONS, ACTIVITY_TYPE_ICONS, DEFAULT_CURRENCY } from '../types';
+import type { Currency } from '../types';
 import { delay } from '../../utils/delay';
+import { resolveMockUri } from './mock-asset-materializer';
 import { mockUsers } from './data/users';
 import { mockClients } from './data/clients';
 import { mockCases } from './data/cases';
@@ -77,6 +81,7 @@ import { mockClientDocuments } from './data/client-documents';
 import { mockSavedSearches } from './data/saved-searches';
 import { mockSearchHistory } from './data/search-history';
 import { mockInvoices } from './data/invoices';
+import { mockDocumentTemplates } from './data/document-templates';
 
 // Mutable copies so mutations persist within a session
 let clients = [...mockClients];
@@ -93,6 +98,7 @@ let clientDocuments = [...mockClientDocuments];
 let savedSearches = [...mockSavedSearches];
 let searchHistory = [...mockSearchHistory];
 let invoices = mockInvoices.map(inv => ({ ...inv, payments: [...inv.payments], lineItems: [...inv.lineItems] }));
+let documentTemplates = [...mockDocumentTemplates];
 let lawyers = [...mockLawyers];
 let judges = [...mockJudges];
 let courts = [...mockCourts];
@@ -330,15 +336,28 @@ const FOLDER_NAMES: Record<string, string> = {
   other: 'Ostalo',
 };
 
+// Replace placeholder `file:///mock/...` URIs with real cached files so the doc
+// is actually openable. Real URIs (added via upload/capture) pass through.
+// The hint (folderId + name) drives the PDF template choice so e.g. a doc in
+// the "pleadings" folder gets the Tuzba template, not generic mock content.
+async function materializeDoc(doc: Document): Promise<Document> {
+  const hint = `${doc.folderId ?? ''} ${doc.name}`;
+  const realUri = await resolveMockUri(doc.uri, doc.type, hint);
+  return realUri === doc.uri ? doc : { ...doc, uri: realUri };
+}
+
 const mockDocumentService: IDocumentService = {
   async getDocumentsByCaseId(caseId: string): Promise<Document[]> {
     await delay(300);
-    return documents.filter((d) => d.caseId === caseId);
+    const filtered = documents.filter((d) => d.caseId === caseId);
+    return Promise.all(filtered.map(materializeDoc));
   },
 
   async getDocumentById(id: string): Promise<Document | null> {
     await delay(300);
-    return documents.find((d) => d.id === id) ?? null;
+    const doc = documents.find((d) => d.id === id);
+    if (!doc) return null;
+    return materializeDoc(doc);
   },
 
   async addDocument(data: Omit<Document, 'id' | 'createdAt'>): Promise<Document> {
@@ -595,6 +614,14 @@ const mockTimeEntryService: ITimeEntryService = {
     return newEntry;
   },
 
+  async updateTimeEntry(id: string, data: Partial<Pick<TimeEntry, 'hours' | 'description' | 'date' | 'billable' | 'amount' | 'currency' | 'paid' | 'paidAt'>>): Promise<TimeEntry | null> {
+    await delay(200);
+    const index = timeEntries.findIndex((t) => t.id === id);
+    if (index === -1) return null;
+    timeEntries[index] = { ...timeEntries[index], ...data };
+    return timeEntries[index];
+  },
+
   async deleteTimeEntry(id: string): Promise<boolean> {
     await delay(300);
     const index = timeEntries.findIndex((t) => t.id === id);
@@ -621,7 +648,7 @@ const mockExpenseService: IExpenseService = {
     return newExpense;
   },
 
-  async updateExpense(id: string, data: Partial<Pick<Expense, 'amount' | 'category' | 'description' | 'date' | 'paid'>>): Promise<Expense | null> {
+  async updateExpense(id: string, data: Partial<Pick<Expense, 'amount' | 'currency' | 'category' | 'description' | 'date' | 'paid' | 'paidAt'>>): Promise<Expense | null> {
     await delay(200);
     const index = expenses.findIndex((e) => e.id === id);
     if (index === -1) return null;
@@ -694,10 +721,28 @@ const mockCommunicationService: ICommunicationService = {
   },
 };
 
+// Client documents have only the URI to materialize; their `type` is a domain
+// label (id-card, passport, …) so we infer the binary kind from the file ext.
+// The hint passes both the doc's domain type and its name so a doc named
+// "Punomocje - …" or typed "power-of-attorney" lands on the Punomocje template.
+async function materializeClientDoc(doc: ClientDocument): Promise<ClientDocument> {
+  const ext = doc.uri.toLowerCase().split('.').pop() ?? '';
+  const kind: 'pdf' | 'image' | 'word' | 'text' | 'other' =
+    ext === 'pdf' ? 'pdf'
+    : ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'heic', 'heif'].includes(ext) ? 'image'
+    : ext === 'doc' || ext === 'docx' ? 'word'
+    : ext === 'txt' || ext === 'rtf' ? 'text'
+    : 'pdf';
+  const hint = `${doc.type} ${doc.name}`;
+  const realUri = await resolveMockUri(doc.uri, kind, hint);
+  return realUri === doc.uri ? doc : { ...doc, uri: realUri };
+}
+
 const mockClientDocumentService: IClientDocumentService = {
   async getByClientId(clientId: string): Promise<ClientDocument[]> {
     await delay(300);
-    return clientDocuments.filter((d) => d.clientId === clientId);
+    const filtered = clientDocuments.filter((d) => d.clientId === clientId);
+    return Promise.all(filtered.map(materializeClientDoc));
   },
 
   async create(data: Omit<ClientDocument, 'id' | 'createdAt'>): Promise<ClientDocument> {
@@ -828,53 +873,140 @@ const mockBillingService: IBillingService = {
     return newPayment;
   },
 
-  async getOutstandingByClient(): Promise<Array<{ clientId: string; clientName: string; totalOutstanding: number; invoiceCount: number }>> {
+  async getOutstandingByClient(): Promise<Array<{ clientId: string; clientName: string; outstandingByCurrency: Partial<Record<Currency, number>>; totalOutstanding: number; invoiceCount: number }>> {
     await delay(300);
-    const map = new Map<string, { clientId: string; clientName: string; totalOutstanding: number; invoiceCount: number }>();
+
+    // Items already on some invoice — won't be double-counted as unbilled work.
+    const billed = new Set<string>();
     for (const inv of invoices) {
-      if (inv.status === 'paid' || inv.status === 'draft') continue;
-      const outstanding = inv.total - inv.paidAmount;
-      if (outstanding <= 0) continue;
-      const existing = map.get(inv.clientId);
-      if (existing) {
-        existing.totalOutstanding += outstanding;
-        existing.invoiceCount += 1;
-      } else {
-        map.set(inv.clientId, {
-          clientId: inv.clientId,
-          clientName: inv.clientName,
-          totalOutstanding: outstanding,
-          invoiceCount: 1,
-        });
+      for (const li of inv.lineItems) {
+        if (li.type === 'time-entry' || li.type === 'expense') billed.add(li.referenceId);
       }
     }
+
+    type Row = { clientId: string; clientName: string; outstandingByCurrency: Partial<Record<Currency, number>>; totalOutstanding: number; invoiceCount: number };
+    const map = new Map<string, Row>();
+    const ensure = (clientId: string, clientName: string): Row => {
+      let entry = map.get(clientId);
+      if (!entry) {
+        entry = { clientId, clientName, outstandingByCurrency: {}, totalOutstanding: 0, invoiceCount: 0 };
+        map.set(clientId, entry);
+      }
+      return entry;
+    };
+    const addAmount = (row: Row, currency: Currency, amount: number) => {
+      row.outstandingByCurrency[currency] = (row.outstandingByCurrency[currency] ?? 0) + amount;
+    };
+
+    // 1) Outstanding from invoices (every non-paid invoice). Invoices are
+    //    stored in RSD on this app — foreign-currency line items get
+    //    converted to RSD at create time using the user-entered rates.
+    for (const inv of invoices) {
+      if (inv.status === 'paid') continue;
+      const outstanding = inv.total - inv.paidAmount;
+      if (outstanding <= 0) continue;
+      const e = ensure(inv.clientId, inv.clientName);
+      addAmount(e, DEFAULT_CURRENCY, outstanding);
+      e.invoiceCount += 1;
+    }
+
+    // 2) Unbilled billable work — kept in its native currency (RSD / EUR / USD /
+    //    CHF). We never sum across currencies; the UI renders one line per
+    //    bucket. Falling back to RSD when a row has no explicit currency.
+    for (const cs of cases) {
+      const buckets: Partial<Record<Currency, number>> = {};
+      for (const te of timeEntries) {
+        if (te.caseId !== cs.id) continue;
+        if (!te.billable || !te.amount || te.amount <= 0) continue;
+        if (billed.has(te.id)) continue;
+        const cur = te.currency ?? DEFAULT_CURRENCY;
+        buckets[cur] = (buckets[cur] ?? 0) + te.amount;
+      }
+      for (const ex of expenses) {
+        if (ex.caseId !== cs.id) continue;
+        if (billed.has(ex.id)) continue;
+        const cur = ex.currency ?? DEFAULT_CURRENCY;
+        buckets[cur] = (buckets[cur] ?? 0) + ex.amount;
+      }
+      const hasAny = Object.values(buckets).some((v) => (v ?? 0) > 0);
+      if (!hasAny) continue;
+      const e = ensure(cs.clientId, cs.clientName);
+      for (const [cur, amt] of Object.entries(buckets) as [Currency, number][]) {
+        if (amt > 0) addAmount(e, cur, amt);
+      }
+    }
+
+    // `totalOutstanding` is a fallback for callers that just need a number;
+    // it intentionally exposes only the RSD bucket so we never mix currencies.
+    for (const row of map.values()) {
+      row.totalOutstanding = row.outstandingByCurrency[DEFAULT_CURRENCY] ?? 0;
+    }
+
     return Array.from(map.values());
   },
 
-  async getOutstandingByCase(): Promise<Array<{ caseId: string; caseName: string; caseNumber: string; clientName: string; totalOutstanding: number; invoiceCount: number }>> {
+  async getOutstandingByCase(): Promise<Array<{ caseId: string; caseName: string; caseNumber: string; clientName: string; outstandingByCurrency: Partial<Record<Currency, number>>; totalOutstanding: number; invoiceCount: number }>> {
     await delay(300);
-    const map = new Map<string, { caseId: string; caseName: string; caseNumber: string; clientName: string; totalOutstanding: number; invoiceCount: number }>();
+
+    const billed = new Set<string>();
     for (const inv of invoices) {
-      if (inv.status === 'paid' || inv.status === 'draft') continue;
+      for (const li of inv.lineItems) {
+        if (li.type === 'time-entry' || li.type === 'expense') billed.add(li.referenceId);
+      }
+    }
+
+    type Row = { caseId: string; caseName: string; caseNumber: string; clientName: string; outstandingByCurrency: Partial<Record<Currency, number>>; totalOutstanding: number; invoiceCount: number };
+    const map = new Map<string, Row>();
+    const ensure = (caseId: string, caseName: string, caseNumber: string, clientName: string): Row => {
+      let entry = map.get(caseId);
+      if (!entry) {
+        entry = { caseId, caseName, caseNumber, clientName, outstandingByCurrency: {}, totalOutstanding: 0, invoiceCount: 0 };
+        map.set(caseId, entry);
+      }
+      return entry;
+    };
+    const addAmount = (row: Row, currency: Currency, amount: number) => {
+      row.outstandingByCurrency[currency] = (row.outstandingByCurrency[currency] ?? 0) + amount;
+    };
+
+    for (const inv of invoices) {
+      if (inv.status === 'paid') continue;
       const outstanding = inv.total - inv.paidAmount;
       if (outstanding <= 0) continue;
       const caseData = cases.find((c) => c.id === inv.caseId);
       const caseNumber = caseData?.caseNumber ?? '';
-      const existing = map.get(inv.caseId);
-      if (existing) {
-        existing.totalOutstanding += outstanding;
-        existing.invoiceCount += 1;
-      } else {
-        map.set(inv.caseId, {
-          caseId: inv.caseId,
-          caseName: inv.caseName,
-          caseNumber,
-          clientName: inv.clientName,
-          totalOutstanding: outstanding,
-          invoiceCount: 1,
-        });
+      const e = ensure(inv.caseId, inv.caseName, caseNumber, inv.clientName);
+      addAmount(e, DEFAULT_CURRENCY, outstanding);
+      e.invoiceCount += 1;
+    }
+
+    for (const cs of cases) {
+      const buckets: Partial<Record<Currency, number>> = {};
+      for (const te of timeEntries) {
+        if (te.caseId !== cs.id) continue;
+        if (!te.billable || !te.amount || te.amount <= 0) continue;
+        if (billed.has(te.id)) continue;
+        const cur = te.currency ?? DEFAULT_CURRENCY;
+        buckets[cur] = (buckets[cur] ?? 0) + te.amount;
+      }
+      for (const ex of expenses) {
+        if (ex.caseId !== cs.id) continue;
+        if (billed.has(ex.id)) continue;
+        const cur = ex.currency ?? DEFAULT_CURRENCY;
+        buckets[cur] = (buckets[cur] ?? 0) + ex.amount;
+      }
+      const hasAny = Object.values(buckets).some((v) => (v ?? 0) > 0);
+      if (!hasAny) continue;
+      const e = ensure(cs.id, cs.title, cs.caseNumber, cs.clientName);
+      for (const [cur, amt] of Object.entries(buckets) as [Currency, number][]) {
+        if (amt > 0) addAmount(e, cur, amt);
       }
     }
+
+    for (const row of map.values()) {
+      row.totalOutstanding = row.outstandingByCurrency[DEFAULT_CURRENCY] ?? 0;
+    }
+
     return Array.from(map.values());
   },
 };
@@ -1181,6 +1313,7 @@ const mockClientAggregationService: IClientAggregationService = {
           caseName: cs.title,
           caseNumber: cs.caseNumber,
           icon: ACTIVITY_TYPE_ICONS['event'],
+          eventId: evt.id,
         });
       }
     }
@@ -1203,13 +1336,14 @@ const mockClientAggregationService: IClientAggregationService = {
           id: `cexp-te-${te.id}`,
           type: 'time-entry',
           description: te.description,
-          amount: te.hours * 100, // placeholder rate
+          amount: te.amount ?? te.hours * 100, // placeholder rate
+          currency: te.currency,
           date: te.date,
           caseId: cs.id,
           caseName: cs.title,
           caseNumber: cs.caseNumber,
           hours: te.hours,
-          paid: false,
+          paid: te.paid ?? false,
         });
       }
 
@@ -1221,6 +1355,7 @@ const mockClientAggregationService: IClientAggregationService = {
           type: 'expense',
           description: exp.description,
           amount: exp.amount,
+          currency: exp.currency,
           date: exp.date,
           caseId: cs.id,
           caseName: cs.title,
@@ -1266,6 +1401,38 @@ const mockClientAggregationService: IClientAggregationService = {
   },
 };
 
+// Document templates — firm-wide reusable skeletons. Materialize the URI so
+// templates open the right kind of file (RTF/text) when tapped.
+async function materializeTemplate(tpl: DocumentTemplate): Promise<DocumentTemplate> {
+  const kind = tpl.type === 'word' ? 'word' : 'text';
+  const realUri = await resolveMockUri(tpl.uri, kind, `${tpl.category} ${tpl.name}`);
+  return realUri === tpl.uri ? tpl : { ...tpl, uri: realUri };
+}
+
+const mockDocumentTemplateService: IDocumentTemplateService = {
+  async getAll(): Promise<DocumentTemplate[]> {
+    await delay(300);
+    return Promise.all(documentTemplates.map(materializeTemplate));
+  },
+  async create(data: Omit<DocumentTemplate, 'id' | 'createdAt'>): Promise<DocumentTemplate> {
+    await delay(300);
+    const newTpl: DocumentTemplate = {
+      ...data,
+      id: 'tpl' + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    documentTemplates.push(newTpl);
+    return newTpl;
+  },
+  async delete(id: string): Promise<boolean> {
+    await delay(200);
+    const i = documentTemplates.findIndex((t) => t.id === id);
+    if (i === -1) return false;
+    documentTemplates.splice(i, 1);
+    return true;
+  },
+};
+
 export const mockServices: ServiceRegistry = {
   users: mockUserService,
   clients: mockClientService,
@@ -1284,4 +1451,5 @@ export const mockServices: ServiceRegistry = {
   billing: mockBillingService,
   reports: mockReportService,
   clientAggregation: mockClientAggregationService,
+  documentTemplates: mockDocumentTemplateService,
 };

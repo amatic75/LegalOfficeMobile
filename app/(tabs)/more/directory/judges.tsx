@@ -17,6 +17,7 @@ import { useServices } from "../../../../src/hooks/useServices";
 import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
 import type { Judge } from "../../../../src/services/types";
+import { DeleteConfirmDialog } from "../../../../src/components/ui/DeleteConfirmDialog";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -222,6 +223,7 @@ export default function JudgeDetailScreen() {
 
   const [judge, setJudge] = useState<Judge | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -243,21 +245,14 @@ export default function JudgeDetailScreen() {
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      t("judges.deleteJudge"),
-      t("judges.confirmDelete"),
-      [
-        { text: t("actions.no"), style: "cancel" },
-        {
-          text: t("actions.yes"),
-          style: "destructive",
-          onPress: async () => {
-            await services.directory.deleteJudge(id!);
-            router.back();
-          },
-        },
-      ]
-    );
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    setShowDeleteConfirm(false);
+    if (!id) return;
+    await services.directory.deleteJudge(id);
+    router.back();
   };
 
   if (loading) {
@@ -392,6 +387,15 @@ export default function JudgeDetailScreen() {
           {t("judges.deleteJudge")}
         </Text>
       </Pressable>
+
+      <DeleteConfirmDialog
+        visible={showDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        title={t("judges.deleteJudge")}
+        body={t("judges.confirmDelete")}
+        confirmLabel={t("judges.deleteJudge")}
+      />
     </ScrollView>
   );
 }

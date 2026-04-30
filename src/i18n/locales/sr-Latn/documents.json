@@ -9,13 +9,19 @@
   "fileTypes": {
     "pdf": "PDF dokument",
     "image": "Slika",
+    "word": "Word dokument",
+    "text": "Tekstualni fajl",
     "other": "Fajl"
   },
   "filter": {
     "all": "Sve",
     "pdf": "PDF",
-    "image": "Slike"
+    "image": "Slike",
+    "word": "Word",
+    "text": "Tekst"
   },
+  "cannotOpenTitle": "Nije moguce otvoriti fajl",
+  "cannotOpenMessage": "Sistem ne moze da otvori ovaj tip fajla. Instalirajte odgovarajucu aplikaciju.",
   "metadata": {
     "size": "Velicina",
     "date": "Datum",
@@ -45,6 +51,9 @@
     "scanConfirmMessage": "Da li zelite da koristite ovu fotografiju ili da ponovite snimanje?"
   },
   "selectFolder": "Izaberite fasciklu",
+  "createFromTemplate": "Iz sablona",
+  "pickTemplate": "Izaberite sablon",
+  "noTemplates": "Nema sablona. Dodajte sablon u Vise → Dokumenta → Sabloni.",
   "addedOn": "Dodato {{date}}",
   "viewAll": "Pogledaj sve",
   "addDocument": "Dodaj dokument",

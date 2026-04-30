@@ -18,6 +18,7 @@ import { useServices } from "../../../src/hooks/useServices";
 import { useReturnBack } from "../../../src/hooks/useReturnBack";
 import { useDebounce } from "../../../src/hooks/useDebounce";
 import { colors } from "../../../src/theme/tokens";
+import { DeleteConfirmDialog } from "../../../src/components/ui/DeleteConfirmDialog";
 import type {
   Client,
   CaseSummary,
@@ -169,6 +170,8 @@ export default function SearchScreen() {
   const [saveModalVisible, setSaveModalVisible] = useState(false);
   const [saveSearchName, setSaveSearchName] = useState("");
   const [savedFeedback, setSavedFeedback] = useState(false);
+  const [deleteSearchConfirm, setDeleteSearchConfirm] = useState<SavedSearch | null>(null);
+  const [clearHistoryConfirm, setClearHistoryConfirm] = useState(false);
 
   // Directory lawyers (replaces MOCK_LAWYERS)
   const [lawyers, setLawyers] = useState<Array<{ id: string; name: string }>>([]);
@@ -444,28 +447,17 @@ export default function SearchScreen() {
     [executeSearch]
   );
 
-  const handleDeleteSavedSearch = useCallback(
-    (search: SavedSearch) => {
-      Alert.alert(
-        t("search:deleteSearch"),
-        t("search:confirmDeleteSearch"),
-        [
-          { text: t("search:cancel"), style: "cancel" },
-          {
-            text: t("search:deleteSearch"),
-            style: "destructive",
-            onPress: async () => {
-              await services.search.deleteSavedSearch(search.id);
-              setSavedSearches((prev) =>
-                prev.filter((s) => s.id !== search.id)
-              );
-            },
-          },
-        ]
-      );
-    },
-    [services.search, t]
-  );
+  const handleDeleteSavedSearch = useCallback((search: SavedSearch) => {
+    setDeleteSearchConfirm(search);
+  }, []);
+
+  const confirmDeleteSavedSearch = useCallback(async () => {
+    if (!deleteSearchConfirm) return;
+    const searchId = deleteSearchConfirm.id;
+    setDeleteSearchConfirm(null);
+    await services.search.deleteSavedSearch(searchId);
+    setSavedSearches((prev) => prev.filter((s) => s.id !== searchId));
+  }, [deleteSearchConfirm, services.search]);
 
   const handleHistoryTap = useCallback(
     (entry: SearchHistoryEntry) => {
@@ -477,23 +469,15 @@ export default function SearchScreen() {
   );
 
   const handleClearHistory = useCallback(() => {
-    Alert.alert(
-      t("search:clearHistory"),
-      t("search:confirmClearHistory"),
-      [
-        { text: t("search:cancel"), style: "cancel" },
-        {
-          text: t("search:clearHistory"),
-          style: "destructive",
-          onPress: async () => {
-            await services.search.clearHistory();
-            setHistoryEntries([]);
-            lastHistoryQuery.current = "";
-          },
-        },
-      ]
-    );
-  }, [services.search, t]);
+    setClearHistoryConfirm(true);
+  }, []);
+
+  const confirmClearHistory = useCallback(async () => {
+    setClearHistoryConfirm(false);
+    await services.search.clearHistory();
+    setHistoryEntries([]);
+    lastHistoryQuery.current = "";
+  }, [services.search]);
 
   const handleSaveSearch = useCallback(async () => {
     if (!saveSearchName.trim()) return;
@@ -1673,6 +1657,24 @@ export default function SearchScreen() {
       {/* Modals */}
       {renderFilterModal()}
       {renderSaveModal()}
+
+      <DeleteConfirmDialog
+        visible={deleteSearchConfirm !== null}
+        onCancel={() => setDeleteSearchConfirm(null)}
+        onConfirm={confirmDeleteSavedSearch}
+        title={t("search:deleteSearch")}
+        body={t("search:confirmDeleteSearch")}
+        confirmLabel={t("search:deleteSearch")}
+      />
+
+      <DeleteConfirmDialog
+        visible={clearHistoryConfirm}
+        onCancel={() => setClearHistoryConfirm(false)}
+        onConfirm={confirmClearHistory}
+        title={t("search:clearHistory")}
+        body={t("search:confirmClearHistory")}
+        confirmLabel={t("search:clearHistory")}
+      />
     </View>
   );
 }

@@ -14,6 +14,7 @@ import srLatnNotifications from './locales/sr-Latn/notifications.json';
 import srLatnBilling from './locales/sr-Latn/billing.json';
 import srLatnReports from './locales/sr-Latn/reports.json';
 import srLatnDirectory from './locales/sr-Latn/directory.json';
+import srLatnMoreDocuments from './locales/sr-Latn/moreDocuments.json';
 
 import srCyrlCommon from './locales/sr-Cyrl/common.json';
 import srCyrlNavigation from './locales/sr-Cyrl/navigation.json';
@@ -28,6 +29,7 @@ import srCyrlNotifications from './locales/sr-Cyrl/notifications.json';
 import srCyrlBilling from './locales/sr-Cyrl/billing.json';
 import srCyrlReports from './locales/sr-Cyrl/reports.json';
 import srCyrlDirectory from './locales/sr-Cyrl/directory.json';
+import srCyrlMoreDocuments from './locales/sr-Cyrl/moreDocuments.json';
 
 import enCommon from './locales/en/common.json';
 import enNavigation from './locales/en/navigation.json';
@@ -42,6 +44,7 @@ import enNotifications from './locales/en/notifications.json';
 import enBilling from './locales/en/billing.json';
 import enReports from './locales/en/reports.json';
 import enDirectory from './locales/en/directory.json';
+import enMoreDocuments from './locales/en/moreDocuments.json';
 
 export type Locale = 'sr-Latn' | 'sr-Cyrl' | 'en';
 
@@ -66,6 +69,7 @@ const resources = {
     billing: srLatnBilling,
     reports: srLatnReports,
     directory: srLatnDirectory,
+    moreDocuments: srLatnMoreDocuments,
   },
   'sr-Cyrl': {
     common: srCyrlCommon,
@@ -81,6 +85,7 @@ const resources = {
     billing: srCyrlBilling,
     reports: srCyrlReports,
     directory: srCyrlDirectory,
+    moreDocuments: srCyrlMoreDocuments,
   },
   en: {
     common: enCommon,
@@ -96,6 +101,7 @@ const resources = {
     billing: enBilling,
     reports: enReports,
     directory: enDirectory,
+    moreDocuments: enMoreDocuments,
   },
 };
 
@@ -103,7 +109,7 @@ i18n.use(initReactI18next).init({
   resources,
   lng: 'sr-Latn',
   fallbackLng: 'sr-Latn',
-  ns: ['common', 'navigation', 'settings', 'clients', 'cases', 'documents', 'calendar', 'home', 'search', 'notifications', 'billing', 'reports', 'directory'],
+  ns: ['common', 'navigation', 'settings', 'clients', 'cases', 'documents', 'calendar', 'home', 'search', 'notifications', 'billing', 'reports', 'directory', 'moreDocuments'],
   defaultNS: 'common',
   interpolation: {
     escapeValue: false,

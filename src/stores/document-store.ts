@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type DocumentFilterType = 'all' | 'pdf' | 'image';
+type DocumentFilterType = 'all' | 'pdf' | 'image' | 'word' | 'text';
 
 interface DocumentStoreState {
   filterType: DocumentFilterType;

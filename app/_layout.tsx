@@ -2,6 +2,7 @@ import "../global.css";
 import "../src/i18n";
 
 import { useEffect, useState } from "react";
+import { View, Image } from "react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
@@ -49,7 +50,15 @@ export default function RootLayout() {
   }, [loadUser]);
 
   if (!appReady) {
-    return null;
+    return (
+      <View style={{ flex: 1, backgroundColor: '#1B2B4B', alignItems: 'center', justifyContent: 'center' }}>
+        <Image
+          source={require('../assets/splash-icon.png')}
+          style={{ width: 200, height: 200 }}
+          resizeMode="contain"
+        />
+      </View>
+    );
   }
 
   return (

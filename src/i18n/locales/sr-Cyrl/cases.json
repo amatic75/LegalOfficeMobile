@@ -31,8 +31,7 @@
     "selectSubtypeDetails": "Детаљи подтипа",
     "tapToEdit": "Додирните за измену",
     "save": "Сачувај",
-    "cancel": "Откажи",
-    "viewInDirectory": "Погледај у именику"
+    "cancel": "Откажи"
   },
   "form": {
     "createTitle": "Нови предмет",
@@ -73,6 +72,63 @@
     "mergers-acquisitions": "Спајања и припајања",
     "commercial-contracts": "Привредни уговори",
     "intellectual-property": "Интелектуална својина"
+  },
+  "subtypeItem": {
+    "contract-disputes": "Спорови из уговора",
+    "property-disputes": "Имовински спорови",
+    "employment-disputes": "Радни спорови",
+    "tort-claims": "Накнада штете",
+    "mediation": "Медијација",
+    "arbitration": "Арбитража",
+    "notarial-matters": "Нотарски послови",
+    "creditor-claims": "Потраживања поверилаца",
+    "debtor-restructuring": "Реорганизација дужника",
+    "liquidation-proceedings": "Поступак ликвидације",
+    "debt-collection": "Наплата потраживања",
+    "asset-seizure": "Пленидба имовине",
+    "wage-garnishment": "Пленидба зараде",
+    "traffic-violations": "Саобраћајни прекршаји",
+    "public-order-offenses": "Нарушени јавни ред и мир",
+    "minor-property-damage": "Мања имовинска штета",
+    "permit-appeals": "Жалбе на дозволе",
+    "tax-disputes": "Порески спорови",
+    "regulatory-compliance": "Регулаторна усклађеност",
+    "financial-crimes": "Финансијска кривична дела",
+    "violent-crimes": "Кривична дела са елементима насиља",
+    "cybercrime": "Сајбер криминал",
+    "felony-charges": "Тешка кривична дела",
+    "organized-crime": "Организовани криминал",
+    "white-collar-crime": "Привредни криминал",
+    "sentence-reduction": "Смањење казне",
+    "procedural-errors": "Процесне грешке",
+    "new-evidence": "Нови докази",
+    "parole-hearings": "Условни отпуст",
+    "sentence-modification": "Измена казне",
+    "rehabilitation": "Рехабилитација",
+    "contested-divorce": "Спорни развод",
+    "uncontested-divorce": "Споразумни развод",
+    "property-division": "Подела имовине",
+    "sole-custody": "Самостално старатељство",
+    "joint-custody": "Заједничко старатељство",
+    "visitation-rights": "Право на виђање детета",
+    "spousal-support": "Издржавање супружника",
+    "child-support-modification": "Измена издржавања детета",
+    "enforcement-of-support": "Извршење издржавања",
+    "domestic-adoption": "Домаће усвојење",
+    "international-adoption": "Међународно усвојење",
+    "step-parent-adoption": "Усвојење пасторка",
+    "llc-registration": "Регистрација ДОО",
+    "joint-stock-company": "Акционарско друштво",
+    "branch-office-registration": "Регистрација огранка",
+    "due-diligence": "Правна анализа (due diligence)",
+    "share-purchase": "Куповина удела",
+    "asset-acquisition": "Аквизиција имовине",
+    "supply-agreements": "Уговори о снабдевању",
+    "lease-agreements": "Уговори о закупу",
+    "service-contracts": "Уговори о услугама",
+    "trademark-registration": "Регистрација жигова",
+    "patent-filing": "Пријава патента",
+    "copyright-protection": "Заштита ауторских права"
   },
   "status": {
     "new": "Нови",
@@ -116,7 +172,15 @@
     }
   },
   "billing": {
-    "title": "Време и трошкови",
+    "title": "Нефактурисане ставке",
+    "createInvoice": "Креирај фактуру",
+    "unpaidInvoicesTitle": "Неплаћене фактуре",
+    "noUnpaidInvoices": "Нема неплаћених фактура за овај предмет.",
+    "percentPaid": "{{percent}}% наплаћено",
+    "viewAllInvoices": "Погледај све фактуре",
+    "remaining": "Преостало",
+    "selectCase": "Изаберите предмет",
+    "changeCase": "Промени",
     "addTime": "Евидентирај време",
     "addExpense": "Додај трошак",
     "hours": "Сати",
@@ -143,7 +207,18 @@
     "deleteConfirm": "Да ли сте сигурни да желите да обришете овај унос?",
     "markPaid": "Означи као плаћено",
     "markUnpaid": "Означи као неплаћено",
-    "paid": "ПЛАЋЕНО"
+    "paid": "ПЛАЋЕНО",
+    "unpaid": "Неплаћено",
+    "currency": "Валута",
+    "datetime": "Датум и време",
+    "pickDate": "Изабери датум",
+    "pickTime": "Изабери време",
+    "confirmMarkPaidTitle": "Означити као плаћено?",
+    "confirmMarkPaidBody": "Овај трошак ће бити означен као плаћен.",
+    "confirmMarkUnpaidTitle": "Означити као неплаћено?",
+    "confirmMarkUnpaidBody": "Овај трошак ће бити означен као неплаћен.",
+    "paidAt": "Датум плаћања",
+    "paidOn": "Плаћено"
   },
   "related": {
     "title": "Повезани предмети",
@@ -163,5 +238,13 @@
   "quickActions": {
     "callClient": "Позови клијента",
     "navigateCourt": "Навигација"
+  },
+  "recentActivity": {
+    "title": "Недавне активности",
+    "noActivity": "Нема недавних активности"
+  },
+  "upcomingActivity": {
+    "title": "Предстојеће активности",
+    "noActivity": "Нема предстојећих активности"
   }
 }

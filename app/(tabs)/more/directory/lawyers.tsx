@@ -17,6 +17,7 @@ import { useServices } from "../../../../src/hooks/useServices";
 import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
 import type { Lawyer } from "../../../../src/services/types";
+import { DeleteConfirmDialog } from "../../../../src/components/ui/DeleteConfirmDialog";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -222,6 +223,7 @@ export default function LawyerDetailScreen() {
 
   const [lawyer, setLawyer] = useState<Lawyer | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -243,21 +245,14 @@ export default function LawyerDetailScreen() {
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      t("lawyers.deleteLawyer"),
-      t("lawyers.confirmDelete"),
-      [
-        { text: t("actions.no"), style: "cancel" },
-        {
-          text: t("actions.yes"),
-          style: "destructive",
-          onPress: async () => {
-            await services.directory.deleteLawyer(id!);
-            router.back();
-          },
-        },
-      ]
-    );
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    setShowDeleteConfirm(false);
+    if (!id) return;
+    await services.directory.deleteLawyer(id);
+    router.back();
   };
 
   if (loading) {
@@ -484,6 +479,15 @@ export default function LawyerDetailScreen() {
           {t("lawyers.deleteLawyer")}
         </Text>
       </Pressable>
+
+      <DeleteConfirmDialog
+        visible={showDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        title={t("lawyers.deleteLawyer")}
+        body={t("lawyers.confirmDelete")}
+        confirmLabel={t("lawyers.deleteLawyer")}
+      />
     </ScrollView>
   );
 }

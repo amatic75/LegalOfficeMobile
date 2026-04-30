@@ -13,7 +13,7 @@ Milestone: v1.2 Client Depth & Directory
 Phase: 11 of 11 (Directory Management)
 Plan: 2 of 2 complete
 Status: v1.2 milestone complete
-Last activity: 2026-04-11 — completed 11-02 (directory CRUD forms, search integration)
+Last activity: 2026-04-20 — completed quick task 3: financial overview top KPI cards laid out as 2×2 grid
 
 Progress: [##########] 100%
 
@@ -66,9 +66,15 @@ Decisions are logged in PROJECT.md Key Decisions table and archived per-mileston
 
 ### Pending Todos
 
-0 pending — the 4 v1.1-era todos were absorbed into v1.2 milestone scope on 2026-04-11.
+3 pending:
+- `2026-04-20-directory-aware-editing-for-opposing-counsel-court-judge-lawyer` — opposing counsel link parity + directory-backed search picker + inline "create new" for court/judge/lawyer/opposing counsel on case detail and edit screens.
+- `2026-04-20-time-and-expenses-card-revamp-currency-picker-datetime-paid-confirmation-client-rollup` — currency selector, datetime picker, paid-confirmation alert, prominent unpaid total, and client-page version with per-case grouping for the Vreme & Troskovi card.
+- `2026-04-20-app-wide-navigation-history-policy-in-page-back-vs-tab-reset` — audit every in-page link to use `returnTo` so back returns to origin (cross-tab); verify bottom-tab presses fully reset history and back at a tab root does nothing.
 
-Todo files moved: `.planning/todos/pending/` → `.planning/todos/done/` (client-page uploads, client-page activities timeline, client-page expenses, lawyers/judges/courts directory).
+Done this session:
+- ~~`2026-04-20-financial-overview-top-kpi-cards-to-2x2-grid-layout`~~ → quick task 3 (commit `127c06d`).
+
+(The 4 v1.1-era todos were absorbed into v1.2 milestone scope on 2026-04-11 and moved to `.planning/todos/done/`: client-page uploads, client-page activities timeline, client-page expenses, lawyers/judges/courts directory.)
 
 ### Blockers/Concerns
 
@@ -82,6 +88,14 @@ Todo files moved: `.planning/todos/pending/` → `.planning/todos/done/` (client
 - `formatRSD` duplicated inline per billing/reporting screen — optional extraction when v1.2 touches client-expenses aggregation
 
 **v1.2 blockers:** None known.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 1 | Mark expenses paid/unpaid, merge expense sections on client page, add directory navigation links | 2026-04-13 | a47a7a1 | [1-mark-expenses-paid-unpaid-merge-expense-](./quick/1-mark-expenses-paid-unpaid-merge-expense-/) |
+| 2 | Add file upload and photo capture option (uncommitted in STATE — present on disk only, see `./quick/2-add-file-upload-and-photo-capture-option/`) | — | — | [2-add-file-upload-and-photo-capture-option](./quick/2-add-file-upload-and-photo-capture-option/) |
+| 3 | Financial overview top KPI cards laid out as 2×2 grid | 2026-04-20 | 127c06d | [3-financial-overview-top-kpi-cards-to-2x2-](./quick/3-financial-overview-top-kpi-cards-to-2x2-/) |
 
 ## Session Continuity
 

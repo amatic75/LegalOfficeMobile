@@ -2,8 +2,9 @@
 
 ## Milestones
 
-- ✅ **v1.0 MVP** — Phases 1-4 (shipped 2026-03-13)
-- 🚧 **v1.1 Enhanced Features** — Phases 5-9 (in progress)
+- ✅ **v1.0 MVP** — Phases 1-4 (shipped 2026-03-13) · [archive](milestones/v1.0-ROADMAP.md)
+- ✅ **v1.1 Enhanced Features** — Phases 5-9 (shipped 2026-03-15) · [archive](milestones/v1.1-ROADMAP.md)
+- 🚧 **v1.2 Client Depth & Directory** — Phases 10-? (in progress)
 
 ## Phases
 
@@ -15,101 +16,69 @@
 - [x] Phase 3: Documents and Calendar (2/2 plans) — completed 2026-03-12
 - [x] Phase 4: Dashboard, Search, and Notifications (2/2 plans) — completed 2026-03-12
 
+See `.planning/milestones/v1.0-ROADMAP.md` for full details.
+
 </details>
 
-### 🚧 v1.1 Enhanced Features (In Progress)
+<details>
+<summary>✅ v1.1 Enhanced Features (Phases 5-9) — SHIPPED 2026-03-15</summary>
 
-**Milestone Goal:** Deepen existing v1.0 screens with case notes, time/expense tracking, document folders, advanced search, notification preferences, client intake, calendar enhancements, billing, voice notes, and reporting dashboards.
+- [x] Phase 5: Enhanced Case Management and Voice Notes (2/2 plans) — completed 2026-03-14
+- [x] Phase 6: Enhanced Documents, Clients, Calendar, and Mobile (2/2 plans) — completed 2026-03-14
+- [x] Phase 7: Advanced Search and Notifications (2/2 plans) — completed 2026-03-14
+- [x] Phase 8: Billing and Invoicing (2/2 plans) — completed 2026-03-15
+- [x] Phase 9: Reporting and Analytics (2/2 plans) — completed 2026-03-15
 
-- [x] **Phase 5: Enhanced Case Management and Voice Notes** (2/2 plans) — completed 2026-03-14
-- [x] **Phase 6: Enhanced Documents, Clients, Calendar, and Mobile** (2/2 plans) — completed 2026-03-14
-- [x] **Phase 7: Advanced Search and Notifications** (2/2 plans) — completed 2026-03-14
-- [x] **Phase 8: Billing and Invoicing** (2/2 plans) — completed 2026-03-15
-- [ ] **Phase 9: Reporting and Analytics** - Financial overview, case management, performance dashboards, visual charts
+See `.planning/milestones/v1.1-ROADMAP.md` for full details.
+
+</details>
+
+### 🚧 v1.2 Client Depth & Directory (In Progress)
+
+**Milestone Goal:** Deepen the client detail page with file uploads, aggregated activity timelines across all cases, and expense/outstanding rollups — plus introduce a unified directory for lawyers, judges, and courts under the More tab.
+
+- [x] Phase 10: Client Detail Depth (2/2 plans) — completed 2026-04-11
+- [x] Phase 11: Directory Management (2/2 plans) — completed 2026-04-11
 
 ## Phase Details
 
-### Phase 5: Enhanced Case Management and Voice Notes
-**Goal**: Lawyers can capture rich case information including notes, court details, time/expenses, and voice recordings directly from their phone
-**Depends on**: Phase 4 (v1.0 case screens exist)
-**Requirements**: CASE-01, CASE-02, CASE-03, CASE-04, CASE-05, CASE-06, CASE-07, CASE-08, VOICE-01, VOICE-02, VOICE-03
+### Phase 10: Client Detail Depth
+
+**Goal**: Lawyers get a true client-centric view on the client detail page — uploading client-level documents, browsing recent and upcoming activity aggregated across every case linked to that client, and seeing all expenses plus outstanding balances rolled up in one place
+**Depends on**: Phase 9 (v1.1 shipped — reuses SECTION_CARD, EditableInfoRow, formatRSD, mockBillingService.getOutstandingByClient, case/document/event/time-entry services)
+**Requirements**: CLNT-05, CLNT-06, CLNT-07, CLNT-08, CLNT-09
 **Success Criteria** (what must be TRUE):
-  1. User can create, edit, and delete text notes on any case, and record/play back voice notes attached to that case
-  2. User can view and edit opposing party, court information, and tags on case detail, and select full 3-level case type subtypes
-  3. User can log time entries and expenses on a case with all required fields (hours/amount, description, date/category)
-  4. User can link related cases and navigate between them from case detail
-  5. User can dictate case notes using speech-to-text instead of typing
+  1. User can upload client-level documents (ID, power of attorney, engagement letter) from the client detail page via file picker or camera, with parity to the case-level document upload flow
+  2. User can view a "Recent activity" list on the client detail page that chronologically merges notes, events, documents, time entries, payments, and status changes from every case linked to the client, newest first, with a "See all" link
+  3. User can view an "Upcoming activity" list on the client detail page that chronologically merges future hearings, deadlines, meetings, and events from every case linked to the client, soonest first, with a "See all" link
+  4. User can view an "Expenses" section on the client detail page that lists every time entry and expense from every linked case, showing case name, date, and formatted RSD amount
+  5. User can view an "Unpaid / Outstanding" summary card on the client detail page that rolls up outstanding invoice balance across all the client's cases and drills down into per-invoice detail
 **Plans:** 2 plans
 
 Plans:
-- [x] 05-01-PLAN.md — Types, mock data, i18n, notes CRUD, expanded fields, tags, tree picker
-- [x] 05-02-PLAN.md — Billing section, related cases linking, voice recording/playback, dictation
+- [x] 10-01: Service aggregation + i18n + document upload upgrade (file picker + camera capture) — completed 2026-04-11
+- [x] 10-02: Recent/Upcoming Activity sections with See All, Expenses grouped by case, Outstanding rollup with drill-down — completed 2026-04-11
 
-### Phase 6: Enhanced Documents, Clients, Calendar, and Mobile
-**Goal**: Lawyers can organize documents into folders, onboard clients through a structured intake workflow, manage recurring calendar events with conflict warnings, and use mobile-optimized scanning and quick actions
-**Depends on**: Phase 5 (enhanced case data available for client/document context)
-**Requirements**: DOC-01, DOC-02, DOC-03, CLNT-01, CLNT-02, CLNT-03, CLNT-04, CAL-01, CAL-02, CAL-03, MOB-01, MOB-02
+### Phase 11: Directory Management
+
+**Goal**: Lawyers have a single unified directory under the More tab for the external and internal people and institutions the office interacts with — lawyers (including opposing counsel), judges, and courts — with full CRUD and search on each
+**Depends on**: Phase 10 (v1.2 cohesion; independent feature slice — safe to run after Phase 10)
+**Requirements**: DIR-01, DIR-02, DIR-03, DIR-04
 **Success Criteria** (what must be TRUE):
-  1. User can organize case documents into categorized folders and view document version history and metadata
-  2. User can create a new client through a multi-step intake workflow (contact, conflict check, consultation, onboarding) and manage corporate contacts
-  3. User can view communication history on a client and manage client-level documents (ID, powers of attorney)
-  4. User is warned about scheduling conflicts when creating events, can edit existing events, and can create recurring events
-  5. User can scan documents with auto-crop enhancement and use quick-action buttons (call client, navigate to court) from detail screens
+  1. User can open a single "Directory" entry under the More tab and switch between Lawyers, Judges, and Courts using a 3-tab top-tab navigator consistent with other More screens
+  2. User can browse, search, add, edit, and delete lawyers with fields for display name, firm, bar number, phone, email, specialty, notes, and an internal-vs-external flag
+  3. User can browse, search, add, edit, and delete judges with fields for display name, court, chamber, phone, and notes
+  4. User can browse, search, add, edit, and delete courts with fields for name, address, city, jurisdiction, phone, website, and notes
 **Plans:** 2 plans
 
 Plans:
-- [x] 06-01-PLAN.md — Types, mock data, i18n, document folders, metadata, version history, scanning confirmation
-- [x] 06-02-PLAN.md — Client intake workflow, communication history, client docs, calendar enhancements, mobile quick actions
-
-### Phase 7: Advanced Search and Notifications
-**Goal**: Lawyers can find anything instantly through saved searches and smart filters, and stay on top of deadlines with configurable, actionable notifications
-**Depends on**: Phase 6 (all enhanced entities available for searching; notification data enriched)
-**Requirements**: SRCH-01, SRCH-02, SRCH-03, SRCH-04, NOTIF-01, NOTIF-02, NOTIF-03, NOTIF-04, NOTIF-05
-**Success Criteria** (what must be TRUE):
-  1. User can save a search query and re-execute it later from a saved searches list
-  2. User can apply quick filters (My Cases, Urgent, New This Week) and combine multiple filter dimensions (date range + type + status + lawyer)
-  3. User can view and re-execute recent search history
-  4. User can configure notification preferences (quiet hours, per-event type), snooze notifications, and take quick actions (mark complete, reschedule) from the notification screen
-  5. User can see escalation urgency indicators on deadline notifications and browse full notification history with read/unread state
-**Plans:** 2 plans
-
-Plans:
-- [x] 07-01-PLAN.md — Advanced search with saved searches, quick filters, history, and multi-dimensional filtering
-- [x] 07-02-PLAN.md — Enhanced notifications with preferences, snooze, quick actions, escalation, and history browsing
-
-### Phase 8: Billing and Invoicing
-**Goal**: Lawyers can generate invoices from tracked time and expenses, record payments, and monitor outstanding balances
-**Depends on**: Phase 5 (time entries and expenses from CASE-06/CASE-07 provide billing data)
-**Requirements**: BILL-01, BILL-02, BILL-03, BILL-04
-**Success Criteria** (what must be TRUE):
-  1. User can generate an invoice for a case that pulls in logged time entries and expenses
-  2. User can record payments against invoices and see the remaining balance update
-  3. User can view outstanding balances aggregated per client and per case
-  4. User can calculate fees using different billing modes (tariff-based, hourly rate, flat fee)
-**Plans:** 2 plans
-
-Plans:
-- [x] 08-01-PLAN.md — Billing types, mock data, i18n, invoice list, creation with fee calculator, and detail screens
-- [x] 08-02-PLAN.md — Payment recording modal on invoice detail and outstanding balances screen
-
-### Phase 9: Reporting and Analytics
-**Goal**: Lawyers can view visual dashboards summarizing their financial performance, case workload, and productivity metrics
-**Depends on**: Phase 8 (billing and invoice data feeds financial reports)
-**Requirements**: RPT-01, RPT-02, RPT-03, RPT-04
-**Success Criteria** (what must be TRUE):
-  1. User can view a financial overview dashboard showing revenue, outstanding invoices, and top clients
-  2. User can view a case management dashboard with active case counts, status breakdown, and upcoming deadlines
-  3. User can view a performance dashboard with case closure rate and workload distribution
-  4. User can see visual charts (bar, pie, line) for key metrics across all dashboards
-**Plans**: TBD
-
-Plans:
-- [ ] 09-01: TBD
+- [x] 11-01: Types, mock services, i18n, Directory route under More with 3-tab navigator, list + search views for Lawyers/Judges/Courts — completed 2026-04-11
+- [x] 11-02: Add/edit/delete CRUD forms for Lawyers/Judges/Courts and wiring into the More tab — completed 2026-04-11
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 5 > 6 > 7 > 8 > 9
+Phases execute in numeric order. v1.2 phases continue from 10.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -121,4 +90,6 @@ Phases execute in numeric order: 5 > 6 > 7 > 8 > 9
 | 6. Enhanced Documents, Clients, Calendar, and Mobile | v1.1 | 2/2 | Complete | 2026-03-14 |
 | 7. Advanced Search and Notifications | v1.1 | 2/2 | Complete | 2026-03-14 |
 | 8. Billing and Invoicing | v1.1 | 2/2 | Complete | 2026-03-15 |
-| 9. Reporting and Analytics | v1.1 | 0/1 | Not started | - |
+| 9. Reporting and Analytics | v1.1 | 2/2 | Complete | 2026-03-15 |
+| 10. Client Detail Depth | v1.2 | 2/2 | Complete | 2026-04-11 |
+| 11. Directory Management | v1.2 | 2/2 | Complete | 2026-04-11 |

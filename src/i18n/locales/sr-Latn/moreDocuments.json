@@ -1,0 +1,36 @@
+{
+  "title": "Dokumenta",
+  "hub": {
+    "templates": "Sabloni dokumenata",
+    "templatesDesc": "Word i tekst sabloni: ugovori, zalbe, tuzbe...",
+    "all": "Sva dokumenta",
+    "allDesc": "Pregled dokumenata po klijentima i predmetima"
+  },
+  "templates": {
+    "title": "Sabloni dokumenata",
+    "noTemplates": "Nema sablona",
+    "addTemplate": "Dodaj sablon",
+    "selectCategory": "Izaberite kategoriju",
+    "category": "Kategorija",
+    "selectFile": "Izaberite Word ili tekst fajl",
+    "filterAll": "Sve",
+    "deleteConfirmTitle": "Brisanje sablona",
+    "deleteConfirmMessage": "Da li ste sigurni da zelite da obrisete \"{{name}}\"?",
+    "categories": {
+      "ugovor": "Ugovor",
+      "zalba": "Zalba",
+      "tuzba": "Tuzba",
+      "punomocje": "Punomocje",
+      "predlog": "Predlog",
+      "odluka": "Odluka",
+      "odgovor": "Odgovor",
+      "other": "Ostalo"
+    }
+  },
+  "all": {
+    "title": "Sva dokumenta",
+    "selectClient": "Izaberite klijenta",
+    "noClient": "Izaberite klijenta da prikazete dokumenta.",
+    "noClientsExist": "Nema klijenata."
+  }
+}

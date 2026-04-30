@@ -14,6 +14,7 @@
     "profile": "Profile",
     "linkedCases": "Linked Cases",
     "noCases": "No linked cases",
+    "newCaseForClient": "New Case",
     "contact": "Contact",
     "representatives": "Representatives"
   },
@@ -81,12 +82,26 @@
   },
   "clientDocuments": {
     "clientDocuments": "Client Documents",
+    "title": "Client Documents",
     "noClientDocuments": "No client documents",
+    "noDocsYet": "No documents yet",
     "addDocument": "Add Document",
+    "documentCount": "Documents ({{count}})",
+    "viewAll": "View All",
+    "selectType": "Select document type",
+    "filterAll": "All",
+    "tabClient": "Client",
+    "tabCase": "Cases",
+    "allCases": "All cases",
+    "selectCase": "Select case",
+    "noCases": "Client has no cases",
+    "noCaseDocs": "No documents for the selected case",
+    "pickCaseHint": "First pick the case the document should be added to.",
     "idCard": "ID Card",
     "passport": "Passport",
     "powerOfAttorney": "Power of Attorney",
     "engagementLetter": "Engagement Letter",
+    "other": "Other",
     "expiresAt": "Expires"
   },
   "contacts": {
@@ -102,7 +117,9 @@
     "permissionRequired": "Permission Required",
     "permissionDenied": "Camera permission is required to take photos",
     "cannotOpenTitle": "Cannot Open File",
-    "cannotOpenMessage": "This file cannot be opened. It may be missing or the device has no app to handle this file type."
+    "cannotOpenMessage": "This file cannot be opened. It may be missing or the device has no app to handle this file type.",
+    "deleteDocument": "Delete document",
+    "deleteConfirm": "Are you sure you want to delete \"{{name}}\"?"
   },
   "recentActivity": {
     "title": "Recent Activity",
@@ -118,11 +135,26 @@
     "title": "Expenses",
     "expensesAndBilling": "Expenses & Billing",
     "total": "Total",
+    "unpaid": "Unpaid",
+    "unpaidPerCase": "Unpaid per case",
+    "clientUnpaid": "Total unpaid for client",
     "noExpenses": "No expenses recorded",
     "timeEntry": "Time Entry",
     "expense": "Expense",
     "viewInvoices": "View invoices",
-    "paid": "PAID"
+    "paid": "PAID",
+    "addTime": "Log time",
+    "addExpense": "Add expense",
+    "totalHours": "Total hours",
+    "selectCase": "Select case",
+    "selectCaseHint": "Which case does this entry belong to?",
+    "noCases": "Client has no cases. Create a case first.",
+    "confirmMarkPaidTitle": "Mark as paid?",
+    "confirmMarkPaidBody": "This expense will be marked as paid.",
+    "confirmMarkUnpaidTitle": "Mark as unpaid?",
+    "confirmMarkUnpaidBody": "This expense will be marked as unpaid.",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
   },
   "outstanding": {
     "title": "Unpaid / Outstanding",

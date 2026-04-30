@@ -35,6 +35,10 @@ export default function ClientsLayout() {
         name="edit/[id]"
         options={{ headerTitle: tc("form.editTitle") }}
       />
+      <Stack.Screen
+        name="documents/[clientId]"
+        options={{ headerTitle: tc("clientDocuments.title") }}
+      />
     </Stack>
   );
 }

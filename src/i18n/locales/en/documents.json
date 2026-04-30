@@ -9,13 +9,19 @@
   "fileTypes": {
     "pdf": "PDF Document",
     "image": "Image",
+    "word": "Word Document",
+    "text": "Text File",
     "other": "File"
   },
   "filter": {
     "all": "All",
     "pdf": "PDF",
-    "image": "Images"
+    "image": "Images",
+    "word": "Word",
+    "text": "Text"
   },
+  "cannotOpenTitle": "Cannot Open File",
+  "cannotOpenMessage": "The system can't open this file type. Install an app that handles it.",
   "metadata": {
     "size": "Size",
     "date": "Date",
@@ -45,6 +51,9 @@
     "scanConfirmMessage": "Would you like to use this photo or retake it?"
   },
   "selectFolder": "Select Folder",
+  "createFromTemplate": "From template",
+  "pickTemplate": "Pick a template",
+  "noTemplates": "No templates yet. Add one in More → Documents → Templates.",
   "addedOn": "Added {{date}}",
   "viewAll": "View All",
   "addDocument": "Add Document",

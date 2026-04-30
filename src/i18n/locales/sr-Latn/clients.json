@@ -14,6 +14,7 @@
     "profile": "Profil",
     "linkedCases": "Povezani predmeti",
     "noCases": "Nema povezanih predmeta",
+    "newCaseForClient": "Novi predmet",
     "contact": "Kontakt",
     "representatives": "Zastupnici"
   },
@@ -81,12 +82,26 @@
   },
   "clientDocuments": {
     "clientDocuments": "Dokumenta klijenta",
+    "title": "Dokumenta klijenta",
     "noClientDocuments": "Nema dokumenata klijenta",
+    "noDocsYet": "Nema dokumenata",
     "addDocument": "Dodaj dokument",
+    "documentCount": "Dokumenta ({{count}})",
+    "viewAll": "Pogledaj sve",
+    "selectType": "Izaberite tip dokumenta",
+    "filterAll": "Sve",
+    "tabClient": "Klijent",
+    "tabCase": "Predmeti",
+    "allCases": "Svi predmeti",
+    "selectCase": "Izaberite predmet",
+    "noCases": "Klijent nema predmete",
+    "noCaseDocs": "Nema dokumenata za izabrani predmet",
+    "pickCaseHint": "Najpre izaberite predmet u koji ce dokument biti dodat.",
     "idCard": "Licna karta",
     "passport": "Pasos",
     "powerOfAttorney": "Punomocje",
     "engagementLetter": "Ugovor o zastupanju",
+    "other": "Ostalo",
     "expiresAt": "Istice"
   },
   "contacts": {
@@ -102,7 +117,9 @@
     "permissionRequired": "Potrebna dozvola",
     "permissionDenied": "Dozvola za kameru je potrebna za fotografisanje",
     "cannotOpenTitle": "Fajl se ne moze otvoriti",
-    "cannotOpenMessage": "Ovaj fajl se ne moze otvoriti. Mozda nedostaje, ili uredjaj nema aplikaciju za ovu vrstu fajla."
+    "cannotOpenMessage": "Ovaj fajl se ne moze otvoriti. Mozda nedostaje, ili uredjaj nema aplikaciju za ovu vrstu fajla.",
+    "deleteDocument": "Obrisi dokument",
+    "deleteConfirm": "Da li ste sigurni da zelite da obrisete \"{{name}}\"?"
   },
   "recentActivity": {
     "title": "Nedavne aktivnosti",
@@ -118,11 +135,26 @@
     "title": "Troškovi",
     "expensesAndBilling": "Troskovi i naplata",
     "total": "Ukupno",
+    "unpaid": "Neplaceno",
+    "unpaidPerCase": "Neplaceno po predmetu",
+    "clientUnpaid": "Ukupno neplaceno za klijenta",
     "noExpenses": "Nema evidentiranih troškova",
     "timeEntry": "Evidencija vremena",
     "expense": "Trošak",
     "viewInvoices": "Pregledaj fakture",
-    "paid": "PLACENO"
+    "paid": "PLACENO",
+    "addTime": "Evidentiraj vreme",
+    "addExpense": "Dodaj trosak",
+    "totalHours": "Ukupno sati",
+    "selectCase": "Izaberite predmet",
+    "selectCaseHint": "Na koji predmet se odnosi ovaj unos?",
+    "noCases": "Klijent nema predmete. Najpre kreirajte predmet.",
+    "confirmMarkPaidTitle": "Oznaciti kao placeno?",
+    "confirmMarkPaidBody": "Ovaj trosak ce biti oznacen kao placen.",
+    "confirmMarkUnpaidTitle": "Oznaciti kao neplaceno?",
+    "confirmMarkUnpaidBody": "Ovaj trosak ce biti oznacen kao neplacen.",
+    "cancel": "Otkazi",
+    "confirm": "Potvrdi"
   },
   "outstanding": {
     "title": "Neplaćeno / Dugovanja",

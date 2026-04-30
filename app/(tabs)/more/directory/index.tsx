@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useFocusEffect, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ScreenContainer } from "../../../../src/components/ui";
+import { DeleteConfirmDialog } from "../../../../src/components/ui/DeleteConfirmDialog";
 import { useServices } from "../../../../src/hooks/useServices";
 import { colors } from "../../../../src/theme/tokens";
 import type { Lawyer, Judge, Court } from "../../../../src/services/types";
@@ -29,6 +30,7 @@ export default function DirectoryScreen() {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<TabKey>("lawyers");
+  const [deleteConfirm, setDeleteConfirm] = useState<{ entity: TabKey; id: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [lawyersList, setLawyersList] = useState<Lawyer[]>([]);
@@ -174,36 +176,32 @@ export default function DirectoryScreen() {
     return !formDisplayName.trim();
   };
 
-  const handleDeleteItem = (entity: TabKey, id: string, name: string) => {
-    const deleteKey =
-      entity === "lawyers"
-        ? "lawyers.deleteLawyer"
-        : entity === "judges"
-          ? "judges.deleteJudge"
-          : "courts.deleteCourt";
-    const confirmKey =
-      entity === "lawyers"
-        ? "lawyers.confirmDelete"
-        : entity === "judges"
-          ? "judges.confirmDelete"
-          : "courts.confirmDelete";
-
-    Alert.alert(t(deleteKey), t(confirmKey), [
-      { text: t("actions.no"), style: "cancel" },
-      {
-        text: t("actions.yes"),
-        style: "destructive",
-        onPress: async () => {
-          if (entity === "lawyers")
-            await services.directory.deleteLawyer(id);
-          else if (entity === "judges")
-            await services.directory.deleteJudge(id);
-          else await services.directory.deleteCourt(id);
-          refreshData();
-        },
-      },
-    ]);
+  const handleDeleteItem = (entity: TabKey, id: string, _name: string) => {
+    setDeleteConfirm({ entity, id });
   };
+
+  const confirmDeleteItem = async () => {
+    if (!deleteConfirm) return;
+    const { entity, id: itemId } = deleteConfirm;
+    setDeleteConfirm(null);
+    if (entity === "lawyers") await services.directory.deleteLawyer(itemId);
+    else if (entity === "judges") await services.directory.deleteJudge(itemId);
+    else await services.directory.deleteCourt(itemId);
+    refreshData();
+  };
+
+  const deleteDialogCopy = (() => {
+    switch (deleteConfirm?.entity) {
+      case "lawyers":
+        return { title: t("lawyers.deleteLawyer"), body: t("lawyers.confirmDelete"), confirm: t("lawyers.deleteLawyer") };
+      case "judges":
+        return { title: t("judges.deleteJudge"), body: t("judges.confirmDelete"), confirm: t("judges.deleteJudge") };
+      case "courts":
+        return { title: t("courts.deleteCourt"), body: t("courts.confirmDelete"), confirm: t("courts.deleteCourt") };
+      default:
+        return { title: "", body: "", confirm: "" };
+    }
+  })();
 
   const getAddTitle = () => {
     if (activeTab === "lawyers") return t("lawyers.addLawyer");
@@ -909,6 +907,15 @@ export default function DirectoryScreen() {
           </KeyboardAvoidingView>
         </View>
       </Modal>
+
+      <DeleteConfirmDialog
+        visible={deleteConfirm !== null}
+        onCancel={() => setDeleteConfirm(null)}
+        onConfirm={confirmDeleteItem}
+        title={deleteDialogCopy.title}
+        body={deleteDialogCopy.body}
+        confirmLabel={deleteDialogCopy.confirm}
+      />
     </ScreenContainer>
   );
 }

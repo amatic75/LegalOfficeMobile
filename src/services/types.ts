@@ -78,8 +78,10 @@ export interface CaseSummary {
   caseSubtype?: CaseSubtype;
   opposingParty?: string;
   opposingPartyRepresentative?: string;
+  opposingPartyRepresentativeId?: string;
   courtCaseNumber?: string;
   judge?: string;
+  judgeId?: string;
   tags?: string[];
   lawyerId?: string;
   lawyerName?: string;
@@ -180,7 +182,7 @@ export interface Document {
   id: string;
   caseId: string;
   name: string;
-  type: 'pdf' | 'image' | 'other';
+  type: 'pdf' | 'image' | 'word' | 'text' | 'other';
   mimeType: string;
   size: number;
   uri: string;
@@ -210,6 +212,8 @@ export function formatFileSize(bytes: number): string {
 export const DOC_TYPE_ICONS: Record<Document['type'], { icon: string; color: string }> = {
   pdf: { icon: 'document-text-outline', color: '#E53935' },
   image: { icon: 'image-outline', color: '#43A047' },
+  word: { icon: 'document-outline', color: '#1976D2' },
+  text: { icon: 'reader-outline', color: '#6D4C41' },
   other: { icon: 'document-outline', color: '#757575' },
 };
 
@@ -355,6 +359,18 @@ export interface CaseNote {
   updatedAt?: string;
 }
 
+export type Currency = 'RSD' | 'EUR' | 'USD' | 'CHF';
+
+export const SUPPORTED_CURRENCIES: Currency[] = ['RSD', 'EUR', 'USD', 'CHF'];
+
+export const DEFAULT_CURRENCY: Currency = 'RSD';
+
+export function formatMoney(amount: number, currency: Currency = DEFAULT_CURRENCY): string {
+  const parts = amount.toFixed(2).split('.');
+  const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return `${intPart},${parts[1]} ${currency}`;
+}
+
 export interface TimeEntry {
   id: string;
   caseId: string;
@@ -362,6 +378,10 @@ export interface TimeEntry {
   description: string;
   date: string;
   billable: boolean;
+  amount?: number;
+  currency?: Currency;
+  paid?: boolean;
+  paidAt?: string;
   createdAt: string;
 }
 
@@ -375,10 +395,12 @@ export interface Expense {
   id: string;
   caseId: string;
   amount: number;
+  currency?: Currency;
   category: ExpenseCategory;
   description: string;
   date: string;
   paid?: boolean;
+  paidAt?: string;
   createdAt: string;
 }
 
@@ -396,97 +418,41 @@ export interface CaseLink {
 
 export const PREDEFINED_TAGS = ['urgent', 'confidential', 'for-review', 'vip', 'pro-bono', 'high-value'] as const;
 
-export const CASE_TYPE_SUBTYPES_TREE: Record<CaseType, { label: string; subtypes: Record<string, { label: string; items: string[] }> }> = {
+// Tree of subtype slug keys -> item slug keys. Labels are looked up via i18n
+// (cases.json: `subtype.<key>` and `subtypeItem.<key>`).
+export const CASE_TYPE_SUBTYPES_TREE: Record<CaseType, { subtypes: Record<string, { items: string[] }> }> = {
   civil: {
-    label: 'Civil',
     subtypes: {
-      litigation: {
-        label: 'Litigation',
-        items: ['Contract disputes', 'Property disputes', 'Employment disputes', 'Tort claims'],
-      },
-      'non-litigation': {
-        label: 'Non-litigation',
-        items: ['Mediation', 'Arbitration', 'Notarial matters'],
-      },
-      bankruptcy: {
-        label: 'Bankruptcy',
-        items: ['Creditor claims', 'Debtor restructuring', 'Liquidation proceedings'],
-      },
-      enforcement: {
-        label: 'Enforcement',
-        items: ['Debt collection', 'Asset seizure', 'Wage garnishment'],
-      },
-      misdemeanor: {
-        label: 'Misdemeanor',
-        items: ['Traffic violations', 'Public order offenses', 'Minor property damage'],
-      },
-      administrative: {
-        label: 'Administrative',
-        items: ['Permit appeals', 'Tax disputes', 'Regulatory compliance'],
-      },
+      litigation: { items: ['contract-disputes', 'property-disputes', 'employment-disputes', 'tort-claims'] },
+      'non-litigation': { items: ['mediation', 'arbitration', 'notarial-matters'] },
+      bankruptcy: { items: ['creditor-claims', 'debtor-restructuring', 'liquidation-proceedings'] },
+      enforcement: { items: ['debt-collection', 'asset-seizure', 'wage-garnishment'] },
+      misdemeanor: { items: ['traffic-violations', 'public-order-offenses', 'minor-property-damage'] },
+      administrative: { items: ['permit-appeals', 'tax-disputes', 'regulatory-compliance'] },
     },
   },
   criminal: {
-    label: 'Criminal',
     subtypes: {
-      investigations: {
-        label: 'Investigations',
-        items: ['Financial crimes', 'Violent crimes', 'Cybercrime'],
-      },
-      indictments: {
-        label: 'Indictments',
-        items: ['Felony charges', 'Organized crime', 'White-collar crime'],
-      },
-      appeals: {
-        label: 'Appeals',
-        items: ['Sentence reduction', 'Procedural errors', 'New evidence'],
-      },
-      'post-conviction': {
-        label: 'Post-conviction',
-        items: ['Parole hearings', 'Sentence modification', 'Rehabilitation'],
-      },
+      investigations: { items: ['financial-crimes', 'violent-crimes', 'cybercrime'] },
+      indictments: { items: ['felony-charges', 'organized-crime', 'white-collar-crime'] },
+      appeals: { items: ['sentence-reduction', 'procedural-errors', 'new-evidence'] },
+      'post-conviction': { items: ['parole-hearings', 'sentence-modification', 'rehabilitation'] },
     },
   },
   family: {
-    label: 'Family',
     subtypes: {
-      divorce: {
-        label: 'Divorce',
-        items: ['Contested divorce', 'Uncontested divorce', 'Property division'],
-      },
-      'child-custody': {
-        label: 'Child custody',
-        items: ['Sole custody', 'Joint custody', 'Visitation rights'],
-      },
-      alimony: {
-        label: 'Alimony',
-        items: ['Spousal support', 'Child support modification', 'Enforcement of support'],
-      },
-      adoption: {
-        label: 'Adoption',
-        items: ['Domestic adoption', 'International adoption', 'Step-parent adoption'],
-      },
+      divorce: { items: ['contested-divorce', 'uncontested-divorce', 'property-division'] },
+      'child-custody': { items: ['sole-custody', 'joint-custody', 'visitation-rights'] },
+      alimony: { items: ['spousal-support', 'child-support-modification', 'enforcement-of-support'] },
+      adoption: { items: ['domestic-adoption', 'international-adoption', 'step-parent-adoption'] },
     },
   },
   corporate: {
-    label: 'Corporate',
     subtypes: {
-      'company-formation': {
-        label: 'Company formation',
-        items: ['LLC registration', 'Joint-stock company', 'Branch office registration'],
-      },
-      'mergers-acquisitions': {
-        label: 'Mergers & acquisitions',
-        items: ['Due diligence', 'Share purchase', 'Asset acquisition'],
-      },
-      'commercial-contracts': {
-        label: 'Commercial contracts',
-        items: ['Supply agreements', 'Lease agreements', 'Service contracts'],
-      },
-      'intellectual-property': {
-        label: 'Intellectual property',
-        items: ['Trademark registration', 'Patent filing', 'Copyright protection'],
-      },
+      'company-formation': { items: ['llc-registration', 'joint-stock-company', 'branch-office-registration'] },
+      'mergers-acquisitions': { items: ['due-diligence', 'share-purchase', 'asset-acquisition'] },
+      'commercial-contracts': { items: ['supply-agreements', 'lease-agreements', 'service-contracts'] },
+      'intellectual-property': { items: ['trademark-registration', 'patent-filing', 'copyright-protection'] },
     },
   },
 };
@@ -503,13 +469,14 @@ export interface ICaseNoteService {
 export interface ITimeEntryService {
   getTimeEntriesByCaseId(caseId: string): Promise<TimeEntry[]>;
   createTimeEntry(data: Omit<TimeEntry, 'id' | 'createdAt'>): Promise<TimeEntry>;
+  updateTimeEntry(id: string, data: Partial<Pick<TimeEntry, 'hours' | 'description' | 'date' | 'billable' | 'amount' | 'currency' | 'paid' | 'paidAt'>>): Promise<TimeEntry | null>;
   deleteTimeEntry(id: string): Promise<boolean>;
 }
 
 export interface IExpenseService {
   getExpensesByCaseId(caseId: string): Promise<Expense[]>;
   createExpense(data: Omit<Expense, 'id' | 'createdAt'>): Promise<Expense>;
-  updateExpense(id: string, data: Partial<Pick<Expense, 'amount' | 'category' | 'description' | 'date' | 'paid'>>): Promise<Expense | null>;
+  updateExpense(id: string, data: Partial<Pick<Expense, 'amount' | 'currency' | 'category' | 'description' | 'date' | 'paid' | 'paidAt'>>): Promise<Expense | null>;
   deleteExpense(id: string): Promise<boolean>;
 }
 
@@ -701,8 +668,14 @@ export interface IBillingService {
   createInvoice(data: Omit<Invoice, 'id' | 'createdAt'>): Promise<Invoice>;
   updateInvoiceStatus(id: string, status: InvoiceStatus): Promise<Invoice | null>;
   addPayment(invoiceId: string, data: Omit<Payment, 'id' | 'createdAt'>): Promise<Payment>;
-  getOutstandingByClient(): Promise<Array<{ clientId: string; clientName: string; totalOutstanding: number; invoiceCount: number }>>;
-  getOutstandingByCase(): Promise<Array<{ caseId: string; caseName: string; caseNumber: string; clientName: string; totalOutstanding: number; invoiceCount: number }>>;
+  // Outstanding amounts are exposed per-currency since invoices, time entries
+  // and expenses can be in RSD / EUR / USD / CHF and we don't have a stable
+  // FX rate to combine them. UIs should render each non-zero currency on its
+  // own line. `totalOutstanding` is kept as a single-number fallback equal to
+  // the RSD bucket only (callers that just want a numeric should use it for
+  // sorting / "is anything outstanding" checks, not for display totals).
+  getOutstandingByClient(): Promise<Array<{ clientId: string; clientName: string; outstandingByCurrency: Partial<Record<Currency, number>>; totalOutstanding: number; invoiceCount: number }>>;
+  getOutstandingByCase(): Promise<Array<{ caseId: string; caseName: string; caseNumber: string; clientName: string; outstandingByCurrency: Partial<Record<Currency, number>>; totalOutstanding: number; invoiceCount: number }>>;
 }
 
 // Phase 9: Reporting and Analytics
@@ -787,6 +760,7 @@ export interface ClientActivity {
   caseNumber: string;
   icon: string;         // Ionicons name
   metadata?: Record<string, string | number>;
+  eventId?: string;     // Set when type === 'event' so the row can deep-link to the calendar event
 }
 
 export interface ClientExpenseItem {
@@ -794,6 +768,7 @@ export interface ClientExpenseItem {
   type: 'time-entry' | 'expense';
   description: string;
   amount: number;
+  currency?: Currency;
   date: string;
   caseId: string;
   caseName: string;
@@ -835,6 +810,33 @@ export interface IClientAggregationService {
   getOutstandingSummary(clientId: string): Promise<ClientOutstandingSummary>;
 }
 
+// Document templates (only Word / TXT files supported for now). Templates are
+// firm-wide reusable skeletons (Ugovor, Zalba, …), not tied to a case or client.
+export type DocumentTemplateCategory =
+  | 'ugovor' | 'zalba' | 'tuzba' | 'punomocje' | 'predlog' | 'odluka' | 'odgovor' | 'other';
+
+export const DOCUMENT_TEMPLATE_CATEGORIES: DocumentTemplateCategory[] = [
+  'ugovor', 'zalba', 'tuzba', 'punomocje', 'predlog', 'odluka', 'odgovor', 'other',
+];
+
+export interface DocumentTemplate {
+  id: string;
+  name: string;
+  type: 'word' | 'text';
+  mimeType: string;
+  size: number;
+  uri: string;
+  category: DocumentTemplateCategory;
+  description?: string;
+  createdAt: string;
+}
+
+export interface IDocumentTemplateService {
+  getAll(): Promise<DocumentTemplate[]>;
+  create(data: Omit<DocumentTemplate, 'id' | 'createdAt'>): Promise<DocumentTemplate>;
+  delete(id: string): Promise<boolean>;
+}
+
 export interface ServiceRegistry {
   users: IUserService;
   clients: IClientService;
@@ -853,4 +855,5 @@ export interface ServiceRegistry {
   billing: IBillingService;
   reports: IReportService;
   clientAggregation: IClientAggregationService;
+  documentTemplates: IDocumentTemplateService;
 }

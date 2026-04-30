@@ -42,6 +42,10 @@ export default function MoreLayout() {
         name="directory"
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="documents"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }

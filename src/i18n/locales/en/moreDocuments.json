@@ -1,0 +1,36 @@
+{
+  "title": "Documents",
+  "hub": {
+    "templates": "Document Templates",
+    "templatesDesc": "Word and text templates: contracts, appeals, lawsuits…",
+    "all": "All Documents",
+    "allDesc": "Browse documents by client and case"
+  },
+  "templates": {
+    "title": "Document Templates",
+    "noTemplates": "No templates yet",
+    "addTemplate": "Add template",
+    "selectCategory": "Select category",
+    "category": "Category",
+    "selectFile": "Pick a Word or text file",
+    "filterAll": "All",
+    "deleteConfirmTitle": "Delete template",
+    "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"?",
+    "categories": {
+      "ugovor": "Contract",
+      "zalba": "Appeal",
+      "tuzba": "Lawsuit",
+      "punomocje": "Power of Attorney",
+      "predlog": "Motion",
+      "odluka": "Decision",
+      "odgovor": "Response",
+      "other": "Other"
+    }
+  },
+  "all": {
+    "title": "All Documents",
+    "selectClient": "Select client",
+    "noClient": "Pick a client to view documents.",
+    "noClientsExist": "No clients."
+  }
+}

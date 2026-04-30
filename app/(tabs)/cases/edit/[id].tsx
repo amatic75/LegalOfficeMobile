@@ -16,7 +16,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useServices } from "../../../../src/hooks/useServices";
 import { colors } from "../../../../src/theme/tokens";
-import type { CaseType, CaseSubtype, Client, Court } from "../../../../src/services/types";
+import { DirectoryPicker, type DirectoryEntry, type DirectoryPickerKind } from "../../../../src/components/ui/DirectoryPicker";
+import type { CaseType, CaseSubtype, Client } from "../../../../src/services/types";
 import { CASE_TYPE_SUBTYPES } from "../../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
@@ -56,7 +57,18 @@ export default function EditCaseScreen() {
   const [selectedType, setSelectedType] = useState<CaseType | null>(null);
   const [selectedSubtype, setSelectedSubtype] = useState<CaseSubtype | null>(null);
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
-  const [selectedCourtId, setSelectedCourtId] = useState<string | null>(null);
+
+  // Directory-backed selections (id + display name pairs)
+  const [courtId, setCourtId] = useState<string | null>(null);
+  const [courtName, setCourtName] = useState<string>('');
+  const [judgeId, setJudgeId] = useState<string | null>(null);
+  const [judgeName, setJudgeName] = useState<string>('');
+  const [opposingRepId, setOpposingRepId] = useState<string | null>(null);
+  const [opposingRepName, setOpposingRepName] = useState<string>('');
+
+  // Directory picker state
+  const [pickerKind, setPickerKind] = useState<DirectoryPickerKind | null>(null);
+  const [pickerField, setPickerField] = useState<"court" | "judge" | "opposingPartyRepresentative" | null>(null);
 
   // Text fields
   const [caseNumber, setCaseNumber] = useState('');
@@ -66,7 +78,6 @@ export default function EditCaseScreen() {
 
   // Data
   const [clients, setClients] = useState<Client[]>([]);
-  const [courts, setCourts] = useState<Court[]>([]);
   const [clientSearch, setClientSearch] = useState('');
 
   // Validation
@@ -77,17 +88,20 @@ export default function EditCaseScreen() {
     Promise.all([
       services.cases.getCaseById(id),
       services.clients.getClients(),
-      services.directory.getCourts(),
-    ]).then(([caseData, clientsData, courtsData]) => {
+    ]).then(([caseData, clientsData]) => {
       setClients(clientsData);
-      setCourts(courtsData);
       if (caseData) {
         setCaseNumber(caseData.caseNumber);
         setTitle(caseData.title);
         setSelectedType(caseData.caseType);
         setSelectedSubtype(caseData.caseSubtype ?? null);
         setSelectedClientId(caseData.clientId);
-        setSelectedCourtId(caseData.courtId ?? null);
+        setCourtId(caseData.courtId ?? null);
+        setCourtName(caseData.court ?? '');
+        setJudgeId(caseData.judgeId ?? null);
+        setJudgeName(caseData.judge ?? '');
+        setOpposingRepId(caseData.opposingPartyRepresentativeId ?? null);
+        setOpposingRepName(caseData.opposingPartyRepresentative ?? '');
         setOpposingParty(caseData.opposingParty ?? '');
         setDescription(caseData.description ?? '');
       }
@@ -103,11 +117,46 @@ export default function EditCaseScreen() {
     : clients;
 
   const selectedClient = clients.find((c) => c.id === selectedClientId);
-  const selectedCourt = courts.find((c) => c.id === selectedCourtId);
 
   const handleTypeSelect = (type: CaseType) => {
     setSelectedType(type);
     setSelectedSubtype(null);
+  };
+
+  const openPicker = (field: "court" | "judge" | "opposingPartyRepresentative") => {
+    setPickerField(field);
+    setPickerKind(field === "court" ? "court" : field === "judge" ? "judge" : "lawyer");
+  };
+
+  const closePicker = () => {
+    setPickerField(null);
+    setPickerKind(null);
+  };
+
+  const handleDirectorySelect = (entry: DirectoryEntry) => {
+    if (pickerField === "court") {
+      setCourtId(entry.id);
+      setCourtName(entry.displayName);
+    } else if (pickerField === "judge") {
+      setJudgeId(entry.id);
+      setJudgeName(entry.displayName);
+    } else if (pickerField === "opposingPartyRepresentative") {
+      setOpposingRepId(entry.id);
+      setOpposingRepName(entry.displayName);
+    }
+  };
+
+  const handleDirectoryClear = () => {
+    if (pickerField === "court") {
+      setCourtId(null);
+      setCourtName('');
+    } else if (pickerField === "judge") {
+      setJudgeId(null);
+      setJudgeName('');
+    } else if (pickerField === "opposingPartyRepresentative") {
+      setOpposingRepId(null);
+      setOpposingRepName('');
+    }
   };
 
   const validateForm = (): boolean => {
@@ -131,8 +180,12 @@ export default function EditCaseScreen() {
         caseType: selectedType!,
         caseSubtype: selectedSubtype ?? undefined,
         opposingParty: opposingParty.trim() || undefined,
-        court: selectedCourt?.name ?? undefined,
-        courtId: selectedCourtId ?? undefined,
+        opposingPartyRepresentative: opposingRepName.trim() || undefined,
+        opposingPartyRepresentativeId: opposingRepId ?? undefined,
+        court: courtName.trim() || undefined,
+        courtId: courtId ?? undefined,
+        judge: judgeName.trim() || undefined,
+        judgeId: judgeId ?? undefined,
         description: description.trim() || undefined,
         updatedAt: new Date().toISOString(),
       });
@@ -444,57 +497,78 @@ export default function EditCaseScreen() {
           </ScrollView>
         </View>
 
-        {/* Section 4: Court Picker */}
+        {/* Section 4: Directory-backed fields (Court, Judge, Opposing counsel) */}
         <Text style={{ fontSize: 15, fontWeight: "700", color: colors.navy.DEFAULT, marginBottom: 10 }}>
           {t("form.selectCourt")}
         </Text>
-        <View
+        <Pressable
+          onPress={() => openPicker("court")}
           style={{
+            flexDirection: "row",
+            alignItems: "center",
             backgroundColor: "#FFFFFF",
-            borderRadius: 14,
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 14,
+            marginBottom: 14,
             borderWidth: 1,
             borderColor: "#F0EAE0",
-            marginBottom: 24,
-            overflow: "hidden",
           }}
         >
-          {courts.map((court, index) => {
-            const isSelected = selectedCourtId === court.id;
-            return (
-              <Pressable
-                key={court.id}
-                onPress={() => setSelectedCourtId(court.id)}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  backgroundColor: isSelected ? colors.golden[50] : "transparent",
-                  borderBottomWidth: index < courts.length - 1 ? 1 : 0,
-                  borderBottomColor: "#F5F0E8",
-                }}
-              >
-                <Ionicons
-                  name={"business-outline" as IoniconsName}
-                  size={16}
-                  color={isSelected ? colors.golden.DEFAULT : "#AAA"}
-                  style={{ marginRight: 10 }}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 14, color: colors.navy.DEFAULT, fontWeight: isSelected ? "600" : "400" }}>
-                    {court.name}
-                  </Text>
-                  <Text style={{ fontSize: 11, color: "#AAA", marginTop: 2 }}>
-                    {court.city}
-                  </Text>
-                </View>
-                {isSelected && (
-                  <Ionicons name={"checkmark-circle" as IoniconsName} size={18} color={colors.golden.DEFAULT} />
-                )}
-              </Pressable>
-            );
-          })}
-        </View>
+          <Ionicons name={"business-outline" as IoniconsName} size={18} color={courtId ? colors.golden.DEFAULT : "#AAA"} />
+          <Text style={{ flex: 1, marginLeft: 10, fontSize: 15, color: courtName ? colors.navy.DEFAULT : "#CCC", fontStyle: courtName ? "normal" : "italic" }}>
+            {courtName || t("detail.tapToEdit")}
+          </Text>
+          <Ionicons name={"chevron-forward" as IoniconsName} size={16} color="#CCC" />
+        </Pressable>
+
+        <Text style={{ fontSize: 15, fontWeight: "700", color: colors.navy.DEFAULT, marginBottom: 10 }}>
+          {t("detail.judge")}
+        </Text>
+        <Pressable
+          onPress={() => openPicker("judge")}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "#FFFFFF",
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 14,
+            marginBottom: 14,
+            borderWidth: 1,
+            borderColor: "#F0EAE0",
+          }}
+        >
+          <Ionicons name={"podium-outline" as IoniconsName} size={18} color={judgeId ? colors.golden.DEFAULT : "#AAA"} />
+          <Text style={{ flex: 1, marginLeft: 10, fontSize: 15, color: judgeName ? colors.navy.DEFAULT : "#CCC", fontStyle: judgeName ? "normal" : "italic" }}>
+            {judgeName || t("detail.tapToEdit")}
+          </Text>
+          <Ionicons name={"chevron-forward" as IoniconsName} size={16} color="#CCC" />
+        </Pressable>
+
+        <Text style={{ fontSize: 15, fontWeight: "700", color: colors.navy.DEFAULT, marginBottom: 10 }}>
+          {t("detail.opposingPartyRep")}
+        </Text>
+        <Pressable
+          onPress={() => openPicker("opposingPartyRepresentative")}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "#FFFFFF",
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 14,
+            marginBottom: 24,
+            borderWidth: 1,
+            borderColor: "#F0EAE0",
+          }}
+        >
+          <Ionicons name={"person-add-outline" as IoniconsName} size={18} color={opposingRepId ? colors.golden.DEFAULT : "#AAA"} />
+          <Text style={{ flex: 1, marginLeft: 10, fontSize: 15, color: opposingRepName ? colors.navy.DEFAULT : "#CCC", fontStyle: opposingRepName ? "normal" : "italic" }}>
+            {opposingRepName || t("detail.tapToEdit")}
+          </Text>
+          <Ionicons name={"chevron-forward" as IoniconsName} size={16} color="#CCC" />
+        </Pressable>
 
         {/* Save Button */}
         <Pressable
@@ -518,6 +592,24 @@ export default function EditCaseScreen() {
           </Text>
         </Pressable>
       </ScrollView>
+
+      {pickerKind && (
+        <DirectoryPicker
+          visible={pickerKind !== null}
+          onClose={closePicker}
+          kind={pickerKind}
+          lawyerFilter={pickerField === "opposingPartyRepresentative" ? "external" : "all"}
+          currentId={
+            pickerField === "court"
+              ? courtId
+              : pickerField === "judge"
+                ? judgeId
+                : opposingRepId
+          }
+          onSelect={handleDirectorySelect}
+          onClear={handleDirectoryClear}
+        />
+      )}
     </KeyboardAvoidingView>
   );
 }

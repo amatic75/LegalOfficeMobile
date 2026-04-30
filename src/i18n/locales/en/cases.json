@@ -31,8 +31,7 @@
     "selectSubtypeDetails": "Subtype details",
     "tapToEdit": "Tap to edit",
     "save": "Save",
-    "cancel": "Cancel",
-    "viewInDirectory": "View in directory"
+    "cancel": "Cancel"
   },
   "form": {
     "createTitle": "New case",
@@ -73,6 +72,63 @@
     "mergers-acquisitions": "Mergers & acquisitions",
     "commercial-contracts": "Commercial contracts",
     "intellectual-property": "Intellectual property"
+  },
+  "subtypeItem": {
+    "contract-disputes": "Contract disputes",
+    "property-disputes": "Property disputes",
+    "employment-disputes": "Employment disputes",
+    "tort-claims": "Tort claims",
+    "mediation": "Mediation",
+    "arbitration": "Arbitration",
+    "notarial-matters": "Notarial matters",
+    "creditor-claims": "Creditor claims",
+    "debtor-restructuring": "Debtor restructuring",
+    "liquidation-proceedings": "Liquidation proceedings",
+    "debt-collection": "Debt collection",
+    "asset-seizure": "Asset seizure",
+    "wage-garnishment": "Wage garnishment",
+    "traffic-violations": "Traffic violations",
+    "public-order-offenses": "Public order offenses",
+    "minor-property-damage": "Minor property damage",
+    "permit-appeals": "Permit appeals",
+    "tax-disputes": "Tax disputes",
+    "regulatory-compliance": "Regulatory compliance",
+    "financial-crimes": "Financial crimes",
+    "violent-crimes": "Violent crimes",
+    "cybercrime": "Cybercrime",
+    "felony-charges": "Felony charges",
+    "organized-crime": "Organized crime",
+    "white-collar-crime": "White-collar crime",
+    "sentence-reduction": "Sentence reduction",
+    "procedural-errors": "Procedural errors",
+    "new-evidence": "New evidence",
+    "parole-hearings": "Parole hearings",
+    "sentence-modification": "Sentence modification",
+    "rehabilitation": "Rehabilitation",
+    "contested-divorce": "Contested divorce",
+    "uncontested-divorce": "Uncontested divorce",
+    "property-division": "Property division",
+    "sole-custody": "Sole custody",
+    "joint-custody": "Joint custody",
+    "visitation-rights": "Visitation rights",
+    "spousal-support": "Spousal support",
+    "child-support-modification": "Child support modification",
+    "enforcement-of-support": "Enforcement of support",
+    "domestic-adoption": "Domestic adoption",
+    "international-adoption": "International adoption",
+    "step-parent-adoption": "Step-parent adoption",
+    "llc-registration": "LLC registration",
+    "joint-stock-company": "Joint-stock company",
+    "branch-office-registration": "Branch office registration",
+    "due-diligence": "Due diligence",
+    "share-purchase": "Share purchase",
+    "asset-acquisition": "Asset acquisition",
+    "supply-agreements": "Supply agreements",
+    "lease-agreements": "Lease agreements",
+    "service-contracts": "Service contracts",
+    "trademark-registration": "Trademark registration",
+    "patent-filing": "Patent filing",
+    "copyright-protection": "Copyright protection"
   },
   "status": {
     "new": "New",
@@ -116,7 +172,15 @@
     }
   },
   "billing": {
-    "title": "Time & Expenses",
+    "title": "Unbilled items",
+    "createInvoice": "Create invoice",
+    "unpaidInvoicesTitle": "Unpaid invoices",
+    "noUnpaidInvoices": "No unpaid invoices for this case.",
+    "percentPaid": "{{percent}}% collected",
+    "viewAllInvoices": "View all invoices",
+    "remaining": "Remaining",
+    "selectCase": "Select case",
+    "changeCase": "Change",
     "addTime": "Log time",
     "addExpense": "Add expense",
     "hours": "Hours",
@@ -143,7 +207,18 @@
     "deleteConfirm": "Are you sure you want to delete this entry?",
     "markPaid": "Mark as paid",
     "markUnpaid": "Mark as unpaid",
-    "paid": "PAID"
+    "paid": "PAID",
+    "unpaid": "Unpaid",
+    "currency": "Currency",
+    "datetime": "Date and time",
+    "pickDate": "Pick date",
+    "pickTime": "Pick time",
+    "confirmMarkPaidTitle": "Mark as paid?",
+    "confirmMarkPaidBody": "This expense will be marked as paid.",
+    "confirmMarkUnpaidTitle": "Mark as unpaid?",
+    "confirmMarkUnpaidBody": "This expense will be marked as unpaid.",
+    "paidAt": "Payment date",
+    "paidOn": "Paid"
   },
   "related": {
     "title": "Related Cases",
@@ -163,5 +238,13 @@
   "quickActions": {
     "callClient": "Call Client",
     "navigateCourt": "Navigate"
+  },
+  "recentActivity": {
+    "title": "Recent activity",
+    "noActivity": "No recent activity"
+  },
+  "upcomingActivity": {
+    "title": "Upcoming activity",
+    "noActivity": "No upcoming activity"
   }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,9 +9,10 @@ import {
   Alert,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams, Stack, useFocusEffect } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useServices } from "../../../../src/hooks/useServices";
+import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
 import type {
   CaseSummary,
@@ -19,7 +20,9 @@ import type {
   TimeEntry,
   Expense,
   InvoiceLineItem,
+  Currency,
 } from "../../../../src/services/types";
+import { DEFAULT_CURRENCY } from "../../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -57,6 +60,13 @@ export default function NewInvoiceScreen() {
   const { t } = useTranslation("billing");
   const router = useRouter();
   const services = useServices();
+  // Optional `?caseId=...` deep-link from the case overview's "Create invoice"
+  // button — pre-selects that case so the user lands on the right form.
+  const { caseId: preselectedCaseId } = useLocalSearchParams<{ caseId?: string }>();
+  // Honors `?returnTo=...` so the back chevron lands on the originating screen
+  // (e.g. the case overview) even though the new-invoice screen lives in the
+  // `more/billing` stack.
+  const { goBack, returnTo } = useReturnBack();
 
   const [allCases, setAllCases] = useState<CaseSummary[]>([]);
   const [selectedCase, setSelectedCase] = useState<CaseSummary | null>(null);
@@ -70,33 +80,81 @@ export default function NewInvoiceScreen() {
   const [loadingEntries, setLoadingEntries] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    services.cases.getCases().then(setAllCases);
-  }, []);
+  // User-driven exclusions and exchange rates ─ both keyed by stable line-item ids
+  // and currency codes respectively. Excluded items still render under "Removed
+  // items" so the user can restore them; they don't contribute to the subtotal.
+  const [excludedIds, setExcludedIds] = useState<Set<string>>(new Set());
+  const [exchangeRates, setExchangeRates] = useState<Record<string, string>>({});
+  const setRate = (cur: string, value: string) =>
+    setExchangeRates((prev) => ({ ...prev, [cur]: value }));
+  const toggleExcluded = (id: string) =>
+    setExcludedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
 
   useEffect(() => {
-    if (!selectedCase) {
+    services.cases.getCases().then((list) => {
+      setAllCases(list);
+      // Honor `?caseId=...` once cases are loaded.
+      if (preselectedCaseId) {
+        const match = list.find((c) => c.id === preselectedCaseId);
+        if (match) setSelectedCase(match);
+      }
+    });
+  }, [preselectedCaseId]);
+
+  // Fetch unbilled time entries + expenses for the picked case. Re-runs on
+  // every focus (returning to this screen after creating an invoice elsewhere
+  // gives us fresh data) and whenever the user switches cases.
+  const selectedCaseId = selectedCase?.id;
+  const refreshLineItems = useCallback(async () => {
+    if (!selectedCaseId) {
       setTimeEntries([]);
       setCaseExpenses([]);
       return;
     }
     setLoadingEntries(true);
-    Promise.all([
-      services.timeEntries.getTimeEntriesByCaseId(selectedCase.id),
-      services.expenses.getExpensesByCaseId(selectedCase.id),
-    ]).then(([te, exp]) => {
-      setTimeEntries(te.filter((e) => e.billable));
-      setCaseExpenses(exp);
-      setLoadingEntries(false);
-    });
-  }, [selectedCase?.id]);
+    const [te, exp, existingInvoices] = await Promise.all([
+      services.timeEntries.getTimeEntriesByCaseId(selectedCaseId),
+      services.expenses.getExpensesByCaseId(selectedCaseId),
+      services.billing.getInvoicesByCaseId(selectedCaseId),
+    ]);
+    // Anything already billed (referenced from an existing invoice's line
+    // items) must not show up here — same item should never appear on two
+    // invoices. Skip synthetic referenceIds like "tariff" / "flat-fee" since
+    // they don't map to real time-entry / expense records.
+    const billed = new Set<string>();
+    for (const inv of existingInvoices) {
+      for (const li of inv.lineItems) {
+        if (li.type !== "time-entry" && li.type !== "expense") continue;
+        if (li.referenceId === "tariff" || li.referenceId === "flat-fee") continue;
+        billed.add(li.referenceId);
+      }
+    }
+    setTimeEntries(te.filter((e) => e.billable && !billed.has(e.id)));
+    setCaseExpenses(exp.filter((e) => !billed.has(e.id)));
+    setLoadingEntries(false);
+  }, [selectedCaseId, services]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshLineItems();
+    }, [refreshLineItems])
+  );
 
   const rate = parseFloat(hourlyRate) || 0;
   const tariff = parseFloat(tariffAmount) || 0;
   const flatFee = parseFloat(flatFeeAmount) || 0;
 
-  // Build line items based on billing mode
-  const lineItems: InvoiceLineItem[] = [];
+  // Per-line-item draft carries the original currency so we can group + convert
+  // at total time. Plain `InvoiceLineItem` doesn't have a currency field; we
+  // serialize the converted RSD amount when saving.
+  type LineItemDraft = InvoiceLineItem & { currency: Currency };
+
+  const lineItems: LineItemDraft[] = [];
   if (billingMode === "hourly") {
     timeEntries.forEach((te, i) => {
       lineItems.push({
@@ -107,6 +165,9 @@ export default function NewInvoiceScreen() {
         quantity: te.hours,
         unitPrice: rate,
         amount: te.hours * rate,
+        // Hourly rate is entered in RSD on this screen, so the time-entry line
+        // is RSD regardless of how the time entry itself was logged.
+        currency: DEFAULT_CURRENCY,
       });
     });
   } else if (billingMode === "tariff" && tariff > 0) {
@@ -116,6 +177,7 @@ export default function NewInvoiceScreen() {
       referenceId: "tariff",
       description: t("mode.tariff"),
       amount: tariff,
+      currency: DEFAULT_CURRENCY,
     });
   } else if (billingMode === "flat-fee" && flatFee > 0) {
     lineItems.push({
@@ -124,10 +186,10 @@ export default function NewInvoiceScreen() {
       referenceId: "flat-fee",
       description: t("mode.flat-fee"),
       amount: flatFee,
+      currency: DEFAULT_CURRENCY,
     });
   }
 
-  // Add expenses as line items
   caseExpenses.forEach((exp, i) => {
     lineItems.push({
       id: `new-li-exp-${i}`,
@@ -135,15 +197,38 @@ export default function NewInvoiceScreen() {
       referenceId: exp.id,
       description: exp.description,
       amount: exp.amount,
+      currency: exp.currency ?? DEFAULT_CURRENCY,
     });
   });
 
-  const subtotal = lineItems.reduce((sum, li) => sum + li.amount, 0);
+  const activeItems = lineItems.filter((li) => !excludedIds.has(li.id));
+  const removedItems = lineItems.filter((li) => excludedIds.has(li.id));
+
+  // Group active items by currency so we can show per-currency subtotals and
+  // ask for one exchange rate per non-RSD currency.
+  const subtotalsByCurrency = activeItems.reduce<Record<string, number>>((acc, li) => {
+    acc[li.currency] = (acc[li.currency] ?? 0) + li.amount;
+    return acc;
+  }, {});
+  const foreignCurrencies = Object.keys(subtotalsByCurrency).filter((c) => c !== DEFAULT_CURRENCY);
+
+  const rsdSubtotal = subtotalsByCurrency[DEFAULT_CURRENCY] ?? 0;
+  let convertedForeignTotal = 0;
+  let missingRateCurrency: string | null = null;
+  for (const cur of foreignCurrencies) {
+    const r = parseFloat(exchangeRates[cur]);
+    if (!r || r <= 0) {
+      if (!missingRateCurrency) missingRateCurrency = cur;
+      continue;
+    }
+    convertedForeignTotal += subtotalsByCurrency[cur] * r;
+  }
+  const subtotal = rsdSubtotal + convertedForeignTotal;
   const tax = subtotal * 0.2;
   const total = subtotal + tax;
 
   const canGenerate =
-    selectedCase && billingMode && subtotal > 0 && !submitting;
+    !!selectedCase && !!billingMode && subtotal > 0 && !submitting && missingRateCurrency === null;
 
   const handleGenerate = async () => {
     if (!selectedCase || !billingMode) return;
@@ -157,6 +242,29 @@ export default function NewInvoiceScreen() {
     due.setDate(due.getDate() + 30);
     const dueDate = due.toISOString().split("T")[0];
 
+    // Persist line items in RSD: foreign-currency amounts are multiplied by
+    // the user-entered rate. The original currency + rate is preserved in the
+    // line description so the user can reconstruct the math later.
+    const persistedItems: InvoiceLineItem[] = activeItems.map((li) => {
+      if (li.currency === DEFAULT_CURRENCY) {
+        return {
+          id: li.id, type: li.type, referenceId: li.referenceId,
+          description: li.description, quantity: li.quantity,
+          unitPrice: li.unitPrice, amount: li.amount,
+        };
+      }
+      const r = parseFloat(exchangeRates[li.currency]) || 0;
+      return {
+        id: li.id,
+        type: li.type,
+        referenceId: li.referenceId,
+        description: `${li.description}  [${li.amount.toFixed(2)} ${li.currency} @ ${r}]`,
+        quantity: li.quantity,
+        unitPrice: li.unitPrice,
+        amount: li.amount * r,
+      };
+    });
+
     await services.billing.createInvoice({
       invoiceNumber,
       caseId: selectedCase.id,
@@ -165,7 +273,7 @@ export default function NewInvoiceScreen() {
       clientName: selectedCase.clientName,
       billingMode,
       status: "draft",
-      lineItems,
+      lineItems: persistedItems,
       subtotal,
       tax,
       total,
@@ -180,7 +288,16 @@ export default function NewInvoiceScreen() {
     });
 
     setSubmitting(false);
-    router.back();
+    // Prefer the explicit returnTo (set by the case overview); otherwise
+    // fall back to the navigator's back if it has somewhere to go, else
+    // land on the invoice list so the user isn't stranded.
+    if (returnTo) {
+      router.replace(returnTo as never);
+    } else if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/(tabs)/more/billing");
+    }
   };
 
   return (
@@ -188,6 +305,17 @@ export default function NewInvoiceScreen() {
       style={{ flex: 1, backgroundColor: "#FFF9F0" }}
       contentContainerStyle={{ padding: 16 }}
     >
+      {returnTo && (
+        <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <Pressable onPress={goBack} style={{ marginLeft: 4, padding: 4 }}>
+                <Ionicons name={"arrow-back" as IoniconsName} size={24} color="#FFFFFF" />
+              </Pressable>
+            ),
+          }}
+        />
+      )}
       {/* Step 1: Select Case */}
       <Text
         style={{
@@ -443,7 +571,7 @@ export default function NewInvoiceScreen() {
                     {t("create.noTimeEntries")}
                   </Text>
                 )}
-                {lineItems
+                {activeItems
                   .filter((li) => li.type === "time-entry")
                   .map((li) => (
                     <View
@@ -455,39 +583,25 @@ export default function NewInvoiceScreen() {
                         paddingVertical: 8,
                         borderBottomWidth: 1,
                         borderBottomColor: "#F5F5F5",
+                        gap: 8,
                       }}
                     >
-                      <View style={{ flex: 1, marginRight: 8 }}>
-                        <Text
-                          style={{
-                            fontSize: 13,
-                            color: colors.navy.DEFAULT,
-                          }}
-                          numberOfLines={2}
-                        >
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 13, color: colors.navy.DEFAULT }} numberOfLines={2}>
                           {li.description}
                         </Text>
                         {li.quantity != null && li.unitPrice != null && (
-                          <Text
-                            style={{
-                              fontSize: 11,
-                              color: "#8899AA",
-                              marginTop: 2,
-                            }}
-                          >
-                            {li.quantity}h x {formatRSD(li.unitPrice)} RSD
+                          <Text style={{ fontSize: 11, color: "#8899AA", marginTop: 2 }}>
+                            {li.quantity}h x {formatRSD(li.unitPrice)} {li.currency}
                           </Text>
                         )}
                       </View>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          fontWeight: "600",
-                          color: colors.navy.DEFAULT,
-                        }}
-                      >
-                        {formatRSD(li.amount)}
+                      <Text style={{ fontSize: 14, fontWeight: "600", color: colors.navy.DEFAULT }}>
+                        {formatRSD(li.amount)} {li.currency}
                       </Text>
+                      <Pressable onPress={() => toggleExcluded(li.id)} hitSlop={8} style={{ padding: 4 }}>
+                        <Ionicons name={"close-circle-outline" as IoniconsName} size={20} color="#E57373" />
+                      </Pressable>
                     </View>
                   ))}
 
@@ -504,7 +618,7 @@ export default function NewInvoiceScreen() {
                     {t("create.noExpenses")}
                   </Text>
                 )}
-                {lineItems
+                {activeItems
                   .filter((li) => li.type === "expense")
                   .map((li) => (
                     <View
@@ -516,42 +630,132 @@ export default function NewInvoiceScreen() {
                         paddingVertical: 8,
                         borderBottomWidth: 1,
                         borderBottomColor: "#F5F5F5",
+                        gap: 8,
                       }}
                     >
-                      <View style={{ flex: 1, marginRight: 8 }}>
-                        <Text
-                          style={{
-                            fontSize: 13,
-                            color: colors.navy.DEFAULT,
-                          }}
-                          numberOfLines={2}
-                        >
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 13, color: colors.navy.DEFAULT }} numberOfLines={2}>
                           {li.description}
                         </Text>
-                        <Text
-                          style={{
-                            fontSize: 11,
-                            color: "#8899AA",
-                            marginTop: 2,
-                          }}
-                        >
+                        <Text style={{ fontSize: 11, color: "#8899AA", marginTop: 2 }}>
                           Trosak
                         </Text>
                       </View>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          fontWeight: "600",
-                          color: colors.navy.DEFAULT,
-                        }}
-                      >
-                        {formatRSD(li.amount)}
+                      <Text style={{ fontSize: 14, fontWeight: "600", color: colors.navy.DEFAULT }}>
+                        {formatRSD(li.amount)} {li.currency}
                       </Text>
+                      <Pressable onPress={() => toggleExcluded(li.id)} hitSlop={8} style={{ padding: 4 }}>
+                        <Ionicons name={"close-circle-outline" as IoniconsName} size={20} color="#E57373" />
+                      </Pressable>
                     </View>
                   ))}
+
+                {/* Removed items — restorable via the back-arrow button */}
+                {removedItems.length > 0 && (
+                  <View style={{ marginTop: 14, paddingTop: 10, borderTopWidth: 1, borderTopColor: "#EEE" }}>
+                    <Text style={{ fontSize: 12, fontWeight: "700", color: "#8899AA", marginBottom: 6 }}>
+                      {t("create.removedItems")}
+                    </Text>
+                    {removedItems.map((li) => (
+                      <View
+                        key={li.id}
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          paddingVertical: 6,
+                          gap: 8,
+                          opacity: 0.55,
+                        }}
+                      >
+                        <Text style={{ flex: 1, fontSize: 12, color: colors.navy.DEFAULT, textDecorationLine: "line-through" }} numberOfLines={1}>
+                          {li.description}
+                        </Text>
+                        <Text style={{ fontSize: 12, color: "#8899AA", textDecorationLine: "line-through" }}>
+                          {formatRSD(li.amount)} {li.currency}
+                        </Text>
+                        <Pressable onPress={() => toggleExcluded(li.id)} hitSlop={8} style={{ padding: 4 }}>
+                          <Ionicons name={"arrow-undo-outline" as IoniconsName} size={18} color={colors.golden.DEFAULT} />
+                        </Pressable>
+                      </View>
+                    ))}
+                  </View>
+                )}
               </>
             )}
           </View>
+
+          {/* Per-currency subtotals + exchange-rate inputs (only when foreign
+              currencies are present in the active items). */}
+          {foreignCurrencies.length > 0 && (
+            <View style={SECTION_CARD}>
+              <Text style={{ fontSize: 15, fontWeight: "700", color: colors.navy.DEFAULT, marginBottom: 12 }}>
+                {t("create.exchangeRates")}
+              </Text>
+
+              {/* RSD subtotal first when present */}
+              {rsdSubtotal > 0 && (
+                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 6 }}>
+                  <Text style={{ fontSize: 13, color: "#8899AA" }}>
+                    {t("create.subtotalIn", { currency: DEFAULT_CURRENCY })}
+                  </Text>
+                  <Text style={{ fontSize: 14, fontWeight: "600", color: colors.navy.DEFAULT }}>
+                    {formatRSD(rsdSubtotal)} {DEFAULT_CURRENCY}
+                  </Text>
+                </View>
+              )}
+
+              {foreignCurrencies.map((cur) => {
+                const sub = subtotalsByCurrency[cur];
+                const r = parseFloat(exchangeRates[cur]);
+                const converted = r > 0 ? sub * r : null;
+                return (
+                  <View key={cur} style={{ paddingVertical: 8, borderTopWidth: 1, borderTopColor: "#F5F5F5" }}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
+                      <Text style={{ fontSize: 13, color: "#8899AA" }}>
+                        {t("create.subtotalIn", { currency: cur })}
+                      </Text>
+                      <Text style={{ fontSize: 14, fontWeight: "600", color: colors.navy.DEFAULT }}>
+                        {formatRSD(sub)} {cur}
+                      </Text>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                      <Text style={{ flex: 1, fontSize: 12, color: "#8899AA" }}>
+                        {t("create.exchangeRateFor", { currency: cur })}
+                      </Text>
+                      <TextInput
+                        value={exchangeRates[cur] ?? ""}
+                        onChangeText={(v) => setRate(cur, v)}
+                        keyboardType="numeric"
+                        placeholder="0,00"
+                        style={{
+                          width: 110,
+                          borderWidth: 1,
+                          borderColor: "#E0E0E0",
+                          borderRadius: 8,
+                          padding: 8,
+                          fontSize: 14,
+                          color: colors.navy.DEFAULT,
+                          textAlign: "right",
+                        }}
+                      />
+                    </View>
+                    {converted !== null && (
+                      <Text style={{ fontSize: 11, color: "#8899AA", marginTop: 6, textAlign: "right" }}>
+                        = {formatRSD(converted)} {DEFAULT_CURRENCY}
+                      </Text>
+                    )}
+                  </View>
+                );
+              })}
+
+              {missingRateCurrency && (
+                <Text style={{ fontSize: 12, color: "#C62828", marginTop: 10 }}>
+                  {t("create.missingRate", { currency: missingRateCurrency })}
+                </Text>
+              )}
+            </View>
+          )}
 
           {/* Calculated totals */}
           <View style={SECTION_CARD}>

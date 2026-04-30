@@ -7,7 +7,11 @@
     "noResults": "Nema faktura za izabrani filter"
   },
   "filter": {
-    "allStatuses": "Svi statusi"
+    "allStatuses": "Svi statusi",
+    "allPayments": "Sve uplate",
+    "paymentPaid": "Placene",
+    "paymentPartial": "Delimicno placene",
+    "paymentUnpaid": "Neplacene"
   },
   "status": {
     "draft": "Nacrt",
@@ -51,7 +55,15 @@
     "lineItemsPreview": "Pregled stavki",
     "noTimeEntries": "Nema naplativih vremenskih unosa za ovaj predmet",
     "noExpenses": "Nema troskova za ovaj predmet",
-    "calculatedTotal": "Izracunati ukupan iznos"
+    "calculatedTotal": "Izracunati ukupan iznos",
+    "removeItem": "Ukloni",
+    "restoreItem": "Vrati",
+    "removedItems": "Uklonjene stavke",
+    "exchangeRates": "Kursevi konverzije",
+    "exchangeRateFor": "Kurs za 1 {{currency}}",
+    "missingRate": "Unesite kurs za {{currency}} da bi konverzija bila tacna.",
+    "subtotalIn": "Medjuzbir ({{currency}})",
+    "convertedTotal": "Ukupno (preracunato u RSD)"
   },
   "payment": {
     "record": "Evidentiraj uplatu",

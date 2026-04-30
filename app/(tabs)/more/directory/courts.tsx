@@ -17,6 +17,7 @@ import { useServices } from "../../../../src/hooks/useServices";
 import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
 import type { Court } from "../../../../src/services/types";
+import { DeleteConfirmDialog } from "../../../../src/components/ui/DeleteConfirmDialog";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -222,6 +223,7 @@ export default function CourtDetailScreen() {
 
   const [court, setCourt] = useState<Court | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -243,21 +245,14 @@ export default function CourtDetailScreen() {
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      t("courts.deleteCourt"),
-      t("courts.confirmDelete"),
-      [
-        { text: t("actions.no"), style: "cancel" },
-        {
-          text: t("actions.yes"),
-          style: "destructive",
-          onPress: async () => {
-            await services.directory.deleteCourt(id!);
-            router.back();
-          },
-        },
-      ]
-    );
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    setShowDeleteConfirm(false);
+    if (!id) return;
+    await services.directory.deleteCourt(id);
+    router.back();
   };
 
   if (loading) {
@@ -415,6 +410,15 @@ export default function CourtDetailScreen() {
           {t("courts.deleteCourt")}
         </Text>
       </Pressable>
+
+      <DeleteConfirmDialog
+        visible={showDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        title={t("courts.deleteCourt")}
+        body={t("courts.confirmDelete")}
+        confirmLabel={t("courts.deleteCourt")}
+      />
     </ScrollView>
   );
 }

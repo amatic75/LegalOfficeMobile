@@ -10,6 +10,7 @@ import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
 import type { CalendarEvent, EventType, CaseSummary, RecurrencePattern } from "../../../../src/services/types";
 import { EVENT_TYPE_COLORS } from "../../../../src/services/types";
+import { DeleteConfirmDialog } from "../../../../src/components/ui/DeleteConfirmDialog";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -43,6 +44,7 @@ export default function EventDetailScreen() {
   const { goBack, returnTo } = useReturnBack();
 
   const [event, setEvent] = useState<CalendarEvent | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
 
@@ -208,22 +210,14 @@ export default function EventDetailScreen() {
   };
 
   const handleDelete = () => {
-    Alert.alert(
-      t("edit.confirmDelete"),
-      t("edit.deleteConfirmMessage"),
-      [
-        { text: t("form.cancel"), style: "cancel" },
-        {
-          text: t("edit.deleteEvent"),
-          style: "destructive",
-          onPress: async () => {
-            if (!id) return;
-            await services.calendarEvents.deleteEvent(id);
-            router.back();
-          },
-        },
-      ]
-    );
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    setShowDeleteConfirm(false);
+    if (!id) return;
+    await services.calendarEvents.deleteEvent(id);
+    router.back();
   };
 
   const toggleDayOfWeek = (day: number) => {
@@ -983,6 +977,15 @@ export default function EventDetailScreen() {
           </Text>
         </Pressable>
       </ScrollView>
+
+      <DeleteConfirmDialog
+        visible={showDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        title={t("edit.confirmDelete")}
+        body={t("edit.deleteConfirmMessage")}
+        confirmLabel={t("edit.deleteEvent")}
+      />
     </>
   );
 }

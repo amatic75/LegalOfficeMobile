@@ -13,14 +13,16 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useServices } from "../../../../src/hooks/useServices";
 import { useReturnBack } from "../../../../src/hooks/useReturnBack";
 import { colors } from "../../../../src/theme/tokens";
+import type { Currency } from "../../../../src/services/types";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
-function formatRSD(amount: number): string {
+function formatAmount(amount: number, currency: Currency = "RSD"): string {
   const parts = amount.toFixed(2).split(".");
   const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  return `${intPart},${parts[1]} RSD`;
+  return `${intPart},${parts[1]} ${currency}`;
 }
+const formatRSD = (amount: number) => formatAmount(amount, "RSD");
 
 const SECTION_CARD = {
   backgroundColor: "#FFFFFF",
@@ -41,6 +43,7 @@ type TabType = "client" | "case";
 interface ClientBalance {
   clientId: string;
   clientName: string;
+  outstandingByCurrency: Partial<Record<Currency, number>>;
   totalOutstanding: number;
   invoiceCount: number;
 }
@@ -50,8 +53,31 @@ interface CaseBalance {
   caseName: string;
   caseNumber: string;
   clientName: string;
+  outstandingByCurrency: Partial<Record<Currency, number>>;
   totalOutstanding: number;
   invoiceCount: number;
+}
+
+// Render one line per currency. Combining different currencies into a single
+// number would be wrong without an FX rate, so we don't.
+function CurrencyAmounts({ amounts }: { amounts: Partial<Record<Currency, number>> }) {
+  const entries = (Object.entries(amounts) as [Currency, number][]).filter(([, v]) => (v ?? 0) > 0);
+  if (entries.length === 0) {
+    return (
+      <Text style={{ fontSize: 20, fontWeight: "700", color: "#2E7D32" }}>
+        {formatRSD(0)}
+      </Text>
+    );
+  }
+  return (
+    <View>
+      {entries.map(([cur, amt]) => (
+        <Text key={cur} style={{ fontSize: 20, fontWeight: "700", color: "#C62828" }}>
+          {formatAmount(amt, cur)}
+        </Text>
+      ))}
+    </View>
+  );
 }
 
 export default function BalancesScreen() {
@@ -84,10 +110,19 @@ export default function BalancesScreen() {
     }, [])
   );
 
-  const totalOutstanding =
-    activeTab === "client"
-      ? clientBalances.reduce((sum, c) => sum + c.totalOutstanding, 0)
-      : caseBalances.reduce((sum, c) => sum + c.totalOutstanding, 0);
+  // Roll up the per-currency totals across the active tab. We never sum across
+  // currencies — each non-zero bucket renders on its own line.
+  const totalsByCurrency: Partial<Record<Currency, number>> = (() => {
+    const totals: Partial<Record<Currency, number>> = {};
+    const rows = activeTab === "client" ? clientBalances : caseBalances;
+    for (const row of rows) {
+      for (const [cur, amt] of Object.entries(row.outstandingByCurrency) as [Currency, number][]) {
+        if (!amt) continue;
+        totals[cur] = (totals[cur] ?? 0) + amt;
+      }
+    }
+    return totals;
+  })();
 
   const renderClientItem = ({ item }: { item: ClientBalance }) => (
     <Pressable
@@ -133,15 +168,7 @@ export default function BalancesScreen() {
           </Text>
         </View>
       </View>
-      <Text
-        style={{
-          fontSize: 20,
-          fontWeight: "700",
-          color: "#C62828",
-        }}
-      >
-        {formatRSD(item.totalOutstanding)}
-      </Text>
+      <CurrencyAmounts amounts={item.outstandingByCurrency} />
     </Pressable>
   );
 
@@ -207,15 +234,7 @@ export default function BalancesScreen() {
       >
         {item.clientName}
       </Text>
-      <Text
-        style={{
-          fontSize: 20,
-          fontWeight: "700",
-          color: "#C62828",
-        }}
-      >
-        {formatRSD(item.totalOutstanding)}
-      </Text>
+      <CurrencyAmounts amounts={item.outstandingByCurrency} />
     </Pressable>
   );
 
@@ -288,15 +307,22 @@ export default function BalancesScreen() {
         >
           {t("balance.outstanding")}
         </Text>
-        <Text
-          style={{
-            fontSize: 28,
-            fontWeight: "700",
-            color: colors.golden.DEFAULT,
-          }}
-        >
-          {formatRSD(totalOutstanding)}
-        </Text>
+        {(() => {
+          const entries = (Object.entries(totalsByCurrency) as [Currency, number][])
+            .filter(([, v]) => (v ?? 0) > 0);
+          if (entries.length === 0) {
+            return (
+              <Text style={{ fontSize: 28, fontWeight: "700", color: colors.golden.DEFAULT }}>
+                {formatRSD(0)}
+              </Text>
+            );
+          }
+          return entries.map(([cur, amt]) => (
+            <Text key={cur} style={{ fontSize: 24, fontWeight: "700", color: colors.golden.DEFAULT }}>
+              {formatAmount(amt, cur)}
+            </Text>
+          ));
+        })()}
       </View>
 
       {/* Tab chips */}

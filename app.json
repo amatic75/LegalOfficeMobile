@@ -5,14 +5,19 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "legaloffice",
-    "icon": "./LOIcon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B2B4B"
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./LOIcon.png",
+        "foregroundImage": "./assets/splash-icon.png",
         "backgroundColor": "#1B2B4B"
       }
     },
@@ -25,11 +30,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "./LOSplashScreen.png",
+          "image": "./assets/splash-icon.png",
           "imageWidth": 200,
           "backgroundColor": "#1B2B4B"
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ]
   }
 }

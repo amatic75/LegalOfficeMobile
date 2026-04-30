@@ -1,0 +1,36 @@
+{
+  "title": "Документа",
+  "hub": {
+    "templates": "Шаблони докумената",
+    "templatesDesc": "Word и текст шаблони: уговори, жалбе, тужбе...",
+    "all": "Сва документа",
+    "allDesc": "Преглед докумената по клијентима и предметима"
+  },
+  "templates": {
+    "title": "Шаблони докумената",
+    "noTemplates": "Нема шаблона",
+    "addTemplate": "Додај шаблон",
+    "selectCategory": "Изаберите категорију",
+    "category": "Категорија",
+    "selectFile": "Изаберите Word или текст фајл",
+    "filterAll": "Све",
+    "deleteConfirmTitle": "Брисање шаблона",
+    "deleteConfirmMessage": "Да ли сте сигурни да желите да обришете \"{{name}}\"?",
+    "categories": {
+      "ugovor": "Уговор",
+      "zalba": "Жалба",
+      "tuzba": "Тужба",
+      "punomocje": "Пуномоћје",
+      "predlog": "Предлог",
+      "odluka": "Одлука",
+      "odgovor": "Одговор",
+      "other": "Остало"
+    }
+  },
+  "all": {
+    "title": "Сва документа",
+    "selectClient": "Изаберите клијента",
+    "noClient": "Изаберите клијента да прикажете документа.",
+    "noClientsExist": "Нема клијената."
+  }
+}
